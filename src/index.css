@@ -9,23 +9,110 @@
   }
 
   body {
-    @apply bg-slate-50 text-slate-800 antialiased font-sans selection:bg-brand-600 selection:text-white;
+    @apply bg-slate-50 text-slate-900 antialiased font-sans selection:bg-sky-500 selection:text-white;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: 'Outfit', 'Plus Jakarta Sans', sans-serif;
   }
 }
 
 /* Custom glowing effects & glassmorphism */
 .glass-panel {
   background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 20px 40px -15px rgba(15, 23, 42, 0.05);
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  box-shadow: 0 20px 45px -15px rgba(14, 165, 233, 0.12), 0 4px 12px -2px rgba(0, 0, 0, 0.03);
+}
+
+.glass-card-interactive {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  box-shadow: 0 10px 30px -10px rgba(15, 23, 42, 0.06);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-card-interactive:hover {
+  transform: translateY(-4px);
+  border-color: rgba(14, 165, 233, 0.4);
+  box-shadow: 0 25px 50px -12px rgba(14, 165, 233, 0.18), 0 0 25px rgba(14, 165, 233, 0.1);
 }
 
 .glass-dark {
-  background: rgba(15, 23, 42, 0.85);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  background: rgba(15, 23, 42, 0.88);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
   border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.gradient-mesh {
+  background: 
+    radial-gradient(at 0% 0%, rgba(14, 165, 233, 0.18) 0px, transparent 50%),
+    radial-gradient(at 100% 10%, rgba(244, 63, 94, 0.14) 0px, transparent 50%),
+    radial-gradient(at 50% 100%, rgba(56, 189, 248, 0.1) 0px, transparent 50%),
+    linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
+}
+
+.gradient-mesh-dark {
+  background: 
+    radial-gradient(at 0% 0%, rgba(14, 165, 233, 0.25) 0px, transparent 50%),
+    radial-gradient(at 100% 10%, rgba(225, 29, 72, 0.2) 0px, transparent 50%),
+    radial-gradient(at 50% 100%, rgba(14, 165, 233, 0.15) 0px, transparent 50%),
+    #090d16;
+}
+
+.gradient-card-sky {
+  background: linear-gradient(135deg, rgba(240, 249, 255, 0.95) 0%, rgba(255, 255, 255, 0.98) 100%);
+  border: 1px solid rgba(186, 230, 253, 0.8);
+  box-shadow: 0 10px 25px -5px rgba(2, 132, 199, 0.08);
+}
+
+.gradient-card-red {
+  background: linear-gradient(135deg, rgba(255, 241, 242, 0.95) 0%, rgba(255, 255, 255, 0.98) 100%);
+  border: 1px solid rgba(254, 205, 211, 0.8);
+  box-shadow: 0 10px 25px -5px rgba(225, 29, 72, 0.08);
+}
+
+.text-gradient-sky {
+  background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-gradient-red {
+  background: linear-gradient(135deg, #f43f5e 0%, #e11d48 50%, #be123c 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-gradient-gold {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.luxury-border-glow {
+  position: relative;
+}
+.luxury-border-glow::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  background: linear-gradient(135deg, rgba(14, 165, 233, 0.4), rgba(244, 63, 94, 0.3), rgba(14, 165, 233, 0.1));
+  border-radius: inherit;
+  z-index: -1;
+  pointer-events: none;
 }
 
 /* Animations */
@@ -36,12 +123,17 @@
 
 @keyframes pulse-glow {
   0%, 100% { opacity: 0.6; transform: scale(1); }
-  50% { opacity: 0.9; transform: scale(1.05); }
+  50% { opacity: 0.95; transform: scale(1.04); }
 }
 
 @keyframes shimmer {
   0% { background-position: -200% 0; }
   100% { background-position: 200% 0; }
+}
+
+@keyframes aurora {
+  0%, 100% { transform: rotate(0deg) scale(1); }
+  50% { transform: rotate(180deg) scale(1.15); }
 }
 
 .animate-float {
@@ -50,6 +142,10 @@
 
 .animate-float-delayed {
   animation: float 4s ease-in-out 2s infinite;
+}
+
+.animate-aurora {
+  animation: aurora 20s linear infinite;
 }
 
 .animate-shimmer {
@@ -95,4 +191,3 @@
     background: white;
   }
 }
-

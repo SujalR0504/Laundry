@@ -66,9 +66,9 @@ export const BookingPage: React.FC = () => {
     street: '',
     area: '',
     landmark: '',
-    city: 'New Delhi',
-    state: 'Delhi',
-    pincode: '110001',
+    city: 'Rewa',
+    state: 'Madhya Pradesh',
+    pincode: '486001',
     isDefault: true,
   });
 
@@ -140,12 +140,13 @@ export const BookingPage: React.FC = () => {
         () => {
           setNewAddr((prev) => ({
             ...prev,
-            street: 'Detected GPS Location Road',
-            area: 'Connaught Place',
-            city: 'New Delhi',
-            pincode: '110001',
+            street: 'Nehru Nagar Main Road',
+            area: 'Nehru Nagar (Near Gayatri School)',
+            city: 'Rewa',
+            state: 'Madhya Pradesh',
+            pincode: '486001',
           }));
-          showToast('Location fetched via GPS: New Delhi (110001)', 'success');
+          showToast('Location fetched via GPS: Rewa, M.P. (486001)', 'success');
         },
         () => {
           showToast('Could not fetch GPS location. Please type manually.', 'info');
@@ -240,72 +241,72 @@ export const BookingPage: React.FC = () => {
       {/* Wizard Progress Stepper (hidden on final confirmation) */}
       {currentStep < 5 && (
         <div className="mb-8">
-          <div className="flex items-center justify-between max-w-xl mx-auto text-xs font-bold text-slate-500">
+          <div className="flex items-center justify-between max-w-xl mx-auto text-xs font-bold text-slate-500 px-1">
             <button
               onClick={() => setCurrentStep(1)}
               className={`flex items-center space-x-1.5 ${
-                currentStep >= 1 ? 'text-brand-600' : ''
+                currentStep >= 1 ? 'text-brand-600 font-extrabold' : ''
               }`}
             >
               <span
                 className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
-                  currentStep >= 1 ? 'bg-brand-600 text-white' : 'bg-slate-200'
+                  currentStep >= 1 ? 'bg-brand-600 text-white shadow-xs' : 'bg-slate-200'
                 }`}
               >
                 1
               </span>
-              <span>Services</span>
+              <span>Items</span>
             </button>
-            <ChevronRight className="w-4 h-4 text-slate-300" />
+            <ChevronRight className="w-3.5 h-3.5 text-slate-300 shrink-0" />
 
             <button
               onClick={() => cart.length > 0 && setCurrentStep(2)}
               className={`flex items-center space-x-1.5 ${
-                currentStep >= 2 ? 'text-brand-600' : ''
+                currentStep >= 2 ? 'text-brand-600 font-extrabold' : ''
               }`}
             >
               <span
                 className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
-                  currentStep >= 2 ? 'bg-brand-600 text-white' : 'bg-slate-200'
+                  currentStep >= 2 ? 'bg-brand-600 text-white shadow-xs' : 'bg-slate-200'
                 }`}
               >
                 2
               </span>
               <span>Address</span>
             </button>
-            <ChevronRight className="w-4 h-4 text-slate-300" />
+            <ChevronRight className="w-3.5 h-3.5 text-slate-300 shrink-0" />
 
             <button
               onClick={() => cart.length > 0 && setCurrentStep(3)}
               className={`flex items-center space-x-1.5 ${
-                currentStep >= 3 ? 'text-brand-600' : ''
+                currentStep >= 3 ? 'text-brand-600 font-extrabold' : ''
               }`}
             >
               <span
                 className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
-                  currentStep >= 3 ? 'bg-brand-600 text-white' : 'bg-slate-200'
+                  currentStep >= 3 ? 'bg-brand-600 text-white shadow-xs' : 'bg-slate-200'
                 }`}
               >
                 3
               </span>
-              <span>Pickup Slot</span>
+              <span>Slot</span>
             </button>
-            <ChevronRight className="w-4 h-4 text-slate-300" />
+            <ChevronRight className="w-3.5 h-3.5 text-slate-300 shrink-0" />
 
             <button
               onClick={() => cart.length > 0 && setCurrentStep(4)}
               className={`flex items-center space-x-1.5 ${
-                currentStep >= 4 ? 'text-brand-600' : ''
+                currentStep >= 4 ? 'text-brand-600 font-extrabold' : ''
               }`}
             >
               <span
                 className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
-                  currentStep >= 4 ? 'bg-brand-600 text-white' : 'bg-slate-200'
+                  currentStep >= 4 ? 'bg-brand-600 text-white shadow-xs' : 'bg-slate-200'
                 }`}
               >
                 4
               </span>
-              <span>Payment</span>
+              <span>Pay</span>
             </button>
           </div>
         </div>
@@ -526,7 +527,7 @@ export const BookingPage: React.FC = () => {
                       required
                       value={newAddr.mobile}
                       onChange={(e) => setNewAddr({ ...newAddr, mobile: e.target.value })}
-                      placeholder="+91 98765 43210"
+                      placeholder="+91 93298 38804"
                       className="w-full px-3 py-2 bg-white rounded-xl border border-slate-300 focus:outline-none focus:border-brand-500 font-medium"
                     />
                   </div>
@@ -1029,7 +1030,7 @@ export const BookingPage: React.FC = () => {
                 </div>
                 <div>
                   <h4 className="font-extrabold text-sm text-slate-900">Razorpay Checkout</h4>
-                  <p className="text-[11px] text-slate-500">Merchant: AquaPure Cleaners</p>
+                  <p className="text-[11px] text-slate-500">Merchant: The Laundry Lounge</p>
                 </div>
               </div>
               <div className="text-right">
@@ -1211,7 +1212,7 @@ export const BookingPage: React.FC = () => {
             <span className="text-slate-300">•</span>
             <a
               href={`https://wa.me/${businessSettings.whatsappNumber}?text=${encodeURIComponent(
-                `Hello AquaPure, I just placed order ${confirmedOrder.orderNumber}`
+                `Hello The Laundry Lounge, I just placed order ${confirmedOrder.orderNumber}`
               )}`}
               target="_blank"
               rel="noreferrer"

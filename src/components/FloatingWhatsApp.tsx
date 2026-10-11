@@ -34,10 +34,10 @@ export const FloatingWhatsApp: React.FC = () => {
                 <MessageCircle className="w-5 h-5" />
               </div>
               <div>
-                <h4 className="font-bold text-sm">AquaPure Live Care</h4>
+                <h4 className="font-bold text-sm">The Laundry Lounge Care</h4>
                 <p className="text-[11px] text-emerald-100 flex items-center space-x-1">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-300 animate-pulse"></span>
-                  <span>Typically replies in 2 mins</span>
+                  <span>Rewa • 9329838804</span>
                 </p>
               </div>
             </div>

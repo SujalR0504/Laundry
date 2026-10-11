@@ -1,4 +1,4 @@
-# 🧺 AquaPure — Commercial Laundry & Dry Cleaning Platform
+# 🧺 The Laundry Lounge — Commercial Laundry & Dry Cleaning Platform (Rewa, M.P.)
 
 A production-ready, fully responsive, and dynamic **Laundry & Dry Cleaning Pickup, Delivery & Payment Platform** built with **React**, **TypeScript**, **Tailwind CSS**, and modern component architecture.
 

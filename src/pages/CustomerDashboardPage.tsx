@@ -43,9 +43,9 @@ export const CustomerDashboardPage: React.FC = () => {
     houseFlat: '',
     street: '',
     area: '',
-    city: 'New Delhi',
-    state: 'Delhi',
-    pincode: '110001',
+    city: 'Rewa',
+    state: 'Madhya Pradesh',
+    pincode: '486001',
     isDefault: false,
   });
 
@@ -74,9 +74,9 @@ export const CustomerDashboardPage: React.FC = () => {
       houseFlat: '',
       street: '',
       area: '',
-      city: 'New Delhi',
-      state: 'Delhi',
-      pincode: '110001',
+      city: 'Rewa',
+      state: 'Madhya Pradesh',
+      pincode: '486001',
       isDefault: false,
     });
   };
@@ -104,7 +104,7 @@ export const CustomerDashboardPage: React.FC = () => {
 
         <div className="flex items-center space-x-4 bg-white/10 backdrop-blur-md px-5 py-3 rounded-2xl border border-white/15">
           <div className="text-center">
-            <div className="text-xs text-brand-200">AquaPure Rewards</div>
+            <div className="text-xs text-brand-200">Lounge Rewards</div>
             <div className="text-lg font-black text-accent-300 flex items-center justify-center space-x-1">
               <Sparkles className="w-4 h-4 inline" />
               <span>{currentUser.loyaltyPoints || 150} Pts</span>

@@ -55,22 +55,38 @@ export const InvoiceModal: React.FC = () => {
           {/* Header */}
           <div className="flex justify-between items-start border-b border-slate-200 pb-6">
             <div>
-              <div className="flex items-center space-x-2.5">
-                <div className="w-10 h-10 rounded-xl bg-brand-600 text-white flex items-center justify-center font-black text-xl">
-                  A
+              <div className="flex items-center space-x-3">
+                <div className="w-12 h-12 rounded-xl bg-white border border-slate-200 p-0.5 flex items-center justify-center overflow-hidden shrink-0">
+                  <img
+                    src="/logo-icon.png"
+                    alt="The Laundry Lounge"
+                    className="w-full h-full object-contain"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = '/logo-icon.jpg';
+                    }}
+                  />
                 </div>
                 <div>
-                  <h1 className="text-xl font-extrabold text-brand-900 leading-tight">
-                    {businessSettings.businessName}
+                  <h1 className="text-xl font-extrabold text-sky-700 leading-tight">
+                    The Laundry <span className="text-red-600">Lounge</span>
                   </h1>
-                  <p className="text-xs text-slate-500">{businessSettings.tagline}</p>
+                  <p className="text-xs text-slate-500 font-medium">Professional Laundry & Dry Cleaning — Rewa (M.P.)</p>
                 </div>
               </div>
 
-              <div className="text-xs text-slate-600 mt-3 space-y-0.5">
-                <p>{businessSettings.address}</p>
-                <p>Phone: {businessSettings.phone} | Email: {businessSettings.email}</p>
-                <p className="font-semibold text-slate-700">GSTIN: {businessSettings.gstin}</p>
+              <div className="text-[11px] text-slate-600 mt-3 space-y-1">
+                <div className="bg-slate-50 p-2 rounded-lg border border-slate-200">
+                  <p className="font-semibold text-slate-800">Branch 1 (Nehru Nagar):</p>
+                  <p>Near Gaytri School Nehru Nagar In FRONT Of Apna Super Bazar Rewa (M. P.)</p>
+                </div>
+                <div className="bg-slate-50 p-2 rounded-lg border border-slate-200">
+                  <p className="font-semibold text-slate-800">Branch 2 — Hari Om (Ring Road):</p>
+                  <p>Behind Hotel The Vijay Villas Gadariya Ring Road Rewa (M. P.)</p>
+                </div>
+                <p className="pt-0.5 font-semibold text-slate-700">
+                  Phone: 9329838804, 9893733683 | Landline: 07662-334849
+                </p>
+                <p className="text-slate-500 font-mono">GSTIN: {businessSettings.gstin}</p>
               </div>
             </div>
 
@@ -230,7 +246,7 @@ export const InvoiceModal: React.FC = () => {
               <p className="font-bold text-slate-700">Terms & Conditions:</p>
               <p>1. This is a computer generated invoice and does not require a physical signature.</p>
               <p>2. Report any discrepancies or stain queries within 24 hours of delivery.</p>
-              <p>3. AquaPure standard liability applies to all fabric treatments as per care labels.</p>
+              <p>3. The Laundry Lounge standard liability applies to all fabric treatments as per care labels.</p>
             </div>
 
             <div className="text-right flex items-center space-x-2 text-emerald-700 font-bold bg-emerald-50 px-3 py-1.5 rounded-lg border border-emerald-100">

@@ -197,14 +197,28 @@ export interface FAQ {
   category: string;
 }
 
+export interface Branch {
+  id: string;
+  name: string;
+  address: string;
+  landmark?: string;
+  city: string;
+  phone: string;
+  isMain?: boolean;
+}
+
 export interface BusinessSettings {
   businessName: string;
   tagline: string;
   gstin: string;
   phone: string;
+  secondaryPhone?: string;
+  landline?: string;
+  phones?: string[];
   email: string;
   supportHours: string;
   address: string;
+  branches?: Branch[];
   gstPercentage: number;
   minOrderValue: number;
   freeDeliveryThreshold: number;

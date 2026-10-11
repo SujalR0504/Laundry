@@ -276,7 +276,7 @@ export const AdminDashboardPage: React.FC = () => {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `aquapure_orders_${new Date().toISOString().split('T')[0]}.csv`;
+    a.download = `thelaundrylounge_orders_${new Date().toISOString().split('T')[0]}.csv`;
     a.click();
     showToast('Orders exported as CSV successfully!', 'success');
   };
@@ -306,7 +306,7 @@ export const AdminDashboardPage: React.FC = () => {
           <span className="text-[10px] font-mono tracking-wider uppercase text-accent-400 bg-white/10 px-2 py-0.5 rounded">
             Enterprise Admin Suite
           </span>
-          <h1 className="text-2xl font-black mt-1">AquaPure Operations Control</h1>
+          <h1 className="text-2xl font-black mt-1">The Laundry Lounge Operations Control</h1>
           <p className="text-xs text-slate-400">
             Real-time management for catalog, orders, delivery fleet, pricing, and CMS
           </p>
@@ -1036,63 +1036,159 @@ export const AdminDashboardPage: React.FC = () => {
 
           {/* TAB 12: STORE SETTINGS */}
           {activeTab === 'settings' && (
-            <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-soft-sm space-y-4">
-              <h3 className="font-extrabold text-base text-slate-900">Store Settings & Taxes</h3>
+            <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-soft-sm space-y-6">
+              <div>
+                <h3 className="font-extrabold text-base text-slate-900">Store Settings & Business Identity</h3>
+                <p className="text-xs text-slate-500">Configure business information, contact channels, and pricing rules.</p>
+              </div>
+
+              {/* Business Info */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                 <div>
-                  <label className="font-bold text-slate-700 block mb-1">GST Percentage (%)</label>
+                  <label className="font-bold text-slate-700 block mb-1">Business Name</label>
                   <input
-                    type="number"
-                    value={settingsForm.gstPercentage}
+                    type="text"
+                    value={settingsForm.businessName}
                     onChange={(e) =>
-                      setSettingsForm({ ...settingsForm, gstPercentage: Number(e.target.value) })
+                      setSettingsForm({ ...settingsForm, businessName: e.target.value })
+                    }
+                    className="w-full px-3 py-2 border rounded-xl font-semibold"
+                  />
+                </div>
+                <div>
+                  <label className="font-bold text-slate-700 block mb-1">Tagline</label>
+                  <input
+                    type="text"
+                    value={settingsForm.tagline}
+                    onChange={(e) =>
+                      setSettingsForm({ ...settingsForm, tagline: e.target.value })
                     }
                     className="w-full px-3 py-2 border rounded-xl"
                   />
                 </div>
                 <div>
-                  <label className="font-bold text-slate-700 block mb-1">Free Delivery Threshold (₹)</label>
+                  <label className="font-bold text-slate-700 block mb-1">Primary Mobile (WhatsApp)</label>
                   <input
-                    type="number"
-                    value={settingsForm.freeDeliveryThreshold}
+                    type="text"
+                    value={settingsForm.phone}
                     onChange={(e) =>
-                      setSettingsForm({
-                        ...settingsForm,
-                        freeDeliveryThreshold: Number(e.target.value),
-                      })
+                      setSettingsForm({ ...settingsForm, phone: e.target.value })
                     }
                     className="w-full px-3 py-2 border rounded-xl"
                   />
                 </div>
                 <div>
-                  <label className="font-bold text-slate-700 block mb-1">Minimum Order Value (₹)</label>
+                  <label className="font-bold text-slate-700 block mb-1">Secondary Mobile</label>
                   <input
-                    type="number"
-                    value={settingsForm.minOrderValue}
+                    type="text"
+                    value={settingsForm.secondaryPhone || '9893733683'}
                     onChange={(e) =>
-                      setSettingsForm({ ...settingsForm, minOrderValue: Number(e.target.value) })
+                      setSettingsForm({ ...settingsForm, secondaryPhone: e.target.value })
                     }
                     className="w-full px-3 py-2 border rounded-xl"
                   />
                 </div>
                 <div>
-                  <label className="font-bold text-slate-700 block mb-1">Express Delivery Fee (₹)</label>
+                  <label className="font-bold text-slate-700 block mb-1">Landline Number</label>
                   <input
-                    type="number"
-                    value={settingsForm.expressDeliveryFee}
+                    type="text"
+                    value={settingsForm.landline || '07662-334849'}
                     onChange={(e) =>
-                      setSettingsForm({
-                        ...settingsForm,
-                        expressDeliveryFee: Number(e.target.value),
-                      })
+                      setSettingsForm({ ...settingsForm, landline: e.target.value })
+                    }
+                    className="w-full px-3 py-2 border rounded-xl"
+                  />
+                </div>
+                <div>
+                  <label className="font-bold text-slate-700 block mb-1">Email</label>
+                  <input
+                    type="text"
+                    value={settingsForm.email}
+                    onChange={(e) =>
+                      setSettingsForm({ ...settingsForm, email: e.target.value })
                     }
                     className="w-full px-3 py-2 border rounded-xl"
                   />
                 </div>
               </div>
+
+              {/* Branches Information */}
+              <div className="pt-2 border-t border-slate-200">
+                <h4 className="font-bold text-sm text-slate-800 mb-3">Store Branches (Rewa, M.P.)</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                  <div className="p-4 bg-sky-50/70 border border-sky-200 rounded-2xl space-y-1">
+                    <span className="font-bold text-sky-900 block text-sm">Branch 1 — Nehru Nagar (Main)</span>
+                    <p className="text-slate-700">Near Gaytri School Nehru Nagar In FRONT Of Apna Super Bazar Rewa (M. P.)</p>
+                    <p className="text-sky-700 font-semibold pt-1">Phone: 9329838804 / 07662-334849</p>
+                  </div>
+                  <div className="p-4 bg-red-50/70 border border-red-200 rounded-2xl space-y-1">
+                    <span className="font-bold text-red-900 block text-sm">Branch 2 — Hari Om (Ring Road)</span>
+                    <p className="text-slate-700">Behind Hotel The Vijay Villas Gadariya Ring Road Rewa (M. P.)</p>
+                    <p className="text-red-700 font-semibold pt-1">Phone: 9893733683 / 9329838804</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Pricing & GST */}
+              <div className="pt-2 border-t border-slate-200">
+                <h4 className="font-bold text-sm text-slate-800 mb-3">Taxes & Delivery Rules</h4>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+                  <div>
+                    <label className="font-bold text-slate-700 block mb-1">GST Percentage (%)</label>
+                    <input
+                      type="number"
+                      value={settingsForm.gstPercentage}
+                      onChange={(e) =>
+                        setSettingsForm({ ...settingsForm, gstPercentage: Number(e.target.value) })
+                      }
+                      className="w-full px-3 py-2 border rounded-xl"
+                    />
+                  </div>
+                  <div>
+                    <label className="font-bold text-slate-700 block mb-1">Free Delivery Threshold (₹)</label>
+                    <input
+                      type="number"
+                      value={settingsForm.freeDeliveryThreshold}
+                      onChange={(e) =>
+                        setSettingsForm({
+                          ...settingsForm,
+                          freeDeliveryThreshold: Number(e.target.value),
+                        })
+                      }
+                      className="w-full px-3 py-2 border rounded-xl"
+                    />
+                  </div>
+                  <div>
+                    <label className="font-bold text-slate-700 block mb-1">Minimum Order Value (₹)</label>
+                    <input
+                      type="number"
+                      value={settingsForm.minOrderValue}
+                      onChange={(e) =>
+                        setSettingsForm({ ...settingsForm, minOrderValue: Number(e.target.value) })
+                      }
+                      className="w-full px-3 py-2 border rounded-xl"
+                    />
+                  </div>
+                  <div>
+                    <label className="font-bold text-slate-700 block mb-1">Express Delivery Fee (₹)</label>
+                    <input
+                      type="number"
+                      value={settingsForm.expressDeliveryFee}
+                      onChange={(e) =>
+                        setSettingsForm({
+                          ...settingsForm,
+                          expressDeliveryFee: Number(e.target.value),
+                        })
+                      }
+                      className="w-full px-3 py-2 border rounded-xl"
+                    />
+                  </div>
+                </div>
+              </div>
+
               <button
                 onClick={() => updateBusinessSettings(settingsForm)}
-                className="px-5 py-2.5 bg-brand-600 text-white font-bold rounded-xl text-xs"
+                className="px-6 py-3 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl text-xs transition-colors shadow-md"
               >
                 Save Settings
               </button>

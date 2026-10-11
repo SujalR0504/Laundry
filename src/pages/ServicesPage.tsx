@@ -314,7 +314,7 @@ export const ServicesPage: React.FC = () => {
               <div className="flex items-center space-x-2">
                 <ShieldCheck className="w-5 h-5 text-emerald-600" />
                 <h3 className="font-extrabold text-base text-slate-900">
-                  AquaPure Fabric Care & Solvent Standards
+                  The Laundry Lounge Fabric Care & Solvent Standards
                 </h3>
               </div>
               <button

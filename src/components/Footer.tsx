@@ -13,40 +13,80 @@ export const Footer: React.FC = () => {
           <div className="lg:col-span-2 space-y-4">
             <div
               onClick={() => setCurrentView('home')}
-              className="flex items-center space-x-2.5 cursor-pointer"
+              className="flex items-center space-x-3 cursor-pointer group"
             >
-              <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-brand-600 to-accent-500 flex items-center justify-center text-white shadow-glow">
-                <Sparkles className="w-5 h-5" />
+              <div className="w-11 h-11 rounded-2xl bg-white border border-slate-700 p-0.5 flex items-center justify-center overflow-hidden">
+                <img
+                  src="/logo-icon.png"
+                  alt="The Laundry Lounge"
+                  className="w-full h-full object-contain"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = '/logo-icon.jpg';
+                  }}
+                />
               </div>
-              <span className="text-2xl font-black tracking-tight text-white">
-                Aqua<span className="text-accent-400">Pure</span>
-              </span>
+              <div>
+                <span className="text-2xl font-black tracking-tight text-white">
+                  The Laundry <span className="text-red-500">Lounge</span>
+                </span>
+                <p className="text-[11px] text-sky-400 font-semibold">Rewa, Madhya Pradesh</p>
+              </div>
             </div>
 
             <p className="text-slate-400 text-xs leading-relaxed max-w-sm">
-              Delhi NCR’s premier fabric care destination. Specialized dry cleaning, organic wet wash,
-              steam roll pressing, and guaranteed punctual doorstep collection and delivery.
+              Rewa’s premier fabric care destination. Specialized dry cleaning, organic gentle wash,
+              steam roll pressing, and convenient doorstep pickup across Rewa from our two dedicated branches.
             </p>
 
-            <div className="space-y-2 pt-2">
-              <div className="flex items-center space-x-2.5 text-slate-300">
-                <Phone className="w-4 h-4 text-accent-400" />
-                <a href={`tel:${businessSettings.phone}`} className="hover:text-white">
-                  {businessSettings.phone}
-                </a>
+            {/* Branches Card */}
+            <div className="space-y-2.5 pt-1">
+              <div className="bg-slate-900/90 border border-slate-800 rounded-xl p-3 text-xs space-y-1">
+                <div className="flex items-center space-x-1.5 text-sky-400 font-bold">
+                  <MapPin className="w-3.5 h-3.5 text-red-500 flex-shrink-0" />
+                  <span>Branch 1 (Nehru Nagar):</span>
+                </div>
+                <p className="text-slate-300 pl-5">
+                  Near Gaytri School Nehru Nagar In FRONT Of Apna Super Bazar Rewa (M. P.)
+                </p>
+              </div>
+
+              <div className="bg-slate-900/90 border border-slate-800 rounded-xl p-3 text-xs space-y-1">
+                <div className="flex items-center space-x-1.5 text-sky-400 font-bold">
+                  <MapPin className="w-3.5 h-3.5 text-red-500 flex-shrink-0" />
+                  <span>Branch 2 — Hari Om (Ring Road):</span>
+                </div>
+                <p className="text-slate-300 pl-5">
+                  Behind Hotel The Vijay Villas Gadariya Ring Road Rewa (M. P.)
+                </p>
+              </div>
+            </div>
+
+            {/* Contact Phones */}
+            <div className="space-y-2 pt-1 text-xs">
+              <div className="flex items-center space-x-2.5 text-slate-200">
+                <Phone className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                <div className="flex flex-wrap gap-x-3 gap-y-1 font-semibold">
+                  <a href="tel:9329838804" className="hover:text-amber-400 text-white">
+                    9329838804
+                  </a>
+                  <span className="text-slate-600">|</span>
+                  <a href="tel:9893733683" className="hover:text-amber-400 text-white">
+                    9893733683
+                  </a>
+                  <span className="text-slate-600">|</span>
+                  <a href="tel:07662334849" className="hover:text-amber-400 text-sky-300">
+                    07662-334849
+                  </a>
+                </div>
               </div>
               <div className="flex items-center space-x-2.5 text-slate-300">
-                <Mail className="w-4 h-4 text-accent-400" />
+                <Mail className="w-4 h-4 text-sky-400" />
                 <a href={`mailto:${businessSettings.email}`} className="hover:text-white">
                   {businessSettings.email}
                 </a>
               </div>
-              <div className="flex items-start space-x-2.5 text-slate-300">
-                <MapPin className="w-4 h-4 text-accent-400 flex-shrink-0 mt-0.5" />
-                <span>{businessSettings.address}</span>
-              </div>
               <div className="flex items-center space-x-2.5 text-slate-300">
-                <Clock className="w-4 h-4 text-accent-400" />
+                <Clock className="w-4 h-4 text-sky-400" />
                 <span>{businessSettings.supportHours}</span>
               </div>
             </div>
@@ -144,7 +184,7 @@ export const Footer: React.FC = () => {
         {/* Bottom bar */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-slate-500 text-[11px] space-y-4 sm:space-y-0">
           <div>
-            © {new Date().getFullYear()} AquaPure Cleaners Pvt Ltd. All rights reserved. GSTIN:{' '}
+            © {new Date().getFullYear()} The Laundry Lounge (Rewa). All rights reserved. GSTIN:{' '}
             <span className="text-slate-300 font-mono">{businessSettings.gstin}</span>
           </div>
 

@@ -154,7 +154,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   // Local storage helper
   const loadLocal = <T,>(key: string, fallback: T): T => {
     try {
-      const data = localStorage.getItem(`aquapure_${key}`);
+      const data = localStorage.getItem(`laundry_lounge_${key}`);
       return data ? JSON.parse(data) : fallback;
     } catch {
       return fallback;
@@ -163,7 +163,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const saveLocal = (key: string, data: any) => {
     try {
-      localStorage.setItem(`aquapure_${key}`, JSON.stringify(data));
+      localStorage.setItem(`laundry_lounge_${key}`, JSON.stringify(data));
     } catch (e) {
       console.error(e);
     }
@@ -191,13 +191,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       {
         id: 'addr-1',
         name: 'Aarav Sharma',
-        mobile: '+91 98765 12345',
-        houseFlat: 'Tower 4, Flat 902',
-        street: 'DLF Crest, Golf Course Road',
-        area: 'Cyber City',
-        city: 'Gurugram',
-        state: 'Haryana',
-        pincode: '122001',
+        mobile: '9329838804',
+        houseFlat: 'House No. 14, Near Gayatri School',
+        street: 'Nehru Nagar Main Road',
+        area: 'Nehru Nagar',
+        city: 'Rewa',
+        state: 'Madhya Pradesh',
+        pincode: '486001',
         isDefault: true,
       },
     ])
@@ -290,8 +290,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const userMatch = SEED_USERS.find((u) => u.role === role) || {
       id: `user-${role}`,
       name: `${role.toUpperCase()} User`,
-      email: `${role}@aquapurelaundry.com`,
-      phone: '+91 98000 00000',
+      email: `${role}@thelaundrylounge.in`,
+      phone: '9329838804',
       role,
     };
     setCurrentUser(userMatch);
