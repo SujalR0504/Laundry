@@ -82,13 +82,13 @@ export const OrderTrackingPage: React.FC = () => {
     : deliveryStaff[0];
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-8">
+    <div className="max-w-6xl mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-12 space-y-6 sm:space-y-8">
       {/* Header & Search */}
       <div className="text-center max-w-2xl mx-auto space-y-3">
         <span className="text-xs font-bold uppercase tracking-wider text-brand-600 bg-brand-50 px-3 py-1 rounded-full border border-brand-200">
           Live Realtime Tracking
         </span>
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900">
+        <h1 className="text-2xl sm:text-4xl font-extrabold text-slate-900">
           Track Your Laundry Order
         </h1>
         <p className="text-xs sm:text-sm text-slate-600">
@@ -109,7 +109,7 @@ export const OrderTrackingPage: React.FC = () => {
           </div>
           <button
             type="submit"
-            className="px-6 py-3 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl text-xs sm:text-sm shadow-md transition-colors"
+            className="px-4 sm:px-6 py-3 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl text-xs sm:text-sm shadow-md transition-colors shrink-0"
           >
             Track
           </button>
@@ -119,7 +119,7 @@ export const OrderTrackingPage: React.FC = () => {
       {activeOrder ? (
         <div className="space-y-6">
           {/* SIMULATED LIVE GPS DISPATCH & RADAR MAP */}
-          <div className="bg-slate-950 text-white rounded-3xl p-6 sm:p-8 relative overflow-hidden shadow-2xl border border-slate-800">
+          <div className="bg-slate-950 text-white rounded-3xl p-4 sm:p-8 relative overflow-hidden shadow-2xl border border-slate-800">
             {/* Ambient map glow */}
             <div className="absolute top-0 right-0 w-80 h-80 bg-accent-500/10 rounded-full blur-3xl pointer-events-none" />
             <div className="absolute bottom-0 left-0 w-80 h-80 bg-brand-500/10 rounded-full blur-3xl pointer-events-none" />

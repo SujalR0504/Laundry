@@ -3,7 +3,7 @@ import { useApp } from '../context/AppContext';
 import { Sparkles, Phone, Mail, MapPin, Clock, ShieldCheck, Heart } from 'lucide-react';
 
 export const Footer: React.FC = () => {
-  const { setCurrentView, businessSettings, serviceAreas, categories } = useApp();
+  const { setCurrentView, switchUserRole, showToast, businessSettings, serviceAreas, categories } = useApp();
 
   return (
     <footer className="bg-slate-950 text-slate-400 text-xs pt-16 pb-24 sm:pb-12 border-t border-slate-900">
@@ -134,6 +134,18 @@ export const Footer: React.FC = () => {
                   className="hover:text-accent-400 transition-colors"
                 >
                   Customer Account
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => {
+                    switchUserRole('admin');
+                    setCurrentView('admin-dashboard');
+                    showToast('Switched to Operations Control Admin Suite', 'info');
+                  }}
+                  className="text-amber-400 hover:text-amber-300 font-bold transition-colors flex items-center space-x-1"
+                >
+                  <span>🛡️ Operations Admin Suite</span>
                 </button>
               </li>
             </ul>

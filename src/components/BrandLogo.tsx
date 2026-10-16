@@ -31,20 +31,20 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
       badge: 'text-[9px] px-1.5 py-0.5',
     },
     md: {
-      img: 'w-12 h-12 sm:w-14 sm:h-14',
-      title: 'text-xl sm:text-2xl font-black',
+      img: 'w-10 h-10 sm:w-14 sm:h-14',
+      title: 'text-lg sm:text-2xl font-black',
       tagline: 'text-[11px]',
       badge: 'text-[10px] px-2 py-0.5',
     },
     lg: {
-      img: 'w-16 h-16 sm:w-20 sm:h-20',
-      title: 'text-2xl sm:text-3xl font-black',
+      img: 'w-14 h-14 sm:w-20 sm:h-20',
+      title: 'text-xl sm:text-3xl font-black',
       tagline: 'text-xs',
       badge: 'text-xs px-2.5 py-1',
     },
     xl: {
-      img: 'w-24 h-24 sm:w-28 sm:h-28',
-      title: 'text-3xl sm:text-5xl font-black',
+      img: 'w-20 h-20 sm:w-28 sm:h-28',
+      title: 'text-2xl sm:text-5xl font-black',
       tagline: 'text-sm',
       badge: 'text-xs px-3 py-1',
     },
@@ -53,10 +53,10 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
   const currentSize = sizeMap[size];
 
   return (
-    <div className={`flex items-center space-x-3 select-none ${className}`}>
+    <div className={`flex items-center space-x-2 sm:space-x-3 select-none ${className}`}>
       {/* 3D Rounded Logo Frame with subtle glow */}
       <div
-        className={`relative ${currentSize.img} rounded-2xl overflow-hidden bg-white shadow-md shadow-sky-500/20 border border-slate-200/90 flex items-center justify-center p-1 transition-all duration-300 group-hover:scale-105 group-hover:shadow-lg group-hover:shadow-sky-500/30 shrink-0 ring-2 ring-sky-100`}
+        className={`relative ${currentSize.img} rounded-xl sm:rounded-2xl overflow-hidden bg-white shadow-md shadow-sky-500/20 border border-slate-200/90 flex items-center justify-center p-1 transition-all duration-300 group-hover:scale-105 group-hover:shadow-lg group-hover:shadow-sky-500/30 shrink-0 ring-1 sm:ring-2 ring-sky-100`}
       >
         <img
           src="/logo-icon.png"
@@ -69,10 +69,10 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
       </div>
 
       {showText && (
-        <div className="flex flex-col justify-center">
-          <div className="flex items-center space-x-2 leading-none">
+        <div className="flex flex-col justify-center min-w-0">
+          <div className="flex items-center space-x-1.5 sm:space-x-2 leading-none">
             <span
-              className={`${currentSize.title} font-display tracking-tight ${
+              className={`${currentSize.title} font-display tracking-tight truncate ${
                 theme === 'dark' ? 'text-white' : 'text-sky-600'
               }`}
             >
@@ -93,7 +93,7 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
             <p
               className={`${currentSize.tagline} ${
                 theme === 'dark' ? 'text-slate-400' : 'text-slate-500'
-              } font-semibold mt-0.5 flex items-center space-x-1.5 truncate`}
+              } font-semibold mt-0.5 hidden sm:flex items-center space-x-1.5 truncate`}
             >
               <span className="text-sky-600 font-bold">2 Branches:</span>
               <span className="truncate text-slate-600">Nehru Nagar & Hari Om (Ring Road)</span>

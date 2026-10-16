@@ -24,11 +24,11 @@ export const FloatingWhatsApp: React.FC = () => {
   ];
 
   return (
-    <div className="fixed bottom-20 sm:bottom-6 right-5 z-40">
+    <div className="fixed bottom-20 sm:bottom-6 right-3 sm:right-6 z-40">
       {/* Chat Popover */}
       {isOpen && (
-        <div className="mb-3 w-80 bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden animate-in fade-in slide-in-from-bottom-5 duration-200">
-          <div className="p-4 bg-emerald-600 text-white flex items-center justify-between">
+        <div className="mb-3 w-[calc(100vw-2rem)] max-w-xs sm:w-80 max-h-[80vh] flex flex-col bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden animate-in fade-in slide-in-from-bottom-5 duration-200">
+          <div className="p-4 bg-emerald-600 text-white flex items-center justify-between shrink-0">
             <div className="flex items-center space-x-2.5">
               <div className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center font-bold text-white">
                 <MessageCircle className="w-5 h-5" />
@@ -49,7 +49,7 @@ export const FloatingWhatsApp: React.FC = () => {
             </button>
           </div>
 
-          <div className="p-4 bg-slate-50 space-y-3">
+          <div className="p-4 bg-slate-50 space-y-3 overflow-y-auto">
             <div className="p-3 bg-white rounded-2xl rounded-tl-none shadow-soft-sm border border-slate-100 text-xs text-slate-700 leading-relaxed">
               👋 Namaste! How can we help you today with your garments or doorstep pickup?
             </div>
@@ -93,7 +93,7 @@ export const FloatingWhatsApp: React.FC = () => {
       {/* Main floating button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center space-x-2 bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-3 rounded-full shadow-lg shadow-emerald-500/30 transition-all hover:scale-105 active:scale-95 group font-bold text-xs"
+        className="flex items-center space-x-2 bg-emerald-500 hover:bg-emerald-600 text-white p-3 sm:px-4 sm:py-3 rounded-full shadow-lg shadow-emerald-500/30 transition-all hover:scale-105 active:scale-95 group font-bold text-xs"
         aria-label="WhatsApp Support"
       >
         <MessageCircle className="w-5 h-5 fill-current" />

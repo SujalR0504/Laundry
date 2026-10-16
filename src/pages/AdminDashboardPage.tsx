@@ -29,12 +29,26 @@ import {
   AlertCircle,
   Eye,
   CheckCircle2,
+  Store,
+  Receipt,
+  MessageCircle,
+  ExternalLink,
+  RefreshCw,
+  ShoppingCart,
+  Sparkles,
+  Printer,
+  ArrowLeft,
+  ArrowRight,
 } from 'lucide-react';
-import { OrderStatus, ServiceItem, PriceType, ServiceUnit } from '../types';
+import { OrderStatus, ServiceItem, PriceType, ServiceUnit, CartItem, PaymentMethod } from '../types';
 
 export const AdminDashboardPage: React.FC = () => {
   const {
     orders,
+    createOrder,
+    setCurrentView,
+    switchUserRole,
+    currentUser,
     updateOrderStatus,
     assignDeliveryStaff,
     deliveryStaff,
@@ -167,6 +181,85 @@ export const AdminDashboardPage: React.FC = () => {
   // Settings form states
   const [settingsForm, setSettingsForm] = useState({ ...businessSettings });
   const [cmsForm, setCmsForm] = useState({ ...cms });
+
+  // Walk-in Counter / POS Order Modal State
+  const [showPosModal, setShowPosModal] = useState(false);
+  const [posBranch, setPosBranch] = useState('Nehru Nagar (Branch 1)');
+  const [posCustomerName, setPosCustomerName] = useState('');
+  const [posCustomerPhone, setPosCustomerPhone] = useState('');
+  const [posPaymentMethod, setPosPaymentMethod] = useState<PaymentMethod>('UPI');
+  const [posDeliveryMode, setPosDeliveryMode] = useState<'standard' | 'express'>('standard');
+  const [posItems, setPosItems] = useState<{ [serviceId: string]: number }>({});
+  const [posNotes, setPosNotes] = useState('');
+
+  const handleUpdatePosItem = (svcId: string, delta: number) => {
+    setPosItems((prev) => {
+      const current = prev[svcId] || 0;
+      const next = Math.max(0, current + delta);
+      if (next === 0) {
+        const copy = { ...prev };
+        delete copy[svcId];
+        return copy;
+      }
+      return { ...prev, [svcId]: next };
+    });
+  };
+
+  const posTotal = Object.entries(posItems).reduce((sum, [svcId, qty]) => {
+    const s = services.find((x) => x.id === svcId);
+    return sum + (s ? s.price * qty : 0);
+  }, 0);
+
+  const handleCreatePosOrder = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!posCustomerName.trim() || !posCustomerPhone.trim()) {
+      showToast('Please enter customer name and phone number', 'error');
+      return;
+    }
+    const cartItems: CartItem[] = Object.entries(posItems).map(([svcId, qty]) => {
+      const s = services.find((x) => x.id === svcId)!;
+      return {
+        serviceId: s.id,
+        service: s,
+        quantity: qty,
+        selectedPrice: s.price,
+        specialInstructions: posNotes || undefined,
+      };
+    });
+
+    if (cartItems.length === 0) {
+      showToast('Please select at least 1 garment item for the counter order', 'error');
+      return;
+    }
+
+    const order = createOrder({
+      items: cartItems,
+      address: {
+        id: 'pos-' + Date.now(),
+        name: posCustomerName.trim(),
+        mobile: posCustomerPhone.trim(),
+        houseFlat: `Walk-in Store POS: ${posBranch}`,
+        street: 'Retail Counter Drop-off',
+        area: posBranch,
+        city: 'Rewa',
+        state: 'Madhya Pradesh',
+        pincode: '486001',
+        isDefault: false,
+      },
+      pickupDate: new Date().toISOString().split('T')[0],
+      pickupSlot: `Walk-in Store: ${posBranch}`,
+      deliveryMode: posDeliveryMode,
+      paymentMethod: posPaymentMethod,
+    });
+
+    showToast(`Counter Order ${order.orderNumber} created successfully!`, 'success');
+    setShowPosModal(false);
+    setPosCustomerName('');
+    setPosCustomerPhone('');
+    setPosItems({});
+    setPosNotes('');
+    openInvoice(order);
+  };
 
   // Metrics calculation
   const totalRevenue = orders.reduce((sum, o) => sum + (o.paymentStatus === 'Paid' ? o.total : 0), 0);
@@ -301,24 +394,81 @@ export const AdminDashboardPage: React.FC = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
       {/* Top Banner */}
-      <div className="bg-slate-900 rounded-3xl p-6 text-white shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <span className="text-[10px] font-mono tracking-wider uppercase text-accent-400 bg-white/10 px-2 py-0.5 rounded">
-            Enterprise Admin Suite
-          </span>
-          <h1 className="text-2xl font-black mt-1">The Laundry Lounge Operations Control</h1>
-          <p className="text-xs text-slate-400">
-            Real-time management for catalog, orders, delivery fleet, pricing, and CMS
+      <div className="bg-gradient-to-r from-slate-950 via-slate-900 to-sky-950 rounded-3xl p-6 sm:p-8 text-white shadow-2xl border border-slate-800 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+        <div className="space-y-1.5">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-[10px] font-mono tracking-wider uppercase text-sky-300 bg-sky-950/80 border border-sky-500/30 px-2.5 py-0.5 rounded-full font-bold">
+              🛡️ Operations Admin Suite
+            </span>
+            <span className="text-[10px] font-mono tracking-wider uppercase text-emerald-300 bg-emerald-950/80 border border-emerald-500/30 px-2.5 py-0.5 rounded-full font-bold flex items-center space-x-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              <span>Rewa Hubs Live (Nehru Nagar &amp; Ring Road)</span>
+            </span>
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-black font-display tracking-tight text-white mt-1">
+            The Laundry Lounge Operations Control
+          </h1>
+          <p className="text-xs text-slate-300 max-w-xl">
+            Real-time management for catalog services, order pipeline, walk-in counter POS, delivery fleet, pricing, and live website CMS.
           </p>
         </div>
 
-        <div className="flex items-center space-x-2">
+        {/* Quick Action Buttons */}
+        <div className="flex flex-wrap items-center gap-2.5">
+          {/* Back to Customer Storefront */}
+          <button
+            onClick={() => setCurrentView('home')}
+            className="px-4 py-2.5 bg-white/10 hover:bg-white/20 text-white rounded-xl text-xs font-bold flex items-center space-x-1.5 transition-all border border-white/15 shadow-sm active:scale-95"
+            title="View customer-facing storefront"
+          >
+            <Eye className="w-4 h-4 text-sky-400" />
+            <span>Storefront View</span>
+          </button>
+
+          {/* New Walk-in Counter POS Order */}
+          <button
+            onClick={() => setShowPosModal(true)}
+            className="px-4 py-2.5 bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600 text-white rounded-xl text-xs font-black flex items-center space-x-1.5 transition-all shadow-lg shadow-emerald-900/30 active:scale-95"
+          >
+            <Receipt className="w-4 h-4 text-emerald-200" />
+            <span>+ Walk-in POS Order</span>
+          </button>
+
+          {/* Add Service */}
+          <button
+            onClick={() => {
+              setEditingServiceId(null);
+              setServiceForm({
+                name: '',
+                categoryId: categories[0]?.id || 'cat-dry-clean',
+                description: '',
+                priceType: 'fixed',
+                price: 50,
+                minPrice: 50,
+                maxPrice: 100,
+                unit: 'Piece',
+                turnaroundHours: 48,
+                image: 'https://images.unsplash.com/photo-1545173168-9f1947eebb7f?auto=format&fit=crop&w=400&q=80',
+                active: true,
+                featured: false,
+                customQuoteRequired: false,
+              });
+              setShowServiceModal(true);
+            }}
+            className="px-4 py-2.5 bg-sky-600 hover:bg-sky-500 text-white rounded-xl text-xs font-bold flex items-center space-x-1.5 transition-all shadow-md active:scale-95"
+          >
+            <Plus className="w-4 h-4" />
+            <span>+ Add Service</span>
+          </button>
+
+          {/* Export CSV */}
           <button
             onClick={handleExportOrdersCSV}
-            className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-xl text-xs font-bold flex items-center space-x-1.5 transition-colors"
+            className="px-3.5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl text-xs font-bold flex items-center space-x-1.5 transition-all border border-slate-700"
+            title="Download Excel / CSV of all orders"
           >
             <Download className="w-3.5 h-3.5" />
-            <span>Export CSV</span>
+            <span>CSV</span>
           </button>
         </div>
       </div>
@@ -327,7 +477,7 @@ export const AdminDashboardPage: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Navigation Sidebar */}
         <div className="lg:col-span-3">
-          <div className="bg-white rounded-3xl p-3 border border-slate-200 shadow-soft-sm space-y-1">
+          <div className="bg-white rounded-2xl sm:rounded-3xl p-2 sm:p-3 border border-slate-200 shadow-soft-sm flex lg:flex-col overflow-x-auto no-scrollbar gap-1.5 lg:gap-0 lg:space-y-1">
             {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = activeTab === item.id;
@@ -335,19 +485,19 @@ export const AdminDashboardPage: React.FC = () => {
                 <button
                   key={item.id}
                   onClick={() => setActiveTab(item.id as any)}
-                  className={`w-full p-2.5 rounded-xl text-left font-bold text-xs flex items-center justify-between transition-all ${
+                  className={`w-auto lg:w-full p-2 sm:p-2.5 rounded-xl text-left font-bold text-xs flex items-center justify-between space-x-2 lg:space-x-0 transition-all shrink-0 whitespace-nowrap ${
                     isActive
                       ? 'bg-brand-600 text-white shadow-sm'
                       : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
                   }`}
                 >
-                  <div className="flex items-center space-x-2.5">
-                    <Icon className="w-4 h-4" />
+                  <div className="flex items-center space-x-2 sm:space-x-2.5">
+                    <Icon className="w-4 h-4 shrink-0" />
                     <span>{item.label}</span>
                   </div>
                   {item.badge !== undefined && (
                     <span
-                      className={`text-[10px] px-1.5 py-0.5 rounded-full font-bold ${
+                      className={`text-[10px] px-1.5 py-0.5 rounded-full font-bold ml-1.5 ${
                         isActive ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-600'
                       }`}
                     >
@@ -536,7 +686,16 @@ export const AdminDashboardPage: React.FC = () => {
           {activeTab === 'orders' && (
             <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-soft-sm space-y-4">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-                <h3 className="font-extrabold text-base text-slate-900">Order Management</h3>
+                <div className="flex items-center space-x-3">
+                  <h3 className="font-extrabold text-base text-slate-900">Order Management Hub</h3>
+                  <button
+                    onClick={() => setShowPosModal(true)}
+                    className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-black flex items-center space-x-1.5 shadow-sm active:scale-95"
+                  >
+                    <Receipt className="w-3.5 h-3.5 text-emerald-200" />
+                    <span>+ Walk-in POS Order</span>
+                  </button>
+                </div>
 
                 {/* Filters */}
                 <div className="flex flex-wrap items-center gap-2">
@@ -635,12 +794,26 @@ export const AdminDashboardPage: React.FC = () => {
                           </select>
                         </td>
                         <td className="py-3 text-right">
-                          <button
-                            onClick={() => openInvoice(order)}
-                            className="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-[11px] font-bold"
-                          >
-                            Invoice
-                          </button>
+                          <div className="flex items-center justify-end space-x-1.5">
+                            <a
+                              href={`https://wa.me/91${order.customerPhone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(
+                                `Hello ${order.customerName}! Update from The Laundry Lounge Rewa: Your order ${order.orderNumber} is currently: ${order.orderStatus}. Thank you!`
+                              )}`}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="p-1.5 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 rounded-lg text-xs"
+                              title="Send WhatsApp update to customer"
+                            >
+                              <MessageCircle className="w-3.5 h-3.5" />
+                            </a>
+                            <button
+                              onClick={() => openInvoice(order)}
+                              className="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-[11px] font-bold flex items-center space-x-1"
+                            >
+                              <Printer className="w-3 h-3 text-slate-500" />
+                              <span>Invoice</span>
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))}
@@ -1602,6 +1775,177 @@ export const AdminDashboardPage: React.FC = () => {
                 >
                   Save FAQ
                 </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* WALK-IN POS COUNTER ORDER INTAKE MODAL */}
+      {showPosModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto">
+          <div className="fixed inset-0 bg-slate-950/70 backdrop-blur-xs" onClick={() => setShowPosModal(false)} />
+          <div className="relative bg-white rounded-3xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl z-10 border border-slate-200 max-h-[90vh] overflow-y-auto space-y-5">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+              <div className="flex items-center space-x-2.5">
+                <div className="w-10 h-10 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center border border-emerald-200">
+                  <Receipt className="w-5 h-5" />
+                </div>
+                <div>
+                  <h4 className="font-black text-lg text-slate-900">Walk-In Counter Order Intake</h4>
+                  <p className="text-xs text-slate-500">Retail branch Point-of-Sale (POS) order generator</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowPosModal(false)}
+                className="p-1 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleCreatePosOrder} className="space-y-4 text-xs">
+              {/* Branch Selector */}
+              <div>
+                <label className="font-bold text-slate-700 block mb-1">Select Retail Branch</label>
+                <select
+                  value={posBranch}
+                  onChange={(e) => setPosBranch(e.target.value)}
+                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-800"
+                >
+                  <option value="Nehru Nagar (Branch 1)">Branch 1: Nehru Nagar (In Front of P.K. School)</option>
+                  <option value="Ring Road Hari Om (Branch 2)">Branch 2: Hari Om Ring Road (Behind Hotel Vijay Villas)</option>
+                </select>
+              </div>
+
+              {/* Customer Info */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="font-bold text-slate-700 block mb-1">Customer Full Name *</label>
+                  <input
+                    type="text"
+                    required
+                    value={posCustomerName}
+                    onChange={(e) => setPosCustomerName(e.target.value)}
+                    placeholder="e.g. Ramesh Sharma"
+                    className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl font-semibold"
+                  />
+                </div>
+                <div>
+                  <label className="font-bold text-slate-700 block mb-1">Customer Mobile Phone *</label>
+                  <input
+                    type="tel"
+                    required
+                    value={posCustomerPhone}
+                    onChange={(e) => setPosCustomerPhone(e.target.value)}
+                    placeholder="e.g. 9893733683"
+                    className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl font-semibold"
+                  />
+                </div>
+              </div>
+
+              {/* Garment Selector */}
+              <div>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="font-bold text-slate-700">Add Garments &amp; Treatment</label>
+                  <span className="text-[11px] font-bold text-sky-600">
+                    {Object.values(posItems).reduce((a, b) => a + b, 0)} items selected
+                  </span>
+                </div>
+                <div className="max-h-52 overflow-y-auto border border-slate-200 rounded-2xl p-2 divide-y divide-slate-100 bg-slate-50/50">
+                  {services.filter((s) => s.active).map((svc) => {
+                    const count = posItems[svc.id] || 0;
+                    return (
+                      <div key={svc.id} className="py-2 px-2 flex items-center justify-between hover:bg-white rounded-xl transition-colors">
+                        <div>
+                          <div className="font-bold text-slate-800 text-xs">{svc.name}</div>
+                          <div className="text-[10px] text-slate-500">₹{svc.price} / {svc.unit}</div>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <button
+                            type="button"
+                            onClick={() => handleUpdatePosItem(svc.id, -1)}
+                            className="w-6 h-6 rounded-lg bg-white border border-slate-200 flex items-center justify-center font-bold text-xs hover:bg-slate-100"
+                          >
+                            -
+                          </button>
+                          <span className="w-5 text-center font-black text-slate-900">{count}</span>
+                          <button
+                            type="button"
+                            onClick={() => handleUpdatePosItem(svc.id, 1)}
+                            className="w-6 h-6 rounded-lg bg-sky-600 text-white flex items-center justify-center font-bold text-xs hover:bg-sky-700"
+                          >
+                            +
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Speed & Payment Options */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                <div>
+                  <label className="font-bold text-slate-700 block mb-1">Turnaround Speed</label>
+                  <select
+                    value={posDeliveryMode}
+                    onChange={(e) => setPosDeliveryMode(e.target.value as any)}
+                    className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl font-semibold"
+                  >
+                    <option value="standard">Standard Care (48 Hours)</option>
+                    <option value="express">⚡ Express Next-Day (24 Hours)</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="font-bold text-slate-700 block mb-1">Payment Method</label>
+                  <select
+                    value={posPaymentMethod}
+                    onChange={(e) => setPosPaymentMethod(e.target.value as any)}
+                    className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl font-semibold"
+                  >
+                    <option value="UPI">UPI (GPay / PhonePe / Paytm QR)</option>
+                    <option value="Cash on Delivery">Cash at Counter (Instant Receipt)</option>
+                    <option value="Razorpay">Card / NetBanking / Razorpay POS</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Special Garment Instructions / Notes */}
+              <div>
+                <label className="font-bold text-slate-700 block mb-1">Stain Notes / Customer Instructions (Optional)</label>
+                <input
+                  type="text"
+                  value={posNotes}
+                  onChange={(e) => setPosNotes(e.target.value)}
+                  placeholder="e.g. Food stain on front pocket, roll press saree with soft sheen"
+                  className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl"
+                />
+              </div>
+
+              {/* Order Summary & Submit */}
+              <div className="pt-3 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3">
+                <div>
+                  <span className="text-[11px] text-slate-500 font-bold block">Estimated Bill Total</span>
+                  <div className="text-2xl font-black text-slate-900">₹{posTotal.toFixed(0)}</div>
+                </div>
+
+                <div className="flex items-center space-x-2 w-full sm:w-auto">
+                  <button
+                    type="button"
+                    onClick={() => setShowPosModal(false)}
+                    className="flex-1 sm:flex-initial px-4 py-2.5 border border-slate-200 text-slate-700 font-bold rounded-xl hover:bg-slate-50"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="flex-1 sm:flex-initial px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-black rounded-xl shadow-lg shadow-emerald-600/30 flex items-center justify-center space-x-1.5"
+                  >
+                    <Printer className="w-4 h-4" />
+                    <span>Create &amp; Print Bill</span>
+                  </button>
+                </div>
               </div>
             </form>
           </div>

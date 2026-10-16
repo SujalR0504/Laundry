@@ -237,11 +237,11 @@ export const BookingPage: React.FC = () => {
   });
 
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+    <div className="max-w-5xl mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-12">
       {/* Wizard Progress Stepper (hidden on final confirmation) */}
       {currentStep < 5 && (
-        <div className="mb-8">
-          <div className="flex items-center justify-between max-w-xl mx-auto text-xs font-bold text-slate-500 px-1">
+        <div className="mb-6 sm:mb-8">
+          <div className="flex items-center justify-between max-w-xl mx-auto text-[11px] sm:text-xs font-bold text-slate-500 px-1 overflow-x-auto no-scrollbar gap-1">
             <button
               onClick={() => setCurrentStep(1)}
               className={`flex items-center space-x-1.5 ${

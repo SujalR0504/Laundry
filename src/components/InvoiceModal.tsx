@@ -12,18 +12,18 @@ export const InvoiceModal: React.FC = () => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-3 sm:p-4">
       {/* Backdrop */}
       <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={closeInvoice} />
 
       {/* Modal Dialog */}
-      <div className="relative bg-white rounded-3xl max-w-2xl w-full shadow-2xl overflow-hidden z-10 my-8 border border-slate-200">
+      <div className="relative bg-white rounded-3xl max-w-2xl w-full shadow-2xl overflow-hidden z-10 my-4 sm:my-8 border border-slate-200 max-h-[92vh] flex flex-col">
         {/* Top Control Bar (hidden in print) */}
-        <div className="p-4 bg-slate-900 text-white flex items-center justify-between print:hidden">
+        <div className="p-3 sm:p-4 bg-slate-900 text-white flex flex-wrap sm:flex-nowrap items-center justify-between gap-2 shrink-0 print:hidden">
           <div className="flex items-center space-x-2">
-            <span className="font-semibold text-sm">Tax Invoice: {invoiceOrder.orderNumber}</span>
+            <span className="font-semibold text-xs sm:text-sm">Tax Invoice: {invoiceOrder.orderNumber}</span>
             <span
-              className={`text-xs px-2 py-0.5 rounded-full font-bold ${
+              className={`text-[10px] sm:text-xs px-2 py-0.5 rounded-full font-bold ${
                 invoiceOrder.paymentStatus === 'Paid'
                   ? 'bg-emerald-500/20 text-emerald-300'
                   : 'bg-amber-500/20 text-amber-300'
@@ -36,10 +36,10 @@ export const InvoiceModal: React.FC = () => {
           <div className="flex items-center space-x-2">
             <button
               onClick={handlePrint}
-              className="px-3 py-1.5 bg-brand-600 hover:bg-brand-500 text-white text-xs font-bold rounded-lg flex items-center space-x-1.5 transition-colors"
+              className="px-2.5 sm:px-3 py-1.5 bg-brand-600 hover:bg-brand-500 text-white text-xs font-bold rounded-lg flex items-center space-x-1.5 transition-colors"
             >
               <Printer className="w-3.5 h-3.5" />
-              <span>Print / Download PDF</span>
+              <span>Print / PDF</span>
             </button>
             <button
               onClick={closeInvoice}
@@ -51,7 +51,7 @@ export const InvoiceModal: React.FC = () => {
         </div>
 
         {/* Printable Invoice Container */}
-        <div id="printable-invoice" className="p-8 text-slate-800 bg-white">
+        <div id="printable-invoice" className="p-4 sm:p-8 text-slate-800 bg-white overflow-y-auto">
           {/* Header */}
           <div className="flex justify-between items-start border-b border-slate-200 pb-6">
             <div>

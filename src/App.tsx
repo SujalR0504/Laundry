@@ -27,7 +27,7 @@ export const AppContent: React.FC = () => {
   const [authOpen, setAuthOpen] = useState(false);
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-800 font-sans selection:bg-brand-500 selection:text-white pb-16 sm:pb-0">
+    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-800 font-sans selection:bg-brand-500 selection:text-white pb-[calc(4.5rem+env(safe-area-inset-bottom,0px))] sm:pb-0 overflow-x-hidden">
       {/* Top Navigation */}
       <Navbar
         onOpenCart={() => setCartOpen(true)}

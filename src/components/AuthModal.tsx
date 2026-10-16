@@ -62,51 +62,51 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-3 sm:p-4">
       <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={onClose} />
 
-      <div className="relative bg-white rounded-3xl max-w-lg w-full shadow-2xl overflow-hidden z-10 border border-slate-100">
+      <div className="relative bg-white rounded-3xl max-w-lg w-full shadow-2xl overflow-hidden z-10 border border-slate-100 max-h-[92vh] flex flex-col my-auto">
         {/* Header */}
-        <div className="p-6 bg-gradient-to-r from-brand-900 via-brand-800 to-brand-700 text-white flex items-center justify-between">
+        <div className="p-4 sm:p-6 bg-gradient-to-r from-brand-900 via-brand-800 to-brand-700 text-white flex items-center justify-between shrink-0">
           <div>
-            <h3 className="text-xl font-bold">Account & Role Switcher</h3>
+            <h3 className="text-lg sm:text-xl font-bold">Account & Role Switcher</h3>
             <p className="text-xs text-brand-200 mt-0.5">
               Current Active Role: <span className="font-semibold text-accent-300 uppercase">{currentUser.role}</span>
             </p>
           </div>
           <button
             onClick={onClose}
-            className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white transition-colors"
+            className="p-1.5 sm:p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Tabs */}
-        <div className="flex border-b border-slate-200 bg-slate-50 text-sm font-semibold">
+        <div className="flex border-b border-slate-200 bg-slate-50 text-xs sm:text-sm font-semibold shrink-0">
           <button
             onClick={() => setActiveTab('demo-switch')}
-            className={`flex-1 py-3 text-center transition-colors ${
+            className={`flex-1 py-2.5 sm:py-3 text-center transition-colors ${
               activeTab === 'demo-switch'
                 ? 'text-brand-600 border-b-2 border-brand-600 bg-white'
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            ⚡ Quick Role Demo
+            ⚡ Demo Roles
           </button>
           <button
             onClick={() => setActiveTab('login')}
-            className={`flex-1 py-3 text-center transition-colors ${
+            className={`flex-1 py-2.5 sm:py-3 text-center transition-colors ${
               activeTab === 'login'
                 ? 'text-brand-600 border-b-2 border-brand-600 bg-white'
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            Customer Login
+            Login
           </button>
           <button
             onClick={() => setActiveTab('register')}
-            className={`flex-1 py-3 text-center transition-colors ${
+            className={`flex-1 py-2.5 sm:py-3 text-center transition-colors ${
               activeTab === 'register'
                 ? 'text-brand-600 border-b-2 border-brand-600 bg-white'
                 : 'text-slate-600 hover:text-slate-900'
@@ -117,7 +117,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
         </div>
 
         {/* Tab Content */}
-        <div className="p-6">
+        <div className="p-4 sm:p-6 overflow-y-auto">
           {activeTab === 'demo-switch' && (
             <div className="space-y-3">
               <p className="text-xs text-slate-500 font-medium">

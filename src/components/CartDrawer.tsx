@@ -27,8 +27,8 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, onProce
         onClick={onClose}
       />
 
-      <div className="fixed inset-y-0 right-0 max-w-full flex pl-10">
-        <div className="w-screen max-w-md bg-white shadow-2xl flex flex-col">
+      <div className="fixed inset-y-0 right-0 max-w-full flex pl-0 sm:pl-10">
+        <div className="w-screen max-w-full sm:max-w-md bg-white shadow-2xl flex flex-col h-full">
           {/* Header */}
           <div className="p-5 border-b border-slate-100 flex items-center justify-between bg-gradient-to-r from-brand-900 to-brand-800 text-white">
             <div className="flex items-center space-x-3">
@@ -152,7 +152,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, onProce
 
           {/* Footer Checkout Actions */}
           {cart.length > 0 && (
-            <div className="p-5 border-t border-slate-200 bg-slate-50">
+            <div className="p-4 sm:p-5 border-t border-slate-200 bg-slate-50 safe-area-bottom">
               <div className="space-y-1.5 mb-4 text-sm">
                 <div className="flex justify-between text-slate-600">
                   <span>Subtotal</span>
