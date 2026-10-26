@@ -43,10 +43,10 @@ export const Footer: React.FC = () => {
               <div className="bg-slate-900/90 border border-slate-800 rounded-xl p-3 text-xs space-y-1">
                 <div className="flex items-center space-x-1.5 text-sky-400 font-bold">
                   <MapPin className="w-3.5 h-3.5 text-red-500 flex-shrink-0" />
-                  <span>Branch 1 (Nehru Nagar):</span>
+                  <span>Branch 1 (Arun Nagar):</span>
                 </div>
                 <p className="text-slate-300 pl-5">
-                  Near Gaytri School Nehru Nagar In FRONT Of Apna Super Bazar Rewa (M. P.)
+                  Near Gayatri School, In Front of Apna Super Bazar, Arun Nagar, Rewa (M. P.)
                 </p>
               </div>
 

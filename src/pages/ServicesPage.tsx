@@ -116,6 +116,64 @@ export const ServicesPage: React.FC = () => {
         </div>
       </div>
 
+      {/* Real Plant & Machine Guarantee Banner */}
+      <div className="bg-gradient-to-r from-sky-950 via-slate-900 to-sky-950 rounded-3xl p-5 sm:p-6 text-white border border-sky-800/40 shadow-xl overflow-hidden relative">
+        <div className="absolute top-0 right-0 w-72 h-72 bg-sky-500/10 rounded-full blur-3xl pointer-events-none" />
+        
+        <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-6">
+          <div className="space-y-1.5 text-center lg:text-left max-w-md">
+            <span className="text-[10px] font-black uppercase tracking-wider text-amber-300 bg-amber-950/80 px-2.5 py-1 rounded-full border border-amber-500/30">
+              Commercial Machinery Standard
+            </span>
+            <h3 className="text-xl sm:text-2xl font-black font-display text-white">
+              Washed in Real Commercial Plants, Not Home Machines
+            </h3>
+            <p className="text-xs text-slate-300 leading-relaxed font-normal">
+              Every garment is processed at our dedicated Rewa facility using heavy rotary washers, centrifugal extractors, and Veit European steam tables.
+            </p>
+          </div>
+
+          {/* 3 Real Machine Preview Badges */}
+          <div className="grid grid-cols-3 gap-3 w-full lg:w-auto shrink-0">
+            <div className="relative rounded-2xl overflow-hidden aspect-[4/3] w-full sm:w-36 border border-white/20 shadow-md group">
+              <img
+                src="/images/industrial-washer.jpg"
+                alt="Heavy Rotary Wash Plant"
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/20 to-transparent" />
+              <span className="absolute bottom-2 left-2 right-2 text-[10px] font-bold text-white text-center truncate">
+                Rotary Washer
+              </span>
+            </div>
+
+            <div className="relative rounded-2xl overflow-hidden aspect-[4/3] w-full sm:w-36 border border-white/20 shadow-md group">
+              <img
+                src="/images/hydro-extractor.jpg"
+                alt="Centrifugal Hydro Extractor"
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/20 to-transparent" />
+              <span className="absolute bottom-2 left-2 right-2 text-[10px] font-bold text-white text-center truncate">
+                Hydro-Extractor
+              </span>
+            </div>
+
+            <div className="relative rounded-2xl overflow-hidden aspect-[4/3] w-full sm:w-36 border border-white/20 shadow-md group">
+              <img
+                src="/images/laundry-processing.png"
+                alt="Sanitized Laundromat Line"
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/20 to-transparent" />
+              <span className="absolute bottom-2 left-2 right-2 text-[10px] font-bold text-white text-center truncate">
+                Folding Line
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Filter and Search Bar */}
       <div className="bg-white p-4 sm:p-5 rounded-3xl border border-slate-200 shadow-soft-sm flex flex-col md:flex-row items-center justify-between gap-4">
         {/* Category Pill Tabs (horizontally scrollable on mobile) */}
@@ -201,6 +259,12 @@ export const ServicesPage: React.FC = () => {
                   <img
                     src={service.image}
                     alt={service.name}
+                    loading="lazy"
+                    onError={(e) => {
+                      // Fallback to our local high quality processing photo if Unsplash fails
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src = '/images/laundry-processing.png';
+                    }}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                   <div className="absolute top-2.5 left-2.5 bg-slate-900/85 backdrop-blur-xs text-white text-[10px] font-bold px-2.5 py-1 rounded-full flex items-center space-x-1">

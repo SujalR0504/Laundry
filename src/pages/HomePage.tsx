@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import confetti from 'canvas-confetti';
 import { useApp } from '../context/AppContext';
+import { WashingMachineSimulator } from '../components/WashingMachineSimulator';
 import {
   Sparkles,
   ArrowRight,
@@ -40,6 +41,11 @@ import {
   BadgePercent,
   Shirt,
   Volume2,
+  X,
+  Maximize2,
+  ChevronLeft,
+  Building2,
+  ExternalLink,
 } from 'lucide-react';
 
 export const HomePage: React.FC = () => {
@@ -63,21 +69,55 @@ export const HomePage: React.FC = () => {
   const [quickServiceId, setQuickServiceId] = useState(categories[0]?.id || '');
   const [quickSlot, setQuickSlot] = useState(pickupSlots[0]?.timeRange || '');
 
-  // Hero Right Widget Tab (Interactive Washing Drum Simulator / Visual Studio / 60s Booking)
+  // Hero Right Widget Tab (Interactive Washing Machine / Visual Studio / 60s Booking)
   const [heroRightTab, setHeroRightTab] = useState<'simulator' | 'visual' | 'form'>('simulator');
-  const [activeDrumCycle, setActiveDrumCycle] = useState<'ozone' | 'steam' | 'silk' | 'eco'>('ozone');
-  const [isDrumSpinning, setIsDrumSpinning] = useState(true);
 
-  // Hero Gallery
+  // Hero Gallery featuring Authentic Store & Plant Images
   const heroGallery = [
     {
-      id: 'studio',
-      title: 'Rewa Flagship Fabric Care Studio',
-      subtitle: 'European steam stations & sanitized ozone cycles in Nehru Nagar & Ring Road',
-      badge: 'Boutique Storefront',
-      image: '/images/hero-studio.jpg',
-      tag: 'Flagship Studio',
-      stat: 'Rewa #1 Studio',
+      id: 'storefront',
+      title: 'The Laundry Lounge Main Storefront',
+      subtitle: 'Arun Nagar, Near Gayatri School, Rewa — Walk-in boutique & drop-off counter',
+      badge: 'Main Storefront',
+      image: '/images/storefront-exterior.jpg',
+      tag: 'Arun Nagar Hub',
+      stat: 'Rewa Main Center',
+    },
+    {
+      id: 'reception',
+      title: 'Customer Welcome Lounge & Counter',
+      subtitle: 'Comfortable waiting lounge with computerized garment tagging & barcode tracking',
+      badge: 'Executive Lounge',
+      image: '/images/reception-counter.jpg',
+      tag: 'The Laundry Lounge',
+      stat: '5-Star Care',
+    },
+    {
+      id: 'washer',
+      title: 'Industrial Heavy Rotary Wash Plant',
+      subtitle: 'High-capacity stainless steel rotary washers for deep hygienic washing',
+      badge: 'Commercial Plant',
+      image: '/images/industrial-washer.jpg',
+      tag: 'Commercial Plant',
+      stat: 'Heavy-Duty Wash',
+    },
+    {
+      id: 'extractor',
+      title: 'Centrifugal Hydro-Extractor Unit',
+      subtitle: 'Precision high-speed water extraction preventing fiber stress & distortion',
+      badge: 'Hydro Extraction',
+      image: '/images/hydro-extractor.jpg',
+      tag: 'Gentle Spin',
+      stat: '100% Fiber Safe',
+    },
+    {
+      id: 'processing',
+      title: 'Sanitized Laundromat & Folding Line',
+      subtitle: 'Multi-point inspection and crisp fold packaging before doorstep delivery',
+      badge: 'Specialist Care',
+      image: '/images/laundry-processing.png',
+      tag: 'Laundromat Operations',
+      stat: '100% Quality Checked',
     },
     {
       id: 'steam',
@@ -86,7 +126,7 @@ export const HomePage: React.FC = () => {
       badge: 'Veit European Press',
       image: '/images/steam-press.jpg',
       tag: 'Industrial Steam',
-      stat: '100% Zero Fabric Burn',
+      stat: '100% Zero Burn',
     },
     {
       id: 'ethnic',
@@ -101,7 +141,7 @@ export const HomePage: React.FC = () => {
       id: 'doorstep',
       title: 'Fast Doorstep Pickup & Delivery in Rewa',
       subtitle: 'Punctual collection in hygienic garment covers across all Rewa localities',
-      badge: 'Contactless Rider Fleet',
+      badge: 'Contactless Fleet',
       image: '/images/doorstep-delivery.jpg',
       tag: 'Free Doorstep Service',
       stat: '60s Booking',
@@ -109,7 +149,119 @@ export const HomePage: React.FC = () => {
   ];
 
   const [activeHeroIndex, setActiveHeroIndex] = useState(0);
-  const [activeBranchPhoto, setActiveBranchPhoto] = useState<'hub1' | 'hub2' | 'mockup'>('hub1');
+  const [activeBranchPhoto, setActiveBranchPhoto] = useState<
+    'storefront' | 'lounge' | 'washer' | 'extractor' | 'processing'
+  >('storefront');
+
+  // Lightbox Modal for Facility & Machinery Photos
+  interface FacilityItem {
+    id: string;
+    name: string;
+    title: string;
+    badge: string;
+    image: string;
+    location: string;
+    category: string;
+    tagline: string;
+    description: string;
+    specs: string[];
+  }
+
+  const [facilityModalImage, setFacilityModalImage] = useState<FacilityItem | null>(null);
+
+  // Real Facility & Machinery Showcase Dataset
+  const facilityShowcase: FacilityItem[] = [
+    {
+      id: 'storefront',
+      name: 'Main Flagship Storefront',
+      title: 'The Laundry Lounge Storefront (Arun Nagar, Rewa)',
+      badge: 'Official Storefront',
+      image: '/images/storefront-exterior.jpg',
+      location: 'Arun Nagar, Near Gayatri School, Rewa',
+      category: 'Walk-In Store & Drop-Off Hub',
+      tagline: 'Arun Nagar, Near Gayatri School, Rewa (M.P.)',
+      description:
+        'Our customer walk-in storefront featuring transparent glass doors, clear pricing menu, and expert fabric consultants. Drop off garments in person or arrange free doorstep pickup.',
+      specs: [
+        'Location: Arun Nagar, Near Gayatri School, Rewa (M.P.)',
+        'Timings: Open 7 Days a week (8:00 AM – 9:00 PM)',
+        'Services: Washing, Leather Cleaning, Dry Cleaning, Roll Press',
+        'Contact: 9893733683 / 9329838804',
+      ],
+    },
+    {
+      id: 'lounge',
+      name: 'Customer Welcome Lounge & Counter',
+      title: 'Customer Welcome Lounge & Computerized Counter',
+      badge: 'Executive Lounge',
+      image: '/images/reception-counter.jpg',
+      location: 'Inside The Laundry Lounge Studio',
+      category: 'Customer Reception & Intake',
+      tagline: 'Illuminated Brand Hallmark & Computerized Counter',
+      description:
+        'Air-conditioned welcome lounge equipped with our illuminated circular Laundry Lounge sign, computerized order tracking, barcode printing, and comfortable customer seating.',
+      specs: [
+        'Computerized garment barcode tagging & instant SMS receipts',
+        'Comfortable air-conditioned customer seating area',
+        'Live electronic weight scales & transparent billing',
+        'Multi-point initial garment pocket & fabric check',
+      ],
+    },
+    {
+      id: 'washer',
+      name: 'Industrial Heavy Rotary Washer',
+      title: 'Heavy-Duty Commercial Horizontal Rotary Wash Plant',
+      badge: 'Commercial Plant',
+      image: '/images/industrial-washer.jpg',
+      location: 'Central Processing Facility, Rewa',
+      category: 'Heavy-Duty Commercial Wash',
+      tagline: 'Dual-Chamber 304 Stainless Steel Drum',
+      description:
+        'Heavy-duty commercial horizontal rotary washing machine. Engineered for large volume hotel linens, delicate fabrics, and sanitized washing with zero fabric tearing or discoloration.',
+      specs: [
+        'Food-grade 304 stainless steel interior drum',
+        'Reversible rotation reduces mechanical fabric stress',
+        '100% RO softened mineral-free water infusion',
+        'Hypoallergenic enzyme detergents safe on vibrant colors',
+      ],
+    },
+    {
+      id: 'extractor',
+      name: 'Centrifugal High-Speed Hydro-Extractor',
+      title: 'High-Velocity Centrifugal Spin Hydro-Extractor',
+      badge: 'Hydro Extraction',
+      image: '/images/hydro-extractor.jpg',
+      location: 'Central Processing Facility, Rewa',
+      category: 'Centrifugal Spin Drying',
+      tagline: 'Centrifugal Moisture Expulsion (Zero Shrinkage)',
+      description:
+        'High-velocity centrifugal hydro-extractor that removes 85%+ moisture in minutes without the high-temperature dryer friction that causes shrinking and fabric pilling.',
+      specs: [
+        'Precision centrifugal balanced spin drum',
+        'Zero thermal shrinkage or fiber distortion',
+        'Safe for woolen garments, wedding silks, and delicate suits',
+        'Dramatically shortens natural drying cycles',
+      ],
+    },
+    {
+      id: 'processing',
+      name: 'Laundromat Line & Precision Folding',
+      title: 'Commercial Laundromat Workstation & Sanitized Folding Line',
+      badge: 'Quality Finishing',
+      image: '/images/laundry-processing.png',
+      location: 'Finishing & Inspection Floor',
+      category: 'Sanitized Garment Line & Packaging',
+      tagline: 'Meticulous Folding & Protective Dust Covers',
+      description:
+        'Our commercial laundromat workstation where every shirt, saree, and trouser is inspected for spots, crisply hand-folded, and packaged in sealed dust-proof bags for doorstep return.',
+      specs: [
+        'Sanitized inspection & folding tables',
+        '100% individual customer load segregation (never mixed)',
+        'Button reinforcement & hemline inspection',
+        'Anti-static protective dust-proof garment bags',
+      ],
+    },
+  ];
 
   // Interactive Live Price Estimator State
   const [estimatorCounts, setEstimatorCounts] = useState<{ [key: string]: number }>({
@@ -158,42 +310,6 @@ export const HomePage: React.FC = () => {
     }, 1000);
     return () => clearInterval(timer);
   }, []);
-
-  // Cycle simulator options
-  const cycleInfo = {
-    ozone: {
-      name: 'Sanitized Ozone Eco-Wash',
-      temp: '30°C Cold Shield',
-      rpm: '800 RPM Gentle Hydro-Cushion',
-      benefit: 'Eliminates 99.9% germs, zero color fading',
-      detergent: 'German Biodegradable Bio-Enzymes',
-      accent: 'from-sky-500 to-cyan-500',
-    },
-    steam: {
-      name: 'Veit European 3D Steam Spa',
-      temp: '140°C Purified Dry Steam',
-      rpm: 'Static Vacuum Forming',
-      benefit: 'Relaxes stubborn fibers, restores fabric loft',
-      detergent: 'Demineralized Distilled Steam Flow',
-      accent: 'from-amber-500 to-orange-500',
-    },
-    silk: {
-      name: 'Bridal Silk & Zari Roll-Press',
-      temp: 'Gentle Warm Heated Cylinders',
-      rpm: '120 RPM Micro Roller Tension',
-      benefit: 'Preserves gold embroidery & zero shrinkage',
-      detergent: 'Zero-Moisture Hydrocarbon Solvent',
-      accent: 'from-rose-500 to-pink-500',
-    },
-    eco: {
-      name: 'Organic Daily Wash & Tumble',
-      temp: '40°C Sanitized Soft Water',
-      rpm: '1200 RPM Moisture Extraction',
-      benefit: 'Crisp everyday comfort, hypoallergenic',
-      detergent: '5-Stage RO Filtered Fresh Soft Water',
-      accent: 'from-emerald-500 to-teal-500',
-    },
-  };
 
   // Draggable slider handler
   const handleSliderMove = (clientX: number) => {
@@ -478,9 +594,30 @@ export const HomePage: React.FC = () => {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
             {/* Left Hero Content */}
             <div className="lg:col-span-7 space-y-6 text-center lg:text-left">
-              <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-sky-100/90 text-sky-900 text-xs font-bold border border-sky-200/80 shadow-xs backdrop-blur-xs">
-                <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
-                <span>Rated 4.9/5 by 5,000+ Happy Households • European Fabric Care</span>
+              {/* Rating + Real Store Studio Location Pill */}
+              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2.5">
+                <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-sky-100/90 text-sky-900 text-xs font-bold border border-sky-200/80 shadow-xs backdrop-blur-xs">
+                  <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
+                  <span>Rated 4.9/5 by 5,000+ Happy Households • European Fabric Care</span>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    const currentItem = facilityShowcase.find((f) => f.id === 'storefront') || facilityShowcase[0];
+                    setFacilityModalImage(currentItem);
+                  }}
+                  className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-white/95 hover:bg-white text-slate-800 text-xs font-bold border border-slate-200 shadow-2xs hover:border-sky-300 transition-all cursor-pointer group"
+                  title="Click to view full photo"
+                >
+                  <img
+                    src="/images/storefront-exterior.jpg"
+                    alt="Arun Nagar Storefront"
+                    className="w-5 h-5 rounded-full object-cover ring-1 ring-sky-500"
+                  />
+                  <span>Arun Nagar Studio</span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping" />
+                </button>
               </div>
 
               <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black font-display tracking-tight text-slate-900 leading-[1.04]">
@@ -495,8 +632,57 @@ export const HomePage: React.FC = () => {
                 Veit European steam pressing, 5-stage RO ozone washing, and delicate Banarasi silk roll press delivered to your doorstep. Visit our 2 flagship retail studios or schedule an express doorstep pickup in 60 seconds.
               </p>
 
+              {/* Real Storefront & Customer Lounge Hero Showcase Image Card */}
+              <div className="bg-white/95 backdrop-blur-md rounded-2xl p-3 sm:p-3.5 border border-sky-100 shadow-lg shadow-sky-950/5 flex flex-col sm:flex-row items-center gap-3.5 text-left hover:border-sky-300 transition-all">
+                {/* Real Storefront Thumbnail with Zoom */}
+                <div
+                  className="relative rounded-xl overflow-hidden w-full sm:w-44 h-32 sm:h-28 shrink-0 cursor-pointer shadow-sm border border-slate-200 group/img bg-slate-950"
+                  onClick={() => {
+                    const currentItem = facilityShowcase.find((f) => f.id === 'storefront') || facilityShowcase[0];
+                    setFacilityModalImage(currentItem);
+                  }}
+                  title="Click to inspect high-resolution studio photo"
+                >
+                  <img
+                    src="/images/storefront-exterior.jpg"
+                    alt="The Laundry Lounge Storefront"
+                    className="w-full h-full object-cover group-hover/img:scale-108 transition-transform duration-500"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/75 via-transparent to-transparent pointer-events-none" />
+                  <span className="absolute bottom-1.5 left-2 text-[9px] font-black text-amber-300 uppercase tracking-wider bg-slate-950/80 px-1.5 py-0.5 rounded border border-white/20">
+                    Real Rewa Studio
+                  </span>
+                  <span className="absolute top-1.5 right-1.5 px-2 py-0.5 rounded-full bg-white/90 text-slate-900 shadow-xs flex items-center space-x-1 text-[10px] font-bold">
+                    <Maximize2 className="w-2.5 h-2.5 text-sky-600" />
+                    <span>Zoom</span>
+                  </span>
+                </div>
+
+                {/* Info Text */}
+                <div className="space-y-1 flex-1 min-w-0">
+                  <div className="flex items-center space-x-1.5">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block animate-ping shrink-0" />
+                    <span className="text-[11px] font-bold text-emerald-700">Flagship Studio Open (8:00 AM – 9:00 PM)</span>
+                  </div>
+                  <h4 className="font-bold text-sm sm:text-base text-slate-900 leading-tight">
+                    Visit Arun Nagar Studio or Book Free Doorstep Pickup
+                  </h4>
+                  <p className="text-[11px] text-slate-500 leading-relaxed line-clamp-2">
+                    Near Gayatri School, In Front of Apna Super Bazar. Heavy rotary washing machines, dry cleaning &amp; European steam pressing.
+                  </p>
+                  <div className="flex items-center space-x-3 pt-0.5 text-[11px] text-sky-700 font-semibold">
+                    <a href="tel:9893733683" className="hover:underline flex items-center space-x-1">
+                      <Phone className="w-3 h-3 text-emerald-600" />
+                      <span>9893733683</span>
+                    </a>
+                    <span>•</span>
+                    <span>Arun Nagar, Rewa (M.P.)</span>
+                  </div>
+                </div>
+              </div>
+
               {/* CTAs */}
-              <div className="flex flex-col sm:flex-row flex-wrap items-center justify-center lg:justify-start gap-3 pt-2">
+              <div className="flex flex-col sm:flex-row flex-wrap items-center justify-center lg:justify-start gap-3 pt-1">
                 <button
                   onClick={() => setCurrentView('booking')}
                   className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-sky-600 via-sky-700 to-sky-800 hover:from-sky-500 hover:to-sky-700 active:scale-[0.99] text-white font-black rounded-2xl shadow-xl shadow-sky-600/30 flex items-center justify-center space-x-2.5 transition-all text-base group"
@@ -508,17 +694,17 @@ export const HomePage: React.FC = () => {
 
                 {/* Direct Dial Branch 1 */}
                 <a
-                  href="tel:9329838804"
+                  href="tel:9893733683"
                   className="w-full sm:w-auto px-5 py-3.5 bg-white hover:bg-sky-50 text-sky-950 font-bold rounded-2xl border border-sky-200/90 shadow-soft-sm flex items-center justify-center space-x-2 transition-all text-sm group"
-                  title="Call Nehru Nagar Branch"
+                  title="Call Arun Nagar Branch"
                 >
                   <Phone className="w-4 h-4 text-emerald-600 group-hover:scale-110 transition-transform" />
-                  <span>Call Nehru Nagar: 9329838804</span>
+                  <span>Call Store: 9893733683</span>
                 </a>
 
                 {/* WhatsApp */}
                 <a
-                  href="https://wa.me/919329838804"
+                  href="https://wa.me/919893733683"
                   target="_blank"
                   rel="noreferrer"
                   className="w-full sm:w-auto px-5 py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-2xl shadow-md shadow-emerald-600/20 flex items-center justify-center space-x-2 transition-all text-sm"
@@ -557,14 +743,14 @@ export const HomePage: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setHeroRightTab('simulator')}
-                    className={`py-2 px-1 sm:px-2 rounded-xl flex items-center justify-center space-x-1 transition-all ${
+                    className={`py-2 px-1 sm:px-2 rounded-xl flex items-center justify-center space-x-1.5 transition-all ${
                       heroRightTab === 'simulator'
                         ? 'bg-white text-sky-950 shadow-sm font-black'
                         : 'text-slate-600 hover:text-slate-900'
                     }`}
                   >
-                    <RefreshCw className={`w-3 h-3 sm:w-3.5 sm:h-3.5 text-sky-600 ${isDrumSpinning ? 'animate-spin' : ''}`} />
-                    <span><span className="hidden sm:inline">Drum </span>Simulator</span>
+                    <RefreshCw className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-sky-600 animate-spin" />
+                    <span><span className="hidden sm:inline">Smart </span>Washer UI</span>
                   </button>
                   <button
                     type="button"
@@ -594,113 +780,14 @@ export const HomePage: React.FC = () => {
 
                 {heroRightTab === 'simulator' ? (
                   /* ========================================================
-                     WASHING DRUM INTERACTIVE SIMULATOR (HIGH ENGAGEMENT)
+                     HIGH-TECH WASHING MACHINE SIMULATOR (INTERACTIVE APPLIANCE)
                   ======================================================== */
-                  <div className="space-y-4">
-                    {/* Simulator Drum Visual Screen */}
-                    <div className="relative rounded-2xl overflow-hidden aspect-[4/3] bg-gradient-to-b from-slate-950 via-slate-900 to-sky-950 p-4 border border-slate-800 shadow-inner flex flex-col justify-between">
-                      {/* Top HUD Display */}
-                      <div className="flex items-center justify-between text-white text-[11px] font-mono z-10">
-                        <div className="flex items-center space-x-1.5 bg-slate-900/80 px-2.5 py-1 rounded-full border border-sky-500/30">
-                          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                          <span className="font-bold text-sky-300">EUROPEAN SPA SYSTEM</span>
-                        </div>
-                        <button
-                          onClick={() => setIsDrumSpinning(!isDrumSpinning)}
-                          className="px-2.5 py-1 rounded-full bg-sky-500/20 hover:bg-sky-500/30 text-sky-200 border border-sky-400/30 font-bold transition-all text-[10px]"
-                        >
-                          {isDrumSpinning ? '⏸ Pause Drum' : '▶ Spin Drum'}
-                        </button>
-                      </div>
-
-                      {/* Center Washing Machine Drum Portal with Real Spin Effect */}
-                      <div className="relative mx-auto my-auto w-40 h-40 sm:w-48 sm:h-48 flex items-center justify-center">
-                        {/* Outer Chrome Bezel */}
-                        <div className="absolute inset-0 rounded-full border-4 border-slate-700/80 shadow-[0_0_30px_rgba(14,165,233,0.3)] animate-pulse-ring" />
-                        
-                        {/* Water Vortex Glass */}
-                        <div className="absolute inset-2 rounded-full bg-sky-900/40 backdrop-blur-xs overflow-hidden border border-sky-400/40">
-                          {/* Animated Water Bubbles & Foam inside Drum */}
-                          <div className={`w-full h-full relative ${isDrumSpinning ? 'animate-drum-active' : ''}`}>
-                            <div className="absolute inset-0 bg-gradient-to-tr from-sky-500/30 via-cyan-400/20 to-transparent" />
-                            {/* Realistic Perforated Drum Ribs */}
-                            <div className={`absolute inset-4 rounded-full border-2 border-dashed border-sky-200/40 ${isDrumSpinning ? 'animate-drum-spin' : ''}`} />
-                            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center text-white">
-                              <span className="text-3xl filter drop-shadow-md">
-                                {activeDrumCycle === 'ozone' && '🫧'}
-                                {activeDrumCycle === 'steam' && '💨'}
-                                {activeDrumCycle === 'silk' && '🥻'}
-                                {activeDrumCycle === 'eco' && '🌿'}
-                              </span>
-                              <div className="text-[10px] font-mono font-bold text-sky-200 mt-0.5 uppercase tracking-wider">
-                                {activeDrumCycle} Active
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Bottom Live Telemetry Overlay */}
-                      <div className="bg-slate-900/90 backdrop-blur-md rounded-xl p-2.5 border border-slate-800 text-white z-10 space-y-1">
-                        <div className="flex items-center justify-between text-xs">
-                          <span className="font-bold text-sky-300">{cycleInfo[activeDrumCycle].name}</span>
-                          <span className="font-mono text-[10px] text-amber-400 font-bold bg-amber-950/70 px-1.5 py-0.5 rounded border border-amber-500/30">
-                            {cycleInfo[activeDrumCycle].temp}
-                          </span>
-                        </div>
-                        <div className="flex items-center justify-between text-[11px] text-slate-300">
-                          <span className="truncate pr-2">{cycleInfo[activeDrumCycle].benefit}</span>
-                          <span className="font-mono text-[10px] text-cyan-300 shrink-0">{cycleInfo[activeDrumCycle].rpm}</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Interactive Cycle Mode Selector */}
-                    <div>
-                      <div className="flex items-center justify-between text-[11px] font-bold text-slate-500 mb-1.5">
-                        <span>Select Fabric Cycle to Test:</span>
-                        <span className="text-sky-700 font-black">Click to change mode</span>
-                      </div>
-                      <div className="grid grid-cols-4 gap-1.5">
-                        {[
-                          { id: 'ozone', label: 'Ozone Wash', icon: '🫧' },
-                          { id: 'steam', label: 'Steam Spa', icon: '💨' },
-                          { id: 'silk', label: 'Silk Roll', icon: '🥻' },
-                          { id: 'eco', label: 'Pure RO Soft', icon: '🌿' },
-                        ].map((c) => (
-                          <button
-                            key={c.id}
-                            type="button"
-                            onClick={() => {
-                              setActiveDrumCycle(c.id as any);
-                              setIsDrumSpinning(true);
-                            }}
-                            className={`p-2 rounded-xl text-center border transition-all ${
-                              activeDrumCycle === c.id
-                                ? 'bg-sky-600 text-white border-sky-600 shadow-md scale-[1.03]'
-                                : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200'
-                            }`}
-                          >
-                            <div className="text-base">{c.icon}</div>
-                            <div className="text-[10px] font-bold mt-0.5 truncate">{c.label}</div>
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Book for this cycle */}
-                    <div className="pt-1 flex items-center gap-2">
-                      <button
-                        type="button"
-                        onClick={() => setCurrentView('booking')}
-                        className="flex-1 py-3 bg-gradient-to-r from-sky-600 via-sky-700 to-sky-800 hover:from-sky-500 hover:to-sky-700 text-white font-extrabold rounded-xl shadow-lg shadow-sky-600/25 flex items-center justify-center space-x-2 text-xs transition-all active:scale-[0.99]"
-                      >
-                        <Calendar className="w-3.5 h-3.5 text-amber-300" />
-                        <span>Book Pickup with {cycleInfo[activeDrumCycle].name}</span>
-                        <ArrowRight className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
-                  </div>
+                  <WashingMachineSimulator
+                    onBookCycle={(cycleId, name) => {
+                      showToast(`Selected ${name} for your laundry pickup!`, 'success');
+                      setCurrentView('booking');
+                    }}
+                  />
                 ) : heroRightTab === 'visual' ? (
                   /* Visual Studio Showcase with Interactive Switcher */
                   <div className="space-y-4">
@@ -1086,18 +1173,18 @@ export const HomePage: React.FC = () => {
                 <img
                   src={
                     activeSpaStep === 0
-                      ? '/images/hero-studio.jpg'
+                      ? '/images/reception-counter.jpg'
                       : activeSpaStep === 1
                       ? '/images/before-after-shirt.jpg'
                       : activeSpaStep === 2
-                      ? '/images/hero-studio.jpg'
+                      ? '/images/industrial-washer.jpg'
                       : activeSpaStep === 3
-                      ? '/images/steam-press.jpg'
+                      ? '/images/hydro-extractor.jpg'
                       : activeSpaStep === 4
                       ? '/images/ethnic-silk-care.jpg'
                       : activeSpaStep === 5
                       ? '/images/steam-press.jpg'
-                      : '/images/doorstep-delivery.jpg'
+                      : '/images/laundry-processing.png'
                   }
                   alt={spaSteps[activeSpaStep].title}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
@@ -1357,79 +1444,144 @@ export const HomePage: React.FC = () => {
       </section>
 
       {/* =========================================================================
-          📍 6. TWO RETAIL BRANCHES FLAGSHIP SHOWCASE BANNER
+          📍 6. TWO RETAIL BRANCHES & REAL COMMERCIAL WORKSHOP SHOWCASE
       ========================================================================= */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-white/95 backdrop-blur-xl rounded-3xl p-6 sm:p-10 border border-slate-200 shadow-xl shadow-sky-500/5">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-            {/* Storefront Image with Switcher */}
-            <div className="lg:col-span-5 relative group overflow-hidden rounded-3xl border border-slate-200/90 shadow-lg bg-slate-950">
-              <img
-                src={
-                  activeBranchPhoto === 'hub1'
-                    ? '/images/hero-studio.jpg'
-                    : activeBranchPhoto === 'hub2'
-                    ? '/images/steam-press.jpg'
-                    : '/laundry-lounge-mockup.jpg'
-                }
-                alt="The Laundry Lounge Storefront and Workshop"
-                className="w-full h-72 sm:h-84 object-cover object-center group-hover:scale-105 transition-transform duration-500"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/30 to-transparent flex flex-col justify-between p-5">
-                <div className="flex flex-wrap gap-1.5 self-start">
-                  <button
-                    type="button"
-                    onClick={() => setActiveBranchPhoto('hub1')}
-                    className={`px-2.5 py-1 rounded-full text-[10px] font-bold transition-all backdrop-blur-md ${
-                      activeBranchPhoto === 'hub1'
-                        ? 'bg-sky-600 text-white shadow-sm'
-                        : 'bg-slate-900/70 text-slate-200 hover:bg-slate-800'
-                    }`}
-                  >
-                    Hub 1: Nehru Nagar
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setActiveBranchPhoto('hub2')}
-                    className={`px-2.5 py-1 rounded-full text-[10px] font-bold transition-all backdrop-blur-md ${
-                      activeBranchPhoto === 'hub2'
-                        ? 'bg-rose-600 text-white shadow-sm'
-                        : 'bg-slate-900/70 text-slate-200 hover:bg-slate-800'
-                    }`}
-                  >
-                    Hub 2: Hari Om Ring Road
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setActiveBranchPhoto('mockup')}
-                    className={`px-2.5 py-1 rounded-full text-[10px] font-bold transition-all backdrop-blur-md ${
-                      activeBranchPhoto === 'mockup'
-                        ? 'bg-amber-600 text-white shadow-sm'
-                        : 'bg-slate-900/70 text-slate-200 hover:bg-slate-800'
-                    }`}
-                  >
-                    Packaging Studio
-                  </button>
-                </div>
+            {/* Storefront & Machine Image with Switcher */}
+            <div className="lg:col-span-6 space-y-3">
+              <div className="relative group overflow-hidden rounded-3xl border border-slate-200/90 shadow-lg bg-slate-950 aspect-[4/3] sm:aspect-[16/11]">
+                <img
+                  src={
+                    activeBranchPhoto === 'storefront'
+                      ? '/images/storefront-exterior.jpg'
+                      : activeBranchPhoto === 'lounge'
+                      ? '/images/reception-counter.jpg'
+                      : activeBranchPhoto === 'washer'
+                      ? '/images/industrial-washer.jpg'
+                      : activeBranchPhoto === 'extractor'
+                      ? '/images/hydro-extractor.jpg'
+                      : '/images/laundry-processing.png'
+                  }
+                  alt="The Laundry Lounge Storefront, Reception Lounge and Commercial Plant"
+                  className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 cursor-pointer"
+                  onClick={() => {
+                    const currentItem = facilityShowcase.find((f) => f.id === activeBranchPhoto) || facilityShowcase[0];
+                    setFacilityModalImage(currentItem);
+                  }}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/25 to-transparent flex flex-col justify-between p-4 sm:p-5 pointer-events-none">
+                  {/* Top Badges & Lightbox Zoom Button */}
+                  <div className="flex items-center justify-between w-full pointer-events-auto">
+                    <span className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-slate-900/85 backdrop-blur-md text-white text-[11px] font-bold border border-white/20 shadow-md">
+                      <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+                      <span>
+                        {activeBranchPhoto === 'storefront'
+                          ? 'Main Arun Nagar Storefront'
+                          : activeBranchPhoto === 'lounge'
+                          ? 'Welcome Lounge & Desk'
+                          : activeBranchPhoto === 'washer'
+                          ? 'Commercial Rotary Washer'
+                          : activeBranchPhoto === 'extractor'
+                          ? 'Centrifugal Hydro-Extractor'
+                          : 'Sanitized Laundromat Line'}
+                      </span>
+                    </span>
 
-                <div className="text-white space-y-1">
-                  <span className="text-[10px] uppercase font-black tracking-wider text-amber-300">
-                    Flagship Retail Branch
-                  </span>
-                  <h4 className="font-bold text-base leading-tight">
-                    {activeBranchPhoto === 'hub1'
-                      ? 'Nehru Nagar (In Front of P.K. School)'
-                      : activeBranchPhoto === 'hub2'
-                      ? 'Hari Om, Ring Road (Near Old Bus Stand)'
-                      : 'High-Speed Finishing & Packaging Hub'}
-                  </h4>
-                  <p className="text-[11px] text-slate-300">Open 7 Days a week: 8:00 AM – 9:00 PM</p>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const currentItem = facilityShowcase.find((f) => f.id === activeBranchPhoto) || facilityShowcase[0];
+                        setFacilityModalImage(currentItem);
+                      }}
+                      className="px-2.5 py-1 rounded-full bg-white/90 hover:bg-white text-slate-900 text-[10px] font-black flex items-center space-x-1 shadow-md transition-all active:scale-95"
+                    >
+                      <Maximize2 className="w-3 h-3 text-sky-600" />
+                      <span>Inspect Photo</span>
+                    </button>
+                  </div>
+
+                  {/* Bottom Caption Overlay */}
+                  <div className="text-white space-y-1">
+                    <div className="flex items-center space-x-2">
+                      <span className="text-[10px] uppercase font-black tracking-wider text-amber-300 bg-amber-950/80 px-2 py-0.5 rounded border border-amber-500/30">
+                        {activeBranchPhoto === 'storefront'
+                          ? 'Arun Nagar Hub'
+                          : activeBranchPhoto === 'lounge'
+                          ? 'Digital Billing Desk'
+                          : activeBranchPhoto === 'washer'
+                          ? 'Grade 304 Stainless Steel'
+                          : activeBranchPhoto === 'extractor'
+                          ? '100% Zero-Shrink Spin'
+                          : 'Sanitized Packaging Hub'}
+                      </span>
+                      <span className="text-[10px] text-slate-300 font-medium">Rewa, Madhya Pradesh</span>
+                    </div>
+                    <h4 className="font-bold text-base sm:text-lg leading-tight text-white">
+                      {activeBranchPhoto === 'storefront'
+                        ? 'Arun Nagar, Near Gayatri School, Rewa'
+                        : activeBranchPhoto === 'lounge'
+                        ? 'Executive Reception Lounge & Tagging Counter'
+                        : activeBranchPhoto === 'washer'
+                        ? 'Heavy-Duty Industrial Rotary Wash Plant'
+                        : activeBranchPhoto === 'extractor'
+                        ? 'High-Speed Centrifugal Hydro-Extractor Unit'
+                        : 'Laundromat Inspection & Protective Folding'}
+                    </h4>
+                    <p className="text-[11px] text-slate-300 line-clamp-1">
+                      {activeBranchPhoto === 'storefront'
+                        ? 'Open 7 Days a week: 8:00 AM – 9:00 PM • Drop-off & Free Doorstep Pickup'
+                        : activeBranchPhoto === 'lounge'
+                        ? 'Air-conditioned lounge, illuminated brand hallmark & computerized garment receipts'
+                        : activeBranchPhoto === 'washer'
+                        ? 'Dual-chamber commercial barrel washer with 100% RO softened water'
+                        : activeBranchPhoto === 'extractor'
+                        ? 'Removes 85%+ moisture in minutes with zero fiber stress or thermal damage'
+                        : 'Individually segregated customer loads with sealed dust-proof return covers'}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* 5-Photo Interactive Thumbnail Row */}
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between text-[11px] font-bold text-slate-500">
+                  <span>Click to view our actual store &amp; machines:</span>
+                  <span className="text-sky-600 font-extrabold text-[10px]">Real Rewa Facility Photos</span>
+                </div>
+                <div className="grid grid-cols-5 gap-1.5 sm:gap-2">
+                  {[
+                    { id: 'storefront', label: 'Storefront', img: '/images/storefront-exterior.jpg' },
+                    { id: 'lounge', label: 'Lounge', img: '/images/reception-counter.jpg' },
+                    { id: 'washer', label: 'Washer', img: '/images/industrial-washer.jpg' },
+                    { id: 'extractor', label: 'Extractor', img: '/images/hydro-extractor.jpg' },
+                    { id: 'processing', label: 'Folding', img: '/images/laundry-processing.png' },
+                  ].map((tab) => (
+                    <button
+                      key={tab.id}
+                      type="button"
+                      onClick={() => setActiveBranchPhoto(tab.id as any)}
+                      className={`relative rounded-xl overflow-hidden aspect-[4/3] border-2 transition-all flex flex-col justify-end p-1 ${
+                        activeBranchPhoto === tab.id
+                          ? 'border-sky-600 ring-2 ring-sky-300 shadow-md scale-105'
+                          : 'border-slate-200 opacity-70 hover:opacity-100 hover:border-slate-400'
+                      }`}
+                      title={tab.label}
+                    >
+                      <img src={tab.img} alt={tab.label} className="absolute inset-0 w-full h-full object-cover" />
+                      <div className="absolute inset-0 bg-slate-950/40" />
+                      <span className="relative z-10 text-[9px] sm:text-[10px] font-black text-white truncate text-center w-full">
+                        {tab.label}
+                      </span>
+                    </button>
+                  ))}
                 </div>
               </div>
             </div>
 
-            {/* Branch Details & Fast Direct Actions */}
-            <div className="lg:col-span-7 space-y-5">
+            {/* Branch Details & Physical Location Cards */}
+            <div className="lg:col-span-6 space-y-5">
               <div className="space-y-2">
                 <span className="text-xs font-bold uppercase tracking-wider text-rose-700 bg-rose-50 px-3 py-1 rounded-full border border-rose-200 shadow-2xs">
                   Physical Stores &amp; Workshop Hubs
@@ -1447,25 +1599,25 @@ export const HomePage: React.FC = () => {
                 {/* Branch 1 */}
                 <div className="p-4 rounded-2xl bg-sky-50/70 border border-sky-200/90 space-y-2.5 shadow-2xs">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-black text-sky-900">Branch 1: Nehru Nagar</span>
+                    <span className="text-xs font-black text-sky-900">Branch 1: Arun Nagar</span>
                     <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">
                       Open Today
                     </span>
                   </div>
                   <p className="text-xs text-slate-700 font-medium">
-                    In Front of P.K. School, Nehru Nagar, Rewa (M.P.) - 486001
+                    Near Gayatri School, In Front of Apna Super Bazar, Arun Nagar, Rewa (M.P.) - 486001
                   </p>
                   <div className="flex items-center space-x-2 pt-1">
                     <a
-                      href="tel:9329838804"
+                      href="tel:9893733683"
                       className="px-3 py-1.5 bg-sky-600 hover:bg-sky-700 text-white rounded-xl text-xs font-bold flex items-center space-x-1 shadow-xs"
                     >
                       <Phone className="w-3 h-3" />
-                      <span>9329838804</span>
+                      <span>9893733683</span>
                     </a>
                     <button
                       type="button"
-                      onClick={() => setActiveBranchPhoto('hub1')}
+                      onClick={() => setActiveBranchPhoto('storefront')}
                       className="px-2.5 py-1.5 bg-white text-sky-800 border border-sky-200 rounded-xl text-xs font-semibold hover:bg-sky-100"
                     >
                       View Photo
@@ -1482,28 +1634,141 @@ export const HomePage: React.FC = () => {
                     </span>
                   </div>
                   <p className="text-xs text-slate-700 font-medium">
-                    Hari Om, Ring Road, Rewa (M.P.) - 486001
+                    Behind Hotel The Vijay Villas, Gadariya Ring Road, Rewa (M.P.) - 486001
                   </p>
                   <div className="flex items-center space-x-2 pt-1">
                     <a
-                      href="tel:9893733683"
+                      href="tel:9329838804"
                       className="px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold flex items-center space-x-1 shadow-xs"
                     >
                       <Phone className="w-3 h-3" />
-                      <span>9893733683</span>
+                      <span>9329838804</span>
                     </a>
                     <button
                       type="button"
-                      onClick={() => setActiveBranchPhoto('hub2')}
+                      onClick={() => setActiveBranchPhoto('lounge')}
                       className="px-2.5 py-1.5 bg-white text-rose-800 border border-rose-200 rounded-xl text-xs font-semibold hover:bg-rose-100"
                     >
-                      View Photo
+                      View Lounge
                     </button>
                   </div>
                 </div>
               </div>
+
+              {/* Plant Highlights Badges */}
+              <div className="pt-2 border-t border-slate-100 grid grid-cols-2 gap-2 text-xs">
+                <div className="flex items-center space-x-2 text-slate-700">
+                  <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <span className="font-semibold text-[11px]">304 Stainless Steel Washers</span>
+                </div>
+                <div className="flex items-center space-x-2 text-slate-700">
+                  <Droplets className="w-4 h-4 text-sky-600 shrink-0" />
+                  <span className="font-semibold text-[11px]">Centrifugal Hydro-Extractors</span>
+                </div>
+                <div className="flex items-center space-x-2 text-slate-700">
+                  <Flame className="w-4 h-4 text-amber-600 shrink-0" />
+                  <span className="font-semibold text-[11px]">European Steam Tables</span>
+                </div>
+                <div className="flex items-center space-x-2 text-slate-700">
+                  <Truck className="w-4 h-4 text-indigo-600 shrink-0" />
+                  <span className="font-semibold text-[11px]">Free Doorstep Pickup Above ₹399</span>
+                </div>
+              </div>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* =========================================================================
+          🏭 6B. INSIDE THE LAUNDRY LOUNGE: REAL PLANT & COMMERCIAL MACHINES GALLERY
+      ========================================================================= */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center max-w-3xl mx-auto mb-10 space-y-2">
+          <span className="text-xs font-black uppercase tracking-wider text-sky-700 bg-sky-50 px-3.5 py-1.5 rounded-full border border-sky-200 shadow-2xs">
+            100% Authentic Facility Transparency
+          </span>
+          <h2 className="text-3xl sm:text-4xl font-black font-display text-slate-900 tracking-tight">
+            Inside The Laundry Lounge: Real Machines &amp; Processing Plant
+          </h2>
+          <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal">
+            No stock imagery tricks. Take an authentic visual tour of our actual commercial laundry plant, heavy rotary washers, hydro-extractors, and customer lounge in Rewa.
+          </p>
+        </div>
+
+        {/* 5-Card Grid Showcase */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {facilityShowcase.map((item, idx) => (
+            <div
+              key={item.id}
+              className={`bg-white rounded-3xl overflow-hidden border border-slate-200/90 shadow-lg shadow-sky-950/5 hover:shadow-2xl hover:border-sky-300 transition-all duration-300 flex flex-col group ${
+                idx === 0 ? 'sm:col-span-2 lg:col-span-1' : ''
+              }`}
+            >
+              <div
+                className="relative h-60 overflow-hidden bg-slate-950 cursor-pointer"
+                onClick={() => setFacilityModalImage(item)}
+              >
+                <img
+                  src={item.image}
+                  alt={item.name}
+                  className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-700"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/20 to-transparent" />
+
+                {/* Top Badges */}
+                <div className="absolute top-3 left-3 right-3 flex items-center justify-between">
+                  <span className="px-2.5 py-1 rounded-full bg-slate-900/85 backdrop-blur-md text-amber-300 text-[10px] font-black border border-amber-400/30">
+                    {item.badge}
+                  </span>
+                  <span className="px-2.5 py-1 rounded-full bg-white/95 text-sky-950 text-[10px] font-black shadow-md flex items-center space-x-1">
+                    <Maximize2 className="w-2.5 h-2.5 text-sky-600" />
+                    <span>Zoom</span>
+                  </span>
+                </div>
+
+                {/* Bottom Overlay Info */}
+                <div className="absolute bottom-3 left-4 right-4 text-white">
+                  <span className="text-[10px] font-mono font-bold text-sky-300 block">{item.category}</span>
+                  <h3 className="text-lg font-bold font-display text-white leading-tight">{item.name}</h3>
+                </div>
+              </div>
+
+              <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
+                <div className="space-y-2">
+                  <p className="text-xs text-slate-600 leading-relaxed font-normal">{item.description}</p>
+                  
+                  {/* Technical Specs Pills */}
+                  <ul className="space-y-1.5 pt-1">
+                    {item.specs.slice(0, 2).map((spec, sIdx) => (
+                      <li key={sIdx} className="flex items-start space-x-2 text-[11px] text-slate-700 font-medium">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0 mt-0.5" />
+                        <span className="line-clamp-1">{spec}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div className="pt-2 border-t border-slate-100 flex items-center justify-between">
+                  <button
+                    type="button"
+                    onClick={() => setFacilityModalImage(item)}
+                    className="text-xs font-bold text-sky-600 hover:text-sky-700 flex items-center space-x-1"
+                  >
+                    <span>View Full Specs</span>
+                    <ArrowRight className="w-3 h-3" />
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setCurrentView('booking')}
+                    className="px-3 py-1.5 rounded-xl bg-sky-50 hover:bg-sky-100 text-sky-900 font-bold text-xs transition-colors"
+                  >
+                    Book Wash
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       </section>
 
@@ -1797,15 +2062,114 @@ export const HomePage: React.FC = () => {
               <ArrowRight className="w-4 h-4 text-sky-600" />
             </button>
             <a
-              href="tel:9329838804"
+              href="tel:9893733683"
               className="px-6 py-4 bg-sky-900/60 hover:bg-sky-900/80 text-white font-bold rounded-2xl border border-white/20 transition-all text-sm flex items-center space-x-2"
             >
               <Phone className="w-4 h-4 text-emerald-400" />
-              <span>Call: 9329838804</span>
+              <span>Call: 9893733683</span>
             </a>
           </div>
         </div>
       </section>
+
+      {/* =========================================================================
+          🔍 REAL FACILITY & MACHINERY LIGHTBOX SPEC MODAL
+      ========================================================================= */}
+      {facilityModalImage && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div
+            className="fixed inset-0 bg-slate-950/85 backdrop-blur-md transition-opacity"
+            onClick={() => setFacilityModalImage(null)}
+          />
+          <div className="relative bg-white rounded-3xl max-w-3xl w-full overflow-hidden shadow-2xl z-10 border border-slate-200 animate-in fade-in zoom-in-95 duration-200">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between p-4 sm:p-5 border-b border-slate-100 bg-slate-50/80">
+              <div className="flex items-center space-x-2">
+                <span className="px-2.5 py-1 rounded-full bg-sky-100 text-sky-800 font-black text-xs">
+                  {facilityModalImage.badge}
+                </span>
+                <span className="text-xs text-slate-500 font-semibold">• Authentic Facility Photo</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setFacilityModalImage(null)}
+                className="w-8 h-8 rounded-full bg-white hover:bg-slate-100 text-slate-500 hover:text-slate-900 flex items-center justify-center transition-colors border border-slate-200 shadow-2xs"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-6 p-6 sm:p-8 items-center max-h-[80vh] overflow-y-auto">
+              {/* Large Image Frame */}
+              <div className="md:col-span-6 relative rounded-2xl overflow-hidden aspect-[4/3] bg-slate-950 border border-slate-200 shadow-md group">
+                <img
+                  src={facilityModalImage.image}
+                  alt={facilityModalImage.title}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-transparent to-transparent pointer-events-none" />
+                <span className="absolute bottom-3 left-3 text-[11px] font-bold text-amber-300 bg-slate-950/80 px-2 py-0.5 rounded border border-white/20">
+                  Rewa, Madhya Pradesh
+                </span>
+              </div>
+
+              {/* Details & Specs */}
+              <div className="md:col-span-6 space-y-4">
+                <div>
+                  <span className="text-[11px] font-mono font-bold text-sky-600 uppercase tracking-wider block">
+                    {facilityModalImage.tagline}
+                  </span>
+                  <h3 className="text-xl sm:text-2xl font-black font-display text-slate-900 leading-tight mt-0.5">
+                    {facilityModalImage.title}
+                  </h3>
+                </div>
+
+                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal">
+                  {facilityModalImage.description}
+                </p>
+
+                {/* Specs List */}
+                <div className="space-y-2 pt-2 border-t border-slate-100">
+                  <h5 className="text-[11px] font-black uppercase text-slate-800 tracking-wider">
+                    Equipment &amp; Process Features:
+                  </h5>
+                  <ul className="space-y-1.5">
+                    {facilityModalImage.specs.map((spec, sIdx) => (
+                      <li key={sIdx} className="flex items-start space-x-2 text-xs text-slate-700">
+                        <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                        <span>{spec}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                {/* Direct Action Buttons */}
+                <div className="pt-3 flex flex-wrap items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setFacilityModalImage(null);
+                      setCurrentView('booking');
+                    }}
+                    className="flex-1 py-3 bg-sky-600 hover:bg-sky-700 active:scale-95 text-white font-bold rounded-xl text-xs flex items-center justify-center space-x-1.5 shadow-md shadow-sky-600/20 transition-all"
+                  >
+                    <Calendar className="w-3.5 h-3.5 text-amber-300" />
+                    <span>Book Laundry Pickup</span>
+                  </button>
+                  <a
+                    href="tel:9893733683"
+                    className="px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold rounded-xl text-xs flex items-center space-x-1.5 transition-colors"
+                  >
+                    <Phone className="w-3.5 h-3.5 text-emerald-600" />
+                    <span>Call Store</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

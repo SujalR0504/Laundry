@@ -96,7 +96,7 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
               } font-semibold mt-0.5 hidden sm:flex items-center space-x-1.5 truncate`}
             >
               <span className="text-sky-600 font-bold">2 Branches:</span>
-              <span className="truncate text-slate-600">Nehru Nagar & Hari Om (Ring Road)</span>
+              <span className="truncate text-slate-600">Arun Nagar &amp; Hari Om (Ring Road)</span>
             </p>
           )}
         </div>

@@ -179,9 +179,32 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [categories, setCategories] = useState<ServiceCategory[]>(() =>
     loadLocal('categories', SEED_CATEGORIES)
   );
-  const [services, setServices] = useState<ServiceItem[]>(() =>
-    loadLocal('services', SEED_SERVICES)
-  );
+  const [services, setServices] = useState<ServiceItem[]>(() => {
+    const existing = loadLocal<ServiceItem[]>('services', []);
+    if (existing && existing.length > 0) {
+      const seedMap = new Map(SEED_SERVICES.map((s) => [s.id, s]));
+      const updated = existing.map((s) => {
+        const seedItem = seedMap.get(s.id);
+        if (seedItem) {
+          return {
+            ...s,
+            image: seedItem.image,
+            name: seedItem.name,
+            categoryId: seedItem.categoryId,
+            turnaroundHours: seedItem.turnaroundHours,
+          };
+        }
+        return s;
+      });
+      const existingIds = new Set(existing.map((s) => s.id));
+      const newItems = SEED_SERVICES.filter((s) => !existingIds.has(s.id));
+      const finalServices = [...updated, ...newItems];
+      saveLocal('services', finalServices);
+      return finalServices;
+    }
+    saveLocal('services', SEED_SERVICES);
+    return SEED_SERVICES;
+  });
   const [cart, setCart] = useState<CartItem[]>(() => loadLocal('cart', []));
   const [orders, setOrders] = useState<Order[]>(() =>
     loadLocal('orders', SEED_INITIAL_ORDERS)
@@ -785,6 +808,17 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const openInvoice = (order: Order) => setInvoiceOrder(order);
   const closeInvoice = () => setInvoiceOrder(null);
 
+  const navigateToView = (view: ActiveView) => {
+    setCurrentView(view);
+    try {
+      window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+    } catch {
+      // browser environment check
+    }
+  };
+
   return (
     <AppContext.Provider
       value={{
@@ -792,7 +826,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         switchUserRole,
         users: SEED_USERS,
         currentView,
-        setCurrentView,
+        setCurrentView: navigateToView,
         selectedOrderIdForTracking,
         trackOrderById,
 
