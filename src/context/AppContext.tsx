@@ -18,6 +18,10 @@ import {
   CMSContent,
   AuditLog,
   PaymentMethod,
+  PaymentStatus,
+  BankAccount,
+  Expense,
+  CustomerDueRecord,
 } from '../types';
 import {
   SEED_CATEGORIES,
@@ -32,6 +36,9 @@ import {
   SEED_REVIEWS,
   SEED_USERS,
   SEED_INITIAL_ORDERS,
+  SEED_ACCOUNTS,
+  SEED_EXPENSES,
+  SEED_CUSTOMER_DUES,
 } from '../data/seedData';
 
 export type ActiveView =
@@ -86,6 +93,14 @@ interface AppContextType {
     deliveryMode: 'standard' | 'express';
     couponCode?: string;
     paymentMethod: PaymentMethod;
+    previousBalance?: number;
+    paidAmount?: number;
+    remainingDue?: number;
+    paymentBreakdown?: {
+      cash?: number;
+      online?: number;
+      due?: number;
+    };
   }) => Order;
   updateOrderStatus: (orderId: string, newStatus: OrderStatus, note?: string) => void;
   assignDeliveryStaff: (orderId: string, staffId: string) => void;
@@ -146,6 +161,26 @@ interface AppContextType {
   invoiceOrder: Order | null;
   openInvoice: (order: Order) => void;
   closeInvoice: () => void;
+
+  // Accounting & Multiple Accounts (Khata, Expenses, Cashbook)
+  accounts: BankAccount[];
+  addAccount: (account: Omit<BankAccount, 'id' | 'currentBalance' | 'totalInflow' | 'totalOutflow'>) => void;
+  updateAccount: (id: string, account: Partial<BankAccount>) => void;
+  deleteAccount: (id: string) => void;
+  expenses: Expense[];
+  addExpense: (expense: Omit<Expense, 'id' | 'createdAt'>) => void;
+  deleteExpense: (id: string) => void;
+  customerDues: CustomerDueRecord[];
+  setCustomerDues: React.Dispatch<React.SetStateAction<CustomerDueRecord[]>>;
+  recordDuePayment: (dueId: string, amountPaid: number, accountId: string, paymentMode: 'Cash' | 'UPI' | 'Bank Transfer', note?: string) => void;
+  addCustomerDue: (due: Omit<CustomerDueRecord, 'id'>) => void;
+  deleteCustomerDue: (id: string) => void;
+  updateCustomerDue: (id: string, due: Partial<CustomerDueRecord>) => void;
+  resetToMyBillBookDues: () => void;
+  getCustomerDue: (phone: string) => number;
+  eraseAllPlatformData: () => void;
+  selectedGlobalBranch: string;
+  setSelectedGlobalBranch: (branch: string) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -187,11 +222,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         const seedItem = seedMap.get(s.id);
         if (seedItem) {
           return {
+            ...seedItem,
             ...s,
-            image: seedItem.image,
-            name: seedItem.name,
-            categoryId: seedItem.categoryId,
-            turnaroundHours: seedItem.turnaroundHours,
+            image: s.image || seedItem.image,
           };
         }
         return s;
@@ -216,8 +249,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         name: 'Aarav Sharma',
         mobile: '9329838804',
         houseFlat: 'House No. 14, Near Gayatri School',
-        street: 'Nehru Nagar Main Road',
-        area: 'Nehru Nagar',
+        street: 'Arun Nagar Main Road',
+        area: 'Arun Nagar',
         city: 'Rewa',
         state: 'Madhya Pradesh',
         pincode: '486001',
@@ -237,9 +270,23 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [deliveryStaff, setDeliveryStaff] = useState<DeliveryStaff[]>(() =>
     loadLocal('deliveryStaff', SEED_DELIVERY_STAFF)
   );
-  const [businessSettings, setBusinessSettings] = useState<BusinessSettings>(() =>
-    loadLocal('businessSettings', SEED_BUSINESS_SETTINGS)
-  );
+  const [businessSettings, setBusinessSettings] = useState<BusinessSettings>(() => {
+    const loaded = loadLocal('businessSettings', SEED_BUSINESS_SETTINGS);
+    return {
+      ...SEED_BUSINESS_SETTINGS,
+      ...loaded,
+      invoiceSettings: {
+        branch1: {
+          ...SEED_BUSINESS_SETTINGS.invoiceSettings!.branch1,
+          ...(loaded.invoiceSettings?.branch1 || {}),
+        },
+        branch2: {
+          ...SEED_BUSINESS_SETTINGS.invoiceSettings!.branch2,
+          ...(loaded.invoiceSettings?.branch2 || {}),
+        },
+      },
+    };
+  });
   const [cms, setCms] = useState<CMSContent>(() =>
     loadLocal('cms', SEED_CMS)
   );
@@ -264,7 +311,49 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [invoiceOrder, setInvoiceOrder] = useState<Order | null>(null);
 
+  // Accounting States
+  const [accounts, setAccounts] = useState<BankAccount[]>(() =>
+    loadLocal('accounts', SEED_ACCOUNTS)
+  );
+  const [expenses, setExpenses] = useState<Expense[]>(() =>
+    loadLocal('expenses', SEED_EXPENSES)
+  );
+  const [selectedGlobalBranch, setSelectedGlobalBranch] = useState<string>(() =>
+    loadLocal('selectedGlobalBranch', 'all')
+  );
+  const [customerDues, setCustomerDues] = useState<CustomerDueRecord[]>(() => {
+    const local = loadLocal<CustomerDueRecord[]>('customerDues', []);
+    const source = !local || local.length === 0 ? SEED_CUSTOMER_DUES : local;
+
+    // Deduplicate and normalize branch to ONLY The Laundry Lounge or Hari Om Laundry
+    const seen = new Set<string>();
+    const uniqueDues: CustomerDueRecord[] = [];
+    source.forEach((d) => {
+      const cleanPhone = (d.customerPhone || '').replace(/\D/g, '');
+      const isStorePhone = cleanPhone === '9893733683';
+      const key = (!cleanPhone || isStorePhone)
+        ? `${d.customerName.trim().toLowerCase()}_${cleanPhone}`
+        : cleanPhone;
+
+      if (!seen.has(key)) {
+        seen.add(key);
+        const text = (d.customerName + ' ' + (d.notes || '') + ' ' + (d.branch || '')).toLowerCase();
+        let branch = 'The Laundry Lounge';
+        if (d.branch === 'Hari Om Laundry' || text.includes('hari om') || text.includes('hariom') || text.includes('ring road')) {
+          branch = 'Hari Om Laundry';
+        }
+        uniqueDues.push({
+          ...d,
+          branch,
+        });
+      }
+    });
+    saveLocal('customerDues', uniqueDues);
+    return uniqueDues;
+  });
+
   // Sync to localStorage
+  useEffect(() => saveLocal('selectedGlobalBranch', selectedGlobalBranch), [selectedGlobalBranch]);
   useEffect(() => saveLocal('currentUser', currentUser), [currentUser]);
   useEffect(() => saveLocal('categories', categories), [categories]);
   useEffect(() => saveLocal('services', services), [services]);
@@ -280,6 +369,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   useEffect(() => saveLocal('reviews', reviews), [reviews]);
   useEffect(() => saveLocal('faqs', faqs), [faqs]);
   useEffect(() => saveLocal('auditLogs', auditLogs), [auditLogs]);
+  useEffect(() => saveLocal('accounts', accounts), [accounts]);
+  useEffect(() => saveLocal('expenses', expenses), [expenses]);
+  useEffect(() => saveLocal('customerDues', customerDues), [customerDues]);
 
   // Toast
   const showToast = (message: string, type: 'success' | 'error' | 'info' = 'success') => {
@@ -310,6 +402,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   // Role Switching
   const switchUserRole = (role: UserRole) => {
+    if (currentUser.role === role) {
+      if (role === 'admin' || role === 'manager') {
+        setCurrentView('admin-dashboard');
+      }
+      return;
+    }
     const userMatch = SEED_USERS.find((u) => u.role === role) || {
       id: `user-${role}`,
       name: `${role.toUpperCase()} User`,
@@ -449,7 +547,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return serviceAreas.find((sa) => sa.pincode === pincode.trim() && sa.isServiceable);
   };
 
-  // Order Creation (Server-Authoritative Pricing Engine)
+  // Order Creation (Server-Authoritative Pricing Engine with custom split payments & customer dues)
   const createOrder = ({
     items,
     address,
@@ -458,6 +556,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     deliveryMode,
     couponCode,
     paymentMethod,
+    previousBalance = 0,
+    paidAmount,
+    remainingDue,
+    paymentBreakdown,
   }: {
     items: CartItem[];
     address: Address;
@@ -466,6 +568,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     deliveryMode: 'standard' | 'express';
     couponCode?: string;
     paymentMethod: PaymentMethod;
+    previousBalance?: number;
+    paidAmount?: number;
+    remainingDue?: number;
+    paymentBreakdown?: {
+      cash?: number;
+      online?: number;
+      due?: number;
+    };
   }): Order => {
     // 1. Calculate Authoritative Subtotal from verified catalog prices
     const authoritativeSubtotal = items.reduce((sum, item) => {
@@ -500,10 +610,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       }
     }
 
-    // 4. Tax (GST)
+    // 4. Tax (GST) & Effective Net Total
     const taxableAmount = Math.max(0, authoritativeSubtotal - discount + deliveryFee + expressFee);
     const tax = Math.round((taxableAmount * businessSettings.gstPercentage) / 100 * 100) / 100;
-    const total = Math.round((taxableAmount + tax) * 100) / 100;
+    const currentOrderTotal = Math.round((taxableAmount + tax) * 100) / 100;
+    const effectiveTotal = Math.round((currentOrderTotal + (previousBalance || 0)) * 100) / 100;
 
     // 5. Unique Order ID & OTP
     const orderSeq = orders.length + 101;
@@ -516,10 +627,21 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     pickupD.setDate(pickupD.getDate() + deliveryDays);
     const expectedDeliveryDate = pickupD.toISOString().split('T')[0];
 
-    // 7. Payment status
-    const paymentStatus = paymentMethod === 'Cash on Delivery' ? 'Pending' : 'Paid';
+    // 7. Payment breakdown, paid amount, and payment status
+    const finalPaid =
+      paidAmount !== undefined
+        ? paidAmount
+        : paymentMethod === 'Cash on Delivery'
+        ? 0
+        : effectiveTotal;
+    const finalDue =
+      remainingDue !== undefined
+        ? remainingDue
+        : Math.max(0, effectiveTotal - finalPaid);
+    const finalPaymentStatus: PaymentStatus = finalDue <= 0 ? 'Paid' : 'Pending';
+
     const razorpayPaymentId =
-      paymentMethod !== 'Cash on Delivery'
+      paymentMethod !== 'Cash on Delivery' && finalPaid > 0
         ? `pay_${Math.random().toString(36).substring(2, 12)}`
         : undefined;
 
@@ -542,10 +664,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       expressFee,
       discount,
       tax,
-      total,
+      total: effectiveTotal,
       couponCode,
       paymentMethod,
-      paymentStatus,
+      paymentStatus: finalPaymentStatus,
       razorpayPaymentId,
       razorpayOrderId: paymentMethod === 'Razorpay' ? `order_rzp_${Date.now()}` : undefined,
       orderStatus: 'Order Placed',
@@ -553,18 +675,105 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         {
           status: 'Order Placed',
           timestamp: new Date().toISOString(),
-          note: `Booking confirmed via ${paymentMethod}. Total ₹${total}`,
+          note: `Booking confirmed via ${paymentMethod}. Total ₹${effectiveTotal} (Paid: ₹${finalPaid}, Due: ₹${finalDue})`,
           updatedBy: currentUser.name,
         },
       ],
       deliveryOtp,
+      previousBalance: previousBalance || 0,
+      paidAmount: finalPaid,
+      remainingDue: finalDue,
+      paymentBreakdown: paymentBreakdown || {
+        cash: paymentMethod === 'Cash on Delivery' ? finalPaid : 0,
+        online: paymentMethod !== 'Cash on Delivery' ? finalPaid : 0,
+        due: finalDue,
+      },
       createdAt: new Date().toISOString(),
     };
 
+    // Update orders list
     setOrders((prev) => [newOrder, ...prev]);
     clearCart();
-    logAuditAction('Order Created', 'order', `Order ${orderNumber} created. Total ₹${total}`);
+
+    // 8. Auto-update Khata (customer dues) for the customer's mobile number
+    const cleanPhone = (address.mobile || currentUser.phone || '').replace(/[^0-9]/g, '').slice(-10);
+    if (cleanPhone) {
+      setCustomerDues((prev) => {
+        const existingIdx = prev.findIndex(
+          (d) => d.customerPhone.replace(/[^0-9]/g, '').slice(-10) === cleanPhone
+        );
+        if (existingIdx >= 0) {
+          const existing = prev[existingIdx];
+          const updated = [...prev];
+          updated[existingIdx] = {
+            ...existing,
+            customerName: address.name || existing.customerName,
+            totalBilled: existing.totalBilled + authoritativeSubtotal,
+            totalPaid: existing.totalPaid + finalPaid,
+            pendingDue: finalDue,
+            lastPaymentDate: new Date().toISOString().split('T')[0],
+            notes: `Counter Order ${orderNumber} (Billed: ₹${effectiveTotal}, Paid: ₹${finalPaid})`,
+          };
+          return updated;
+        } else if (finalDue > 0) {
+          const newDueRecord: CustomerDueRecord = {
+            id: `due-${Date.now()}`,
+            customerId: currentUser.id || `cust-${Date.now()}`,
+            customerName: address.name || currentUser.name || 'Walk-in Customer',
+            customerPhone: address.mobile || currentUser.phone,
+            totalBilled: effectiveTotal,
+            totalPaid: finalPaid,
+            pendingDue: finalDue,
+            branch: address.area || 'Branch 1 - Arun Nagar',
+            lastPaymentDate: new Date().toISOString().split('T')[0],
+            notes: `Counter Order ${orderNumber}`,
+          };
+          return [newDueRecord, ...prev];
+        }
+        return prev;
+      });
+    }
+
+    // 9. Update accounts (Cash Drawer & Bank/UPI balances)
+    if (paymentBreakdown) {
+      const cashInflow = paymentBreakdown.cash || 0;
+      const onlineInflow = paymentBreakdown.online || 0;
+      if (cashInflow > 0 || onlineInflow > 0) {
+        setAccounts((prev) =>
+          prev.map((acc) => {
+            if (cashInflow > 0 && acc.accountType === 'cash_drawer') {
+              return {
+                ...acc,
+                currentBalance: acc.currentBalance + cashInflow,
+                totalInflow: acc.totalInflow + cashInflow,
+              };
+            }
+            if (onlineInflow > 0 && (acc.accountType === 'upi_merchant' || acc.isPrimary)) {
+              return {
+                ...acc,
+                currentBalance: acc.currentBalance + onlineInflow,
+                totalInflow: acc.totalInflow + onlineInflow,
+              };
+            }
+            return acc;
+          })
+        );
+      }
+    }
+
+    logAuditAction('Order Created', 'order', `Order ${orderNumber} created. Total ₹${effectiveTotal} (Paid: ₹${finalPaid}, Due: ₹${finalDue})`);
     return newOrder;
+  };
+
+  // Helper to lookup unpaid customer dues by phone number
+  const getCustomerDue = (phone: string): number => {
+    if (!phone) return 0;
+    const cleanPhone = phone.replace(/[^0-9]/g, '').slice(-10);
+    if (!cleanPhone) return 0;
+    const match = customerDues.find(
+      (d) => d.customerPhone.replace(/[^0-9]/g, '').slice(-10) === cleanPhone
+    );
+    return match ? Math.max(0, match.pendingDue) : 0;
   };
 
   // Order Status Updates
@@ -808,6 +1017,200 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const openInvoice = (order: Order) => setInvoiceOrder(order);
   const closeInvoice = () => setInvoiceOrder(null);
 
+  // Accounting & Cashbook Methods
+  const addAccount = (accData: Omit<BankAccount, 'id' | 'currentBalance' | 'totalInflow' | 'totalOutflow'>) => {
+    const newAcc: BankAccount = {
+      ...accData,
+      id: 'acc-' + Date.now(),
+      currentBalance: Number(accData.openingBalance) || 0,
+      totalInflow: 0,
+      totalOutflow: 0,
+    };
+    setAccounts((prev) => [newAcc, ...prev]);
+    logAuditAction('Account Created', 'accounting', `New account ${newAcc.name} added with opening balance ₹${newAcc.openingBalance}`);
+    showToast(`Account "${newAcc.name}" created successfully!`, 'success');
+  };
+
+  const updateAccount = (id: string, updated: Partial<BankAccount>) => {
+    setAccounts((prev) => prev.map((a) => (a.id === id ? { ...a, ...updated } : a)));
+    logAuditAction('Account Updated', 'accounting', `Account ${id} details updated.`);
+    showToast('Account details updated successfully!', 'success');
+  };
+
+  const deleteAccount = (id: string) => {
+    setAccounts((prev) => prev.filter((a) => a.id !== id));
+    logAuditAction('Account Deleted', 'accounting', `Account ${id} removed.`);
+    showToast('Account removed from ledger.', 'info');
+  };
+
+  const addExpense = (expData: Omit<Expense, 'id' | 'createdAt'>) => {
+    const newExp: Expense = {
+      ...expData,
+      id: 'exp-' + Date.now(),
+      createdAt: new Date().toISOString(),
+    };
+    setExpenses((prev) => [newExp, ...prev]);
+
+    // Deduct from the account balance
+    setAccounts((prev) =>
+      prev.map((acc) => {
+        if (acc.id === expData.paidViaAccountId) {
+          return {
+            ...acc,
+            currentBalance: acc.currentBalance - expData.amount,
+            totalOutflow: acc.totalOutflow + expData.amount,
+          };
+        }
+        return acc;
+      })
+    );
+
+    logAuditAction('Expense Recorded', 'accounting', `₹${expData.amount} paid for "${expData.title}" via ${expData.accountName}`);
+    showToast(`Expense ₹${expData.amount} recorded successfully!`, 'success');
+  };
+
+  const deleteExpense = (id: string) => {
+    const target = expenses.find((e) => e.id === id);
+    if (target) {
+      setAccounts((prev) =>
+        prev.map((acc) => {
+          if (acc.id === target.paidViaAccountId) {
+            return {
+              ...acc,
+              currentBalance: acc.currentBalance + target.amount,
+              totalOutflow: Math.max(0, acc.totalOutflow - target.amount),
+            };
+          }
+          return acc;
+        })
+      );
+    }
+    setExpenses((prev) => prev.filter((e) => e.id !== id));
+    logAuditAction('Expense Deleted', 'accounting', `Expense ${id} deleted.`);
+    showToast('Expense entry deleted.', 'info');
+  };
+
+  const recordDuePayment = (
+    dueId: string,
+    amountPaid: number,
+    accountId: string,
+    paymentMode: 'Cash' | 'UPI' | 'Bank Transfer',
+    note?: string
+  ) => {
+    const target = customerDues.find((d) => d.id === dueId);
+    if (!target) return;
+
+    const newPending = Math.max(0, target.pendingDue - amountPaid);
+    const newPaid = target.totalPaid + amountPaid;
+    const todayStr = new Date().toISOString().split('T')[0];
+
+    setCustomerDues((prev) =>
+      prev.map((d) =>
+        d.id === dueId
+          ? {
+              ...d,
+              totalPaid: newPaid,
+              pendingDue: newPending,
+              lastPaymentDate: todayStr,
+              notes: note
+                ? `${d.notes || ''} | ${todayStr}: Received ₹${amountPaid} via ${paymentMode} - ${note}`
+                : d.notes,
+            }
+          : d
+      )
+    );
+
+    // Credit the account
+    setAccounts((prev) =>
+      prev.map((acc) => {
+        if (acc.id === accountId) {
+          return {
+            ...acc,
+            currentBalance: acc.currentBalance + amountPaid,
+            totalInflow: acc.totalInflow + amountPaid,
+          };
+        }
+        return acc;
+      })
+    );
+
+    logAuditAction(
+      'Customer Due Collected',
+      'accounting',
+      `₹${amountPaid} collected from ${target.customerName}. Remaining due: ₹${newPending}. Credited to ${accountId}.`
+    );
+    showToast(`₹${amountPaid} payment collected from ${target.customerName}!`, 'success');
+  };
+
+  const addCustomerDue = (due: Omit<CustomerDueRecord, 'id'>) => {
+    const newDue: CustomerDueRecord = {
+      ...due,
+      id: 'due-' + Date.now(),
+    };
+    setCustomerDues((prev) => [newDue, ...prev]);
+    showToast(`Khata entry for ${newDue.customerName} created!`, 'success');
+  };
+
+  const deleteCustomerDue = (id: string) => {
+    const target = customerDues.find((d) => d.id === id);
+    setCustomerDues((prev) => prev.filter((d) => d.id !== id));
+    logAuditAction('Customer Due Removed', 'accounting', `Due entry for ${target?.customerName || id} removed.`);
+    showToast('Customer due record removed', 'info');
+  };
+
+  const updateCustomerDue = (id: string, dueUpdate: Partial<CustomerDueRecord>) => {
+    setCustomerDues((prev) =>
+      prev.map((d) => (d.id === id ? { ...d, ...dueUpdate } : d))
+    );
+    showToast('Customer due record updated', 'success');
+  };
+
+  const resetToMyBillBookDues = () => {
+    setCustomerDues(SEED_CUSTOMER_DUES);
+    saveLocal('customerDues', SEED_CUSTOMER_DUES);
+    logAuditAction('MyBillBook Sync', 'accounting', 'Reloaded 110 party ledgers from MyBillBook (₹19,785 total due).');
+    showToast('Synced 110 MyBillBook parties (₹19,785 to collect)!', 'success');
+  };
+
+  const eraseAllPlatformData = () => {
+    try {
+      Object.keys(localStorage).forEach((key) => {
+        if (key.startsWith('laundry_lounge_') || key.startsWith('mbb_business_')) {
+          localStorage.removeItem(key);
+        }
+      });
+    } catch (e) {
+      console.error(e);
+    }
+
+    setOrders([]);
+    setCustomerDues([]);
+    setExpenses([]);
+    setCart([]);
+    setAuditLogs([
+      {
+        id: `log-${Date.now()}`,
+        timestamp: new Date().toISOString(),
+        actorName: currentUser.name || 'Admin',
+        actorRole: currentUser.role || 'admin',
+        action: 'Factory Reset Executed',
+        targetType: 'system',
+        details: 'All orders, customer dues, expenses, and stored browser data erased.',
+      },
+    ]);
+    setAccounts((prev) =>
+      prev.map((acc) => ({
+        ...acc,
+        openingBalance: 0,
+        currentBalance: 0,
+        totalInflow: 0,
+        totalOutflow: 0,
+      }))
+    );
+
+    showToast('All transaction records & stored data have been erased!', 'info');
+  };
+
   const navigateToView = (view: ActiveView) => {
     setCurrentView(view);
     try {
@@ -897,6 +1300,26 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         invoiceOrder,
         openInvoice,
         closeInvoice,
+
+        // Accounting
+        accounts,
+        addAccount,
+        updateAccount,
+        deleteAccount,
+        expenses,
+        addExpense,
+        deleteExpense,
+        customerDues,
+        setCustomerDues,
+        recordDuePayment,
+        addCustomerDue,
+        deleteCustomerDue,
+        updateCustomerDue,
+        resetToMyBillBookDues,
+        getCustomerDue,
+        eraseAllPlatformData,
+        selectedGlobalBranch,
+        setSelectedGlobalBranch,
       }}
     >
       {children}

@@ -15,13 +15,24 @@ import {
   User,
   ShieldCheck,
   CheckCircle2,
+  Receipt,
+  QrCode,
+  Phone,
+  MessageCircle,
+  DollarSign,
+  AlertCircle,
+  Copy,
+  ExternalLink,
 } from 'lucide-react';
 import { Order } from '../types';
 
 export const CustomerDashboardPage: React.FC = () => {
   const {
     currentUser,
+    switchUserRole,
     orders,
+    customerDues,
+    businessSettings,
     addresses,
     addAddress,
     deleteAddress,
@@ -33,7 +44,8 @@ export const CustomerDashboardPage: React.FC = () => {
     showToast,
   } = useApp();
 
-  const [activeTab, setActiveTab] = useState<'orders' | 'addresses' | 'coupons' | 'profile'>('orders');
+  const [activeTab, setActiveTab] = useState<'orders' | 'addresses' | 'coupons' | 'profile' | 'dues'>('orders');
+  const [showUpiModal, setShowUpiModal] = useState(false);
 
   // New address mini state
   const [showAddAddr, setShowAddAddr] = useState(false);
@@ -54,6 +66,14 @@ export const CustomerDashboardPage: React.FC = () => {
   );
   const activeOrders = myOrders.filter((o) => o.orderStatus !== 'Delivered' && o.orderStatus !== 'Cancelled');
   const pastOrders = myOrders.filter((o) => o.orderStatus === 'Delivered' || o.orderStatus === 'Cancelled');
+
+  const myDues = customerDues.filter(
+    (d) =>
+      (d.customerPhone && currentUser.phone && d.customerPhone.replace(/\D/g, '') === currentUser.phone.replace(/\D/g, '')) ||
+      (d.customerId && d.customerId === currentUser.id) ||
+      (currentUser.name && d.customerName.toLowerCase().includes(currentUser.name.toLowerCase()))
+  );
+  const myTotalDue = myDues.reduce((sum, d) => sum + (d.pendingDue || 0), 0);
 
   const handleReorder = (order: Order) => {
     order.items.forEach((item) => {
@@ -115,6 +135,18 @@ export const CustomerDashboardPage: React.FC = () => {
             <div className="text-[11px] sm:text-xs text-brand-200">Total Bookings</div>
             <div className="text-base sm:text-lg font-black">{myOrders.length}</div>
           </div>
+          <div className="w-px h-8 bg-white/20 hidden sm:block" />
+          <button
+            onClick={() => {
+              switchUserRole('admin');
+              setCurrentView('admin-dashboard');
+              showToast('Switched to Admin Portal', 'success');
+            }}
+            className="px-3.5 py-2 bg-white/20 hover:bg-white/30 rounded-xl text-xs font-bold text-white transition-all border border-white/20 active:scale-95"
+            title="Switch to Admin Dashboard"
+          >
+            Admin Login →
+          </button>
         </div>
       </div>
 
@@ -149,6 +181,22 @@ export const CustomerDashboardPage: React.FC = () => {
           }`}
         >
           My Coupons ({coupons.length})
+        </button>
+        <button
+          onClick={() => setActiveTab('dues')}
+          className={`pb-3 transition-colors flex items-center space-x-1.5 shrink-0 ${
+            activeTab === 'dues'
+              ? 'border-b-2 border-rose-600 text-rose-600 font-extrabold'
+              : 'text-slate-500 hover:text-slate-900'
+          }`}
+        >
+          <Receipt className="w-4 h-4" />
+          <span>My Dues &amp; Khata</span>
+          {myTotalDue > 0 && (
+            <span className="px-1.5 py-0.5 rounded-full bg-rose-100 text-rose-700 font-black text-[10px]">
+              ₹{myTotalDue.toLocaleString('en-IN')}
+            </span>
+          )}
         </button>
         <button
           onClick={() => setActiveTab('profile')}
@@ -494,6 +542,186 @@ export const CustomerDashboardPage: React.FC = () => {
                 className="w-full px-3 py-2 bg-slate-100 rounded-xl border border-slate-200 text-slate-700 font-medium"
               />
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* TAB CONTENT: MY DUES & KHATA */}
+      {activeTab === 'dues' && (
+        <div className="space-y-6">
+          {/* Due Summary Card */}
+          <div className="bg-gradient-to-r from-rose-950 via-slate-900 to-slate-950 rounded-3xl p-6 sm:p-8 text-white shadow-xl border border-rose-900/40 relative overflow-hidden">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+              <div>
+                <span className="text-[10px] font-black uppercase tracking-wider text-rose-300 bg-rose-950/90 border border-rose-500/40 px-3 py-1 rounded-full">
+                  Customer Udhar Khata Ledger
+                </span>
+                <h3 className="text-xl sm:text-2xl font-black text-white mt-2">
+                  My Pending Dues &amp; Khata Statement
+                </h3>
+                <p className="text-xs text-slate-300 max-w-lg mt-1">
+                  Check your pending balances for counter orders, dry cleaning, and doorstep delivery. You can pay anytime via UPI QR.
+                </p>
+              </div>
+
+              <div className="bg-slate-900/90 p-4 sm:p-5 rounded-2xl border border-rose-500/50 text-right sm:min-w-[180px]">
+                <div className="text-[10px] font-bold text-rose-300 uppercase tracking-wider">
+                  Total Outstanding
+                </div>
+                <div className="text-2xl sm:text-3xl font-black text-rose-400 mt-1">
+                  ₹{myTotalDue.toLocaleString('en-IN')}
+                </div>
+                {myTotalDue > 0 ? (
+                  <button
+                    onClick={() => setShowUpiModal(true)}
+                    className="mt-3 w-full py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold transition-all shadow-md active:scale-95 flex items-center justify-center space-x-1.5"
+                  >
+                    <QrCode className="w-3.5 h-3.5" />
+                    <span>Pay via UPI QR</span>
+                  </button>
+                ) : (
+                  <span className="inline-block mt-2 text-[11px] font-bold text-emerald-400">
+                    ✓ All Bills Clear
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Dues List */}
+          {myDues.length === 0 ? (
+            <div className="bg-white p-8 rounded-3xl border border-slate-200 text-center space-y-3">
+              <div className="w-12 h-12 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto">
+                <CheckCircle2 className="w-6 h-6" />
+              </div>
+              <h4 className="font-extrabold text-slate-900 text-sm">All Accounts Clear!</h4>
+              <p className="text-xs text-slate-500 max-w-md mx-auto">
+                You have no pending dues or credit balance with The Laundry Lounge. Thank you for being a valued customer!
+              </p>
+            </div>
+          ) : (
+            <div className="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-soft-sm">
+              <div className="p-4 sm:p-5 border-b border-slate-100 flex items-center justify-between">
+                <h4 className="font-extrabold text-sm text-slate-900 flex items-center space-x-2">
+                  <Receipt className="w-4 h-4 text-rose-600" />
+                  <span>Itemized Due Records ({myDues.length})</span>
+                </h4>
+                <span className="text-xs font-bold text-rose-700 bg-rose-50 px-2.5 py-0.5 rounded-full border border-rose-200">
+                  Total: ₹{myTotalDue.toLocaleString('en-IN')}
+                </span>
+              </div>
+
+              <div className="divide-y divide-slate-100 text-xs">
+                {myDues.map((d) => (
+                  <div key={d.id} className="p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-slate-50/50 transition-colors">
+                    <div className="space-y-1">
+                      <div className="flex items-center space-x-2">
+                        <span className="font-extrabold text-slate-900 text-sm">{d.branch}</span>
+                        <span className="text-[10px] font-semibold bg-slate-100 text-slate-600 px-2 py-0.5 rounded-md">
+                          Ref: {d.id}
+                        </span>
+                      </div>
+                      <p className="text-slate-600 text-xs">{d.notes || 'Counter order and dry cleaning services'}</p>
+                      <div className="flex items-center space-x-4 text-[11px] text-slate-500 pt-1">
+                        <span>Total Billed: <strong className="text-slate-800">₹{d.totalBilled.toLocaleString('en-IN')}</strong></span>
+                        <span>Paid: <strong className="text-emerald-700">₹{d.totalPaid.toLocaleString('en-IN')}</strong></span>
+                        {d.lastPaymentDate && <span>Last Payment: {d.lastPaymentDate}</span>}
+                      </div>
+                    </div>
+
+                    <div className="flex items-center space-x-3 self-end sm:self-center">
+                      <div className="text-right">
+                        <div className="text-[10px] text-slate-400 font-bold uppercase">Pending Due</div>
+                        <div className="text-base font-black text-rose-600">₹{d.pendingDue.toLocaleString('en-IN')}</div>
+                      </div>
+
+                      <button
+                        onClick={() => setShowUpiModal(true)}
+                        className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold transition-all shadow-xs"
+                      >
+                        Pay Now
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Contact Store Banner */}
+          <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+            <div className="flex items-center space-x-2.5">
+              <Phone className="w-4 h-4 text-emerald-600" />
+              <span className="text-slate-600">Have questions about your bills? Call our Rewa hubs: <strong>9893733683 / 9329838804</strong></span>
+            </div>
+            <a
+              href="https://wa.me/919893733683?text=Hello%20The%20Laundry%20Lounge,%20I%20have%20a%20query%20about%20my%20bill%20due."
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center space-x-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-bold transition-colors shrink-0"
+            >
+              <MessageCircle className="w-3.5 h-3.5" />
+              <span>WhatsApp Store</span>
+            </a>
+          </div>
+        </div>
+      )}
+
+      {/* UPI QR PAYMENT MODAL */}
+      {showUpiModal && (
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl border border-slate-200 text-center space-y-4 animate-in fade-in zoom-in-95">
+            <div className="flex justify-between items-center pb-2 border-b border-slate-100">
+              <span className="font-extrabold text-sm text-slate-900">Pay via UPI QR Code</span>
+              <button
+                onClick={() => setShowUpiModal(false)}
+                className="text-slate-400 hover:text-slate-600"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="space-y-1">
+              <div className="text-xs text-slate-500">Scan to pay pending balance of</div>
+              <div className="text-3xl font-black text-slate-900">₹{myTotalDue.toLocaleString('en-IN')}</div>
+              <div className="text-[11px] text-emerald-700 font-bold">The Laundry Lounge Rewa</div>
+            </div>
+
+            {/* QR Code Container */}
+            <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200 inline-block shadow-inner">
+              <img
+                src={`https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=upi://pay?pa=${encodeURIComponent(businessSettings?.upiId || 'thelaundrylounge@upi')}%26pn=The%20Laundry%20Lounge%26am=${myTotalDue}%26cu=INR`}
+                alt="UPI QR Code"
+                className="w-44 h-44 mx-auto rounded-lg"
+              />
+            </div>
+
+            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200 text-xs flex items-center justify-between">
+              <span className="font-mono text-slate-700">{businessSettings?.upiId || 'thelaundrylounge@upi'}</span>
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText(businessSettings?.upiId || 'thelaundrylounge@upi');
+                  showToast('UPI ID copied to clipboard!', 'success');
+                }}
+                className="text-brand-600 hover:underline font-bold text-[11px]"
+              >
+                Copy
+              </button>
+            </div>
+
+            <p className="text-[10px] text-slate-400">
+              Works with PhonePe, Google Pay, Paytm, BHIM or any UPI App. After payment, take a screenshot and send on WhatsApp.
+            </p>
+
+            <button
+              onClick={() => {
+                showToast('Thank you! Store notified of your payment.', 'success');
+                setShowUpiModal(false);
+              }}
+              className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold transition-all shadow-md active:scale-95"
+            >
+              I Have Completed Payment
+            </button>
           </div>
         </div>
       )}

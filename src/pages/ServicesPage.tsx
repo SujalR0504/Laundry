@@ -15,12 +15,25 @@ import {
   X,
   ShieldCheck,
   Zap,
+  Camera,
 } from 'lucide-react';
 import { ServiceItem } from '../types';
+import { ChangeServiceImageModal } from '../components/admin/ChangeServiceImageModal';
 
 export const ServicesPage: React.FC = () => {
-  const { categories, services, cart, addToCart, updateCartQuantity, setCurrentView, getCartCount, getCartSubtotal } =
-    useApp();
+  const {
+    categories,
+    services,
+    cart,
+    addToCart,
+    updateCartQuantity,
+    setCurrentView,
+    getCartCount,
+    getCartSubtotal,
+    currentUser,
+    updateService,
+    showToast,
+  } = useApp();
 
   const [selectedCatId, setSelectedCatId] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
@@ -28,6 +41,7 @@ export const ServicesPage: React.FC = () => {
   const [selectedNotes, setSelectedNotes] = useState<{ [serviceId: string]: string }>({});
   const [starchChoices, setStarchChoices] = useState<{ [serviceId: string]: boolean }>({});
   const [showFabricCareModal, setShowFabricCareModal] = useState(false);
+  const [editingPhotoService, setEditingPhotoService] = useState<ServiceItem | null>(null);
 
   let filteredServices = services.filter((svc) => {
     if (!svc.active) return false;
@@ -272,6 +286,22 @@ export const ServicesPage: React.FC = () => {
                     <span>{service.turnaroundHours}h</span>
                   </div>
 
+                  {/* Admin Change Photo Quick Action Button */}
+                  {currentUser?.role === 'admin' && (
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setEditingPhotoService(service);
+                      }}
+                      className="absolute top-2.5 right-2.5 bg-slate-900/85 hover:bg-brand-600 text-white text-[10px] font-bold px-2.5 py-1 rounded-xl flex items-center space-x-1 shadow-md transition-all z-10 active:scale-95"
+                      title="Admin: Change photo for this item"
+                    >
+                      <Camera className="w-3 h-3 text-brand-300" />
+                      <span>Change Photo</span>
+                    </button>
+                  )}
+
                   {service.customQuoteRequired && (
                     <span className="absolute bottom-2 left-2 bg-amber-500 text-white text-[10px] font-bold px-2 py-0.5 rounded shadow">
                       Quote on inspection
@@ -442,6 +472,17 @@ export const ServicesPage: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* QUICK PHOTO CHANGE MODAL FOR ADMIN */}
+      <ChangeServiceImageModal
+        isOpen={!!editingPhotoService}
+        onClose={() => setEditingPhotoService(null)}
+        service={editingPhotoService}
+        onSave={(serviceId, newImageUrl) => {
+          updateService(serviceId, { image: newImageUrl });
+          showToast('Service garment image updated!', 'success');
+        }}
+      />
     </div>
   );
 };

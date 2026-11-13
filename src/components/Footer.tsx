@@ -43,7 +43,7 @@ export const Footer: React.FC = () => {
               <div className="bg-slate-900/90 border border-slate-800 rounded-xl p-3 text-xs space-y-1">
                 <div className="flex items-center space-x-1.5 text-sky-400 font-bold">
                   <MapPin className="w-3.5 h-3.5 text-red-500 flex-shrink-0" />
-                  <span>Branch 1 (Arun Nagar):</span>
+                  <span>The Laundry Lounge (Branch 1 - Arun Nagar):</span>
                 </div>
                 <p className="text-slate-300 pl-5">
                   Near Gayatri School, In Front of Apna Super Bazar, Arun Nagar, Rewa (M. P.)
@@ -206,7 +206,12 @@ export const Footer: React.FC = () => {
               <span>Razorpay Verified Merchant</span>
             </span>
             <span>•</span>
-            <span>100% Eco-Safe Cleaning</span>
+            <button
+              onClick={() => setCurrentView('admin-dashboard')}
+              className="text-slate-500 hover:text-slate-300 transition-colors"
+            >
+              Admin Portal
+            </button>
           </div>
         </div>
       </div>

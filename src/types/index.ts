@@ -140,6 +140,14 @@ export interface Order {
   laundryInternalNotes?: string;
   deliveryOtp: string;
   deliveryProofPhoto?: string;
+  previousBalance?: number;
+  paidAmount?: number;
+  remainingDue?: number;
+  paymentBreakdown?: {
+    cash?: number;
+    online?: number;
+    due?: number;
+  };
   createdAt: string;
 }
 
@@ -207,6 +215,40 @@ export interface Branch {
   isMain?: boolean;
 }
 
+export interface BranchInvoiceConfig {
+  branchId: string;
+  businessTitle: string;
+  tagline?: string;
+  address: string;
+  phone: string;
+  secondaryPhone?: string;
+  email: string;
+  gstin?: string;
+  invoicePrefix: string;
+  accountHolderName: string;
+  ifscCode: string;
+  accountNumber: string;
+  bankName: string;
+  upiId: string;
+  customQrUrl?: string;
+  terms: string[];
+  signatoryTitle: string;
+  signatureText?: string;
+  stampImageUrl?: string;
+  logoUrl?: string;
+  showLogo?: boolean;
+  logoHeight?: number;
+  logoContainerStyle?: 'card' | 'frameless';
+  primaryColor?: string;
+  invoiceTitle?: string;
+  showQrCode?: boolean;
+  showBankDetails?: boolean;
+  showTerms?: boolean;
+  showPreviousDue?: boolean;
+  showAmountInWords?: boolean;
+  footerNote?: string;
+}
+
 export interface BusinessSettings {
   businessName: string;
   tagline: string;
@@ -231,6 +273,10 @@ export interface BusinessSettings {
   upiId: string;
   whatsappNumber: string;
   whatsappMessageTemplate: string;
+  invoiceSettings?: {
+    branch1: BranchInvoiceConfig;
+    branch2: BranchInvoiceConfig;
+  };
 }
 
 export interface CMSContent {
@@ -253,4 +299,73 @@ export interface AuditLog {
   action: string;
   targetType: string;
   details: string;
+}
+
+export interface BankAccount {
+  id: string;
+  name: string;
+  bankName: string;
+  accountNumber: string;
+  ifscCode: string;
+  branchName: string;
+  accountType: 'bank_current' | 'bank_savings' | 'upi_merchant' | 'cash_drawer';
+  openingBalance: number;
+  currentBalance: number;
+  totalInflow: number;
+  totalOutflow: number;
+  upiId?: string;
+  isPrimary?: boolean;
+}
+
+export interface Expense {
+  id: string;
+  title: string;
+  category:
+    | 'Detergents & Chemicals'
+    | 'Machinery & Maintenance'
+    | 'Packaging & Hangers'
+    | 'Staff Salaries'
+    | 'Shop Rent'
+    | 'Electricity & Water'
+    | 'Fuel & Transport'
+    | 'Tea & Refreshment'
+    | 'Miscellaneous';
+  amount: number;
+  paidViaAccountId: string;
+  accountName: string;
+  branch: string;
+  date: string;
+  receiptNumber?: string;
+  vendorName?: string;
+  note?: string;
+  createdAt: string;
+}
+
+export interface CustomerDueRecord {
+  id: string;
+  customerId: string;
+  customerName: string;
+  customerPhone: string;
+  totalBilled: number;
+  totalPaid: number;
+  pendingDue: number;
+  branch: string;
+  lastPaymentDate?: string;
+  notes?: string;
+}
+
+export interface LedgerTransaction {
+  id: string;
+  type: 'income_web' | 'income_offline' | 'due_collection' | 'expense';
+  title: string;
+  description: string;
+  amount: number;
+  accountId: string;
+  accountName: string;
+  paymentMode: 'Cash' | 'UPI' | 'Bank Transfer' | 'Razorpay';
+  branch: string;
+  date: string;
+  referenceId?: string;
+  customerName?: string;
+  createdAt: string;
 }

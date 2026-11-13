@@ -140,8 +140,8 @@ export const BookingPage: React.FC = () => {
         () => {
           setNewAddr((prev) => ({
             ...prev,
-            street: 'Nehru Nagar Main Road',
-            area: 'Nehru Nagar (Near Gayatri School)',
+            street: 'Arun Nagar Main Road',
+            area: 'Arun Nagar (Near Gayatri School)',
             city: 'Rewa',
             state: 'Madhya Pradesh',
             pincode: '486001',

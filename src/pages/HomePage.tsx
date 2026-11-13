@@ -69,8 +69,8 @@ export const HomePage: React.FC = () => {
   const [quickServiceId, setQuickServiceId] = useState(categories[0]?.id || '');
   const [quickSlot, setQuickSlot] = useState(pickupSlots[0]?.timeRange || '');
 
-  // Hero Right Widget Tab (Interactive Washing Machine / Visual Studio / 60s Booking)
-  const [heroRightTab, setHeroRightTab] = useState<'simulator' | 'visual' | 'form'>('simulator');
+  // Hero Right Widget Tab (Studio Showcase / 60s Booking / Washer Simulator)
+  const [heroRightTab, setHeroRightTab] = useState<'visual' | 'form' | 'simulator'>('visual');
 
   // Hero Gallery featuring Authentic Store & Plant Images
   const heroGallery = [
@@ -278,9 +278,6 @@ export const HomePage: React.FC = () => {
   const sliderRef = useRef<HTMLDivElement>(null);
   const [isDraggingSlider, setIsDraggingSlider] = useState(false);
 
-  // 7-Stage Garment Spa Active Step
-  const [activeSpaStep, setActiveSpaStep] = useState(0);
-
   // Pincode Checker tool state
   const [checkerPincode, setCheckerPincode] = useState('');
   const [checkerResult, setCheckerResult] = useState<{
@@ -443,65 +440,6 @@ export const HomePage: React.FC = () => {
     setCheckerResult({ checked: true, area: res });
   };
 
-  // 7-Stage Garment Spa Steps (Inspired by Pressto & WashODry)
-  const spaSteps = [
-    {
-      num: '01',
-      title: 'Optical Tagging & Fabric Diagnostic',
-      subtitle: 'Barcoded garment tracking with fiber inspection & colorfastness check',
-      icon: Eye,
-      tag: 'Zero Misplacement',
-      detail: 'Every shirt, saree, or suit receives an individual QR code and high-resolution camera log. Pockets are searched, buttons checked, and stains graded before washing.',
-    },
-    {
-      num: '02',
-      title: 'Ultrasonic Stain Eradication',
-      subtitle: 'Targeted spot treatment for wine, grease, oil, and sweat rings',
-      icon: Droplets,
-      tag: 'Safe on Fibers',
-      detail: 'German gentle bio-enzymatic agents dissolve oxidation and stubborn collar rings without harsh chlorine bleach, preserving fabric strength and color richness.',
-    },
-    {
-      num: '03',
-      title: 'Sanitized Ozone Micro-Bubble Wash',
-      subtitle: 'Hospital-grade cold ozone sterilization with 5-stage RO softened water',
-      icon: Wind,
-      tag: '99.9% Bacteria Free',
-      detail: 'Ozone gas infusion penetrates deep into the weave to destroy odours, sweat bacteria, and allergens. Separate dedicated wash loads—never mixed with other customers clothes.',
-    },
-    {
-      num: '04',
-      title: 'Veit European 3D Steam Sculpting',
-      subtitle: 'Form-finishing mannequins & industrial vacuum tables for crisp edges',
-      icon: Flame,
-      tag: 'Zero Scorch Guarantee',
-      detail: 'Purified dry steam relaxes inner fibers while vacuum suction locks in sharp creases. Safe for delicate silks, wool suits, and cashmere with 100% zero burn risk.',
-    },
-    {
-      num: '05',
-      title: 'UV-C Antimicrobial Sanitization',
-      subtitle: 'Final germ-shield cycle inside our clean-room finishing chamber',
-      icon: Sun,
-      tag: 'Allergen Shield',
-      detail: 'A short UV-C beam exposure neutralizes dust mites, seasonal pathogens, and mildew spores so garments remain hygienic even after days in your wardrobe.',
-    },
-    {
-      num: '06',
-      title: 'Multi-Point Master Quality Audit',
-      subtitle: 'Scrutiny of buttons, hemlines, cuffs, collar symmetry, and fragrance',
-      icon: Award,
-      tag: '100% Showroom Pass',
-      detail: 'If a stain has even 1% residue or a crease is misaligned, the garment goes back for complimentary re-processing. Only showroom-grade items are approved.',
-    },
-    {
-      num: '07',
-      title: 'Luxury Garment Shield & Hanger Delivery',
-      subtitle: 'Sealed breathable dust covers, custom wooden hangers, and delivery to your door',
-      icon: Truck,
-      tag: 'Doorstep Perfection',
-      detail: 'Suits and sarees are hung in anti-static garment bags to maintain zero wrinkles during transit. Delivered by uniformed riders in sanitized hampers.',
-    },
-  ];
 
   const filteredFaqs = faqs.filter((faq) => {
     if (faqFilter === 'all') return true;
@@ -517,396 +455,233 @@ export const HomePage: React.FC = () => {
   return (
     <div className="space-y-16 sm:space-y-24 pb-16 overflow-x-hidden selection:bg-sky-500 selection:text-white">
       {/* =========================================================================
-          🔥 0. HIGH-ENERGY LIVE NOTIFICATION & VALUE TICKER (WashODry Inspired)
+          🌟 1. HERO SECTION (DECENT, ELEGANT, UNCLUTTERED)
       ========================================================================= */}
-      <div className="bg-gradient-to-r from-slate-950 via-sky-950 to-slate-950 text-white text-xs py-2.5 px-4 border-b border-sky-800/40 relative overflow-hidden shadow-inner">
-        <div className="animate-marquee whitespace-nowrap flex items-center space-x-10 text-slate-200 font-semibold tracking-wide">
-          <span className="flex items-center space-x-2">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping inline-block" />
-            <span className="text-emerald-300 font-black uppercase text-[11px] tracking-wider">Live Activity:</span>
-            <span>Over 12,480+ garments freshly delivered across MP this month</span>
-          </span>
-          <span className="text-slate-500">•</span>
-          <span className="flex items-center space-x-1.5 text-amber-300">
-            <Gift className="w-3.5 h-3.5" />
-            <span className="font-bold">WELCOME25:</span>
-            <span className="text-white">Flat 25% Off on your 1st Doorstep Booking!</span>
-          </span>
-          <span className="text-slate-500">•</span>
-          <span className="flex items-center space-x-1.5 text-sky-300">
-            <ShieldCheck className="w-3.5 h-3.5 text-sky-400" />
-            <span>100% German Bio-Detergents &amp; Pure RO Soft Water</span>
-          </span>
-          <span className="text-slate-500">•</span>
-          <span className="flex items-center space-x-1.5 text-rose-300">
-            <Flame className="w-3.5 h-3.5 text-rose-400" />
-            <span>Veit European Steam Table: 0% Fabric Scorch Guarantee</span>
-          </span>
-          <span className="text-slate-500">•</span>
-          <span className="flex items-center space-x-1.5 text-emerald-300">
-            <Truck className="w-3.5 h-3.5" />
-            <span>Free Doorstep Collection &amp; Delivery on Orders Above ₹399</span>
-          </span>
-          <span className="text-slate-500">•</span>
-          <span className="flex items-center space-x-1.5 text-amber-300">
-            <Clock className="w-3.5 h-3.5" />
-            <span>Express 24h &amp; Standard 48h Turnaround Available</span>
-          </span>
-        </div>
-      </div>
-
-      {/* =========================================================================
-          🌟 1. HERO SECTION (DYNAMIC WASHING DRUM SIMULATOR & FLOATING BUBBLES)
-      ========================================================================= */}
-      <section className="relative overflow-hidden gradient-mesh pt-6 sm:pt-12 pb-16 sm:pb-24 border-b border-slate-200/60">
-        {/* Animated Background Atmospheric Light Blooms & Bubbles */}
-        <div className="absolute top-0 right-1/4 w-[520px] h-[520px] bg-sky-300/35 rounded-full blur-3xl pointer-events-none animate-float-delayed" />
-        <div className="absolute top-1/3 left-4 w-[460px] h-[460px] bg-rose-200/30 rounded-full blur-3xl pointer-events-none animate-float" />
-        
-        {/* Floating Bubble Micro-Elements */}
-        <div className="bubble-particle w-8 h-8 top-12 left-10" style={{ animationDelay: '0s' }} />
-        <div className="bubble-particle w-5 h-5 top-36 right-20" style={{ animationDelay: '1.2s' }} />
-        <div className="bubble-particle w-12 h-12 bottom-16 left-1/3" style={{ animationDelay: '2.5s' }} />
-        <div className="bubble-particle w-6 h-6 top-1/2 right-1/4" style={{ animationDelay: '3.1s' }} />
-
+      <section className="relative overflow-hidden bg-gradient-to-b from-slate-50 via-white to-slate-50/60 pt-6 sm:pt-10 pb-16 sm:pb-20 border-b border-slate-200/60">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          {/* Top Pill Announcement Bar */}
-          <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3 mb-6">
-            <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-slate-900 text-white text-xs font-semibold shadow-md shadow-slate-900/10 hover:bg-slate-800 transition-colors">
-              <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" />
-              <span>Next-Day Delivery Cutoff:</span>
-              <span className="font-mono font-bold text-amber-300">
-                {String(timeLeft.hours).padStart(2, '0')}h {String(timeLeft.minutes).padStart(2, '0')}m {String(timeLeft.seconds).padStart(2, '0')}s
-              </span>
-            </div>
-
-            <button
-              onClick={handleClaimTopVoucher}
-              className="inline-flex items-center space-x-1.5 px-3.5 py-1.5 rounded-full bg-gradient-to-r from-rose-50 to-pink-50 hover:from-rose-100 hover:to-pink-100 text-rose-700 text-xs font-black border border-rose-200/80 shadow-2xs transition-all active:scale-95 group"
-            >
-              <BadgePercent className="w-3.5 h-3.5 text-rose-600 group-hover:rotate-12 transition-transform" />
-              <span>Claim Flat 25% Off Code:</span>
-              <span className="underline decoration-rose-400 font-mono">FIRSTWASH25</span>
-              <Copy className="w-3 h-3 text-rose-500" />
-            </button>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
             {/* Left Hero Content */}
             <div className="lg:col-span-7 space-y-6 text-center lg:text-left">
-              {/* Rating + Real Store Studio Location Pill */}
-              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2.5">
-                <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-sky-100/90 text-sky-900 text-xs font-bold border border-sky-200/80 shadow-xs backdrop-blur-xs">
-                  <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
-                  <span>Rated 4.9/5 by 5,000+ Happy Households • European Fabric Care</span>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={() => {
-                    const currentItem = facilityShowcase.find((f) => f.id === 'storefront') || facilityShowcase[0];
-                    setFacilityModalImage(currentItem);
-                  }}
-                  className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-white/95 hover:bg-white text-slate-800 text-xs font-bold border border-slate-200 shadow-2xs hover:border-sky-300 transition-all cursor-pointer group"
-                  title="Click to view full photo"
-                >
-                  <img
-                    src="/images/storefront-exterior.jpg"
-                    alt="Arun Nagar Storefront"
-                    className="w-5 h-5 rounded-full object-cover ring-1 ring-sky-500"
-                  />
-                  <span>Arun Nagar Studio</span>
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping" />
-                </button>
+              {/* Clean Single Trust Badge */}
+              <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-sky-50 text-sky-800 text-xs font-medium border border-sky-200">
+                <Sparkles className="w-3.5 h-3.5 text-sky-600" />
+                <span>Premium Dry Cleaning &amp; Laundry • Rewa (M.P.)</span>
               </div>
 
-              <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black font-display tracking-tight text-slate-900 leading-[1.04]">
-                The Laundry{' '}
-                <span className="text-gradient-red drop-shadow-xs">Lounge</span>
-                <span className="block text-2xl sm:text-4xl lg:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-sky-800 via-sky-600 to-cyan-600 mt-2 sm:mt-3">
-                  European Boutique Garment Spa &amp; Doorstep Care
-                </span>
-              </h1>
-
-              <p className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto lg:mx-0 leading-relaxed font-normal">
-                Veit European steam pressing, 5-stage RO ozone washing, and delicate Banarasi silk roll press delivered to your doorstep. Visit our 2 flagship retail studios or schedule an express doorstep pickup in 60 seconds.
-              </p>
-
-              {/* Real Storefront & Customer Lounge Hero Showcase Image Card */}
-              <div className="bg-white/95 backdrop-blur-md rounded-2xl p-3 sm:p-3.5 border border-sky-100 shadow-lg shadow-sky-950/5 flex flex-col sm:flex-row items-center gap-3.5 text-left hover:border-sky-300 transition-all">
-                {/* Real Storefront Thumbnail with Zoom */}
-                <div
-                  className="relative rounded-xl overflow-hidden w-full sm:w-44 h-32 sm:h-28 shrink-0 cursor-pointer shadow-sm border border-slate-200 group/img bg-slate-950"
-                  onClick={() => {
-                    const currentItem = facilityShowcase.find((f) => f.id === 'storefront') || facilityShowcase[0];
-                    setFacilityModalImage(currentItem);
-                  }}
-                  title="Click to inspect high-resolution studio photo"
-                >
-                  <img
-                    src="/images/storefront-exterior.jpg"
-                    alt="The Laundry Lounge Storefront"
-                    className="w-full h-full object-cover group-hover/img:scale-108 transition-transform duration-500"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/75 via-transparent to-transparent pointer-events-none" />
-                  <span className="absolute bottom-1.5 left-2 text-[9px] font-black text-amber-300 uppercase tracking-wider bg-slate-950/80 px-1.5 py-0.5 rounded border border-white/20">
-                    Real Rewa Studio
-                  </span>
-                  <span className="absolute top-1.5 right-1.5 px-2 py-0.5 rounded-full bg-white/90 text-slate-900 shadow-xs flex items-center space-x-1 text-[10px] font-bold">
-                    <Maximize2 className="w-2.5 h-2.5 text-sky-600" />
-                    <span>Zoom</span>
-                  </span>
-                </div>
-
-                {/* Info Text */}
-                <div className="space-y-1 flex-1 min-w-0">
-                  <div className="flex items-center space-x-1.5">
-                    <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block animate-ping shrink-0" />
-                    <span className="text-[11px] font-bold text-emerald-700">Flagship Studio Open (8:00 AM – 9:00 PM)</span>
-                  </div>
-                  <h4 className="font-bold text-sm sm:text-base text-slate-900 leading-tight">
-                    Visit Arun Nagar Studio or Book Free Doorstep Pickup
-                  </h4>
-                  <p className="text-[11px] text-slate-500 leading-relaxed line-clamp-2">
-                    Near Gayatri School, In Front of Apna Super Bazar. Heavy rotary washing machines, dry cleaning &amp; European steam pressing.
-                  </p>
-                  <div className="flex items-center space-x-3 pt-0.5 text-[11px] text-sky-700 font-semibold">
-                    <a href="tel:9893733683" className="hover:underline flex items-center space-x-1">
-                      <Phone className="w-3 h-3 text-emerald-600" />
-                      <span>9893733683</span>
-                    </a>
-                    <span>•</span>
-                    <span>Arun Nagar, Rewa (M.P.)</span>
-                  </div>
-                </div>
+              {/* Clean Commanding Heading */}
+              <div>
+                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-slate-900 leading-tight">
+                  Doorstep Laundry &amp; Dry Cleaning in Rewa
+                </h1>
+                <p className="text-base sm:text-lg text-slate-600 mt-3 max-w-xl mx-auto lg:mx-0 leading-relaxed font-normal">
+                  Professional garment care, gentle ozone wash, European steam pressing &amp; roll press delivered to your doorstep. Visit our Nehru Nagar &amp; Ring Road branches or schedule a free pickup in 60 seconds.
+                </p>
               </div>
 
-              {/* CTAs */}
+              {/* Clean Actions / CTAs */}
               <div className="flex flex-col sm:flex-row flex-wrap items-center justify-center lg:justify-start gap-3 pt-1">
                 <button
                   onClick={() => setCurrentView('booking')}
-                  className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-sky-600 via-sky-700 to-sky-800 hover:from-sky-500 hover:to-sky-700 active:scale-[0.99] text-white font-black rounded-2xl shadow-xl shadow-sky-600/30 flex items-center justify-center space-x-2.5 transition-all text-base group"
+                  className="w-full sm:w-auto px-6 py-3 bg-sky-600 hover:bg-sky-700 text-white font-semibold rounded-xl shadow-sm flex items-center justify-center space-x-2 transition-colors text-sm"
                 >
-                  <Calendar className="w-5 h-5 text-amber-300" />
-                  <span>Schedule Free Pickup</span>
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1.5 transition-transform" />
+                  <Calendar className="w-4 h-4" />
+                  <span>Book Doorstep Pickup</span>
+                  <ArrowRight className="w-4 h-4" />
                 </button>
 
-                {/* Direct Dial Branch 1 */}
+                <button
+                  onClick={() => setCurrentView('services')}
+                  className="w-full sm:w-auto px-5 py-3 bg-white hover:bg-slate-50 text-slate-700 font-medium rounded-xl border border-slate-200 shadow-xs transition-colors text-sm"
+                >
+                  Services &amp; Pricing
+                </button>
+
                 <a
                   href="tel:9893733683"
-                  className="w-full sm:w-auto px-5 py-3.5 bg-white hover:bg-sky-50 text-sky-950 font-bold rounded-2xl border border-sky-200/90 shadow-soft-sm flex items-center justify-center space-x-2 transition-all text-sm group"
-                  title="Call Arun Nagar Branch"
+                  className="w-full sm:w-auto px-4 py-3 text-slate-700 hover:text-slate-900 font-medium text-sm flex items-center justify-center space-x-1.5"
                 >
-                  <Phone className="w-4 h-4 text-emerald-600 group-hover:scale-110 transition-transform" />
-                  <span>Call Store: 9893733683</span>
-                </a>
-
-                {/* WhatsApp */}
-                <a
-                  href="https://wa.me/919893733683"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="w-full sm:w-auto px-5 py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-2xl shadow-md shadow-emerald-600/20 flex items-center justify-center space-x-2 transition-all text-sm"
-                >
-                  <MessageCircle className="w-4 h-4" />
-                  <span>WhatsApp Care</span>
+                  <Phone className="w-4 h-4 text-emerald-600" />
+                  <span>9893733683</span>
                 </a>
               </div>
 
-              {/* Floating perk badges */}
-              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2.5 pt-2">
-                <span className="px-3 py-1.5 rounded-xl bg-white/95 border border-slate-200 text-xs font-bold text-slate-700 shadow-2xs flex items-center space-x-1.5">
-                  <ShieldCheck className="w-4 h-4 text-emerald-600" />
-                  <span>100% Zero Fabric Damage</span>
+              {/* Clean Trust Indicators */}
+              <div className="pt-4 flex flex-wrap items-center justify-center lg:justify-start gap-5 text-xs text-slate-500 font-medium border-t border-slate-200">
+                <span className="flex items-center space-x-1.5">
+                  <Star className="w-4 h-4 text-amber-500 fill-amber-500" />
+                  <span className="font-semibold text-slate-800">4.9/5 Rating</span>
+                  <span>(5,000+ Rewa Homes)</span>
                 </span>
-                <span className="px-3 py-1.5 rounded-xl bg-white/95 border border-slate-200 text-xs font-bold text-slate-700 shadow-2xs flex items-center space-x-1.5">
-                  <Zap className="w-4 h-4 text-amber-500" />
-                  <span>Express 24h Turnaround</span>
+                <span className="flex items-center space-x-1.5">
+                  <Clock className="w-4 h-4 text-sky-600" />
+                  <span className="font-semibold text-slate-800">24-48h Delivery</span>
                 </span>
-                <span className="px-3 py-1.5 rounded-xl bg-white/95 border border-slate-200 text-xs font-bold text-slate-700 shadow-2xs flex items-center space-x-1.5">
-                  <Truck className="w-4 h-4 text-sky-600" />
-                  <span>Free Pickup on ₹399+</span>
+                <span className="flex items-center space-x-1.5">
+                  <Truck className="w-4 h-4 text-emerald-600" />
+                  <span className="font-semibold text-slate-800">Free Pickup &gt; ₹399</span>
                 </span>
-                <span className="px-3 py-1.5 rounded-xl bg-white/95 border border-rose-200 text-xs font-bold text-rose-700 shadow-2xs flex items-center space-x-1.5">
-                  <MapPin className="w-4 h-4 text-rose-600" />
-                  <span>2 Central Studios in Rewa</span>
+                <span className="flex items-center space-x-1.5">
+                  <MapPin className="w-4 h-4 text-rose-500" />
+                  <span className="font-semibold text-slate-800">2 Branches</span>
                 </span>
               </div>
             </div>
 
-            {/* Right: Interactive High-Tech Drum Simulator & Quick Booking Console */}
+            {/* Right: Studio Showcase & Quick Booking */}
             <div className="lg:col-span-5">
-              <div className="glass-card rounded-3xl p-4 sm:p-7 shadow-2xl relative border border-white/80 backdrop-blur-xl">
-                {/* 3 Interactive Switcher Tabs */}
-                <div className="grid grid-cols-3 p-1 bg-slate-100/90 rounded-2xl mb-4 text-[11px] sm:text-xs font-bold border border-slate-200/70">
-                  <button
-                    type="button"
-                    onClick={() => setHeroRightTab('simulator')}
-                    className={`py-2 px-1 sm:px-2 rounded-xl flex items-center justify-center space-x-1.5 transition-all ${
-                      heroRightTab === 'simulator'
-                        ? 'bg-white text-sky-950 shadow-sm font-black'
-                        : 'text-slate-600 hover:text-slate-900'
-                    }`}
-                  >
-                    <RefreshCw className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-sky-600 animate-spin" />
-                    <span><span className="hidden sm:inline">Smart </span>Washer UI</span>
-                  </button>
+              <div className="bg-white rounded-2xl p-4 sm:p-5 shadow-md border border-slate-200">
+                {/* 2 Clean Switcher Tabs */}
+                <div className="grid grid-cols-2 p-1 bg-slate-100 rounded-xl mb-4 text-xs font-semibold border border-slate-200">
                   <button
                     type="button"
                     onClick={() => setHeroRightTab('visual')}
-                    className={`py-2 px-1 sm:px-2 rounded-xl flex items-center justify-center space-x-1 transition-all ${
+                    className={`py-2 px-3 rounded-lg flex items-center justify-center space-x-1.5 transition-colors ${
                       heroRightTab === 'visual'
-                        ? 'bg-white text-sky-950 shadow-sm font-black'
+                        ? 'bg-white text-slate-900 shadow-xs font-semibold'
                         : 'text-slate-600 hover:text-slate-900'
                     }`}
                   >
-                    <Camera className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-sky-600" />
-                    <span>Studio<span className="hidden sm:inline"> Hub</span></span>
+                    <Camera className="w-3.5 h-3.5 text-sky-600" />
+                    <span>Store &amp; Facilities</span>
                   </button>
                   <button
                     type="button"
                     onClick={() => setHeroRightTab('form')}
-                    className={`py-2 px-1 sm:px-2 rounded-xl flex items-center justify-center space-x-1 transition-all ${
+                    className={`py-2 px-3 rounded-lg flex items-center justify-center space-x-1.5 transition-colors ${
                       heroRightTab === 'form'
-                        ? 'bg-white text-sky-950 shadow-sm font-black'
+                        ? 'bg-white text-slate-900 shadow-xs font-semibold'
                         : 'text-slate-600 hover:text-slate-900'
                     }`}
                   >
-                    <Calendar className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-sky-600" />
-                    <span>Instant<span className="hidden sm:inline"> (60s)</span></span>
+                    <Calendar className="w-3.5 h-3.5 text-sky-600" />
+                    <span>Quick Booking</span>
                   </button>
                 </div>
 
-                {heroRightTab === 'simulator' ? (
-                  /* ========================================================
-                     HIGH-TECH WASHING MACHINE SIMULATOR (INTERACTIVE APPLIANCE)
-                  ======================================================== */
-                  <WashingMachineSimulator
-                    onBookCycle={(cycleId, name) => {
-                      showToast(`Selected ${name} for your laundry pickup!`, 'success');
-                      setCurrentView('booking');
-                    }}
-                  />
-                ) : heroRightTab === 'visual' ? (
-                  /* Visual Studio Showcase with Interactive Switcher */
-                  <div className="space-y-4">
-                    <div className="relative rounded-2xl overflow-hidden aspect-[4/3] group shadow-inner border border-slate-200/80 bg-slate-950">
+                {heroRightTab === 'visual' ? (
+                  /* Visual Studio Showcase with Clean Prev/Next Controls */
+                  <div className="space-y-3">
+                    <div className="relative rounded-xl overflow-hidden aspect-[4/3] bg-slate-950 border border-slate-200">
                       <img
                         src={heroGallery[activeHeroIndex].image}
                         alt={heroGallery[activeHeroIndex].title}
-                        className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 ease-out"
+                        className={`w-full h-full ${heroGallery[activeHeroIndex].id === 'storefront' ? 'object-cover object-top' : 'object-cover'}`}
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/20 to-transparent" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent" />
 
-                      {/* Top Floating Badge */}
+                      {/* Top Badges */}
                       <div className="absolute top-3 left-3 right-3 flex items-center justify-between">
-                        <span className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-slate-900/85 backdrop-blur-md text-white text-[11px] font-bold border border-white/20 shadow-md">
-                          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+                        <span className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-slate-900/80 backdrop-blur-sm text-white text-[11px] font-medium border border-white/20">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
                           <span>{heroGallery[activeHeroIndex].badge}</span>
                         </span>
-                        <span className="px-2.5 py-1 rounded-full bg-white/95 backdrop-blur-md text-sky-950 text-[10px] font-black shadow-md">
+                        <span className="px-2.5 py-1 rounded-full bg-white/95 text-slate-900 text-[10px] font-semibold">
                           {heroGallery[activeHeroIndex].tag}
                         </span>
                       </div>
 
+                      {/* Prev / Next Arrow Overlay */}
+                      <div className="absolute inset-y-0 left-2 right-2 flex items-center justify-between pointer-events-none">
+                        <button
+                          type="button"
+                          onClick={() => setActiveHeroIndex((prev) => (prev > 0 ? prev - 1 : heroGallery.length - 1))}
+                          className="pointer-events-auto p-1.5 rounded-full bg-slate-900/60 hover:bg-slate-900 text-white transition-colors"
+                          title="Previous photo"
+                        >
+                          <ChevronLeft className="w-4 h-4" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setActiveHeroIndex((prev) => (prev < heroGallery.length - 1 ? prev + 1 : 0))}
+                          className="pointer-events-auto p-1.5 rounded-full bg-slate-900/60 hover:bg-slate-900 text-white transition-colors"
+                          title="Next photo"
+                        >
+                          <ChevronRight className="w-4 h-4" />
+                        </button>
+                      </div>
+
                       {/* Bottom Caption Overlay */}
-                      <div className="absolute bottom-3 left-3 right-3 text-white space-y-1">
+                      <div className="absolute bottom-3 left-3 right-3 text-white space-y-0.5">
                         <div className="flex items-center space-x-2">
-                          <span className="px-2 py-0.5 rounded-md bg-amber-400 text-slate-950 font-black text-[10px]">
+                          <span className="px-1.5 py-0.5 rounded bg-amber-400 text-slate-950 font-bold text-[10px]">
                             {heroGallery[activeHeroIndex].stat}
                           </span>
-                          <span className="text-[10px] text-white/80 font-medium">Rewa, Madhya Pradesh</span>
+                          <span className="text-[11px] text-white/80">Rewa, Madhya Pradesh</span>
                         </div>
-                        <h4 className="font-display font-black text-base sm:text-lg text-white leading-tight">
+                        <h4 className="font-semibold text-base text-white">
                           {heroGallery[activeHeroIndex].title}
                         </h4>
-                        <p className="text-[11px] text-sky-200/90 line-clamp-1 font-medium">
+                        <p className="text-[11px] text-slate-200 line-clamp-1">
                           {heroGallery[activeHeroIndex].subtitle}
                         </p>
                       </div>
                     </div>
 
-                    {/* Interactive Thumbnail Selector */}
-                    <div>
-                      <div className="flex items-center justify-between text-[11px] font-bold text-slate-500 mb-2">
-                        <span>Click to explore facilities &amp; fabric care:</span>
-                        <span className="text-sky-600 font-extrabold">{activeHeroIndex + 1} of {heroGallery.length}</span>
-                      </div>
-                      <div className="grid grid-cols-4 gap-2">
-                        {heroGallery.map((item, idx) => (
+                    {/* Clean Pagination Indicator */}
+                    <div className="flex items-center justify-between text-xs text-slate-500 pt-1">
+                      <span>Photo {activeHeroIndex + 1} of {heroGallery.length}</span>
+                      <div className="flex items-center space-x-1">
+                        {heroGallery.map((_, idx) => (
                           <button
-                            key={item.id}
+                            key={idx}
                             type="button"
                             onClick={() => setActiveHeroIndex(idx)}
-                            className={`relative rounded-xl overflow-hidden aspect-video border-2 transition-all ${
-                              activeHeroIndex === idx
-                                ? 'border-sky-600 ring-2 ring-sky-300 scale-[1.03] shadow-md'
-                                : 'border-transparent opacity-70 hover:opacity-100 hover:border-slate-300'
+                            className={`h-1.5 rounded-full transition-all ${
+                              activeHeroIndex === idx ? 'w-5 bg-sky-600' : 'w-1.5 bg-slate-300 hover:bg-slate-400'
                             }`}
-                            title={item.title}
-                          >
-                            <img
-                              src={item.image}
-                              alt={item.title}
-                              className="w-full h-full object-cover"
-                            />
-                            <div className="absolute inset-0 bg-slate-950/20" />
-                          </button>
+                            title={`Slide ${idx + 1}`}
+                          />
                         ))}
                       </div>
                     </div>
 
-                    <div className="pt-2 flex items-center gap-2">
-                      <button
-                        type="button"
-                        onClick={() => setCurrentView('booking')}
-                        className="flex-1 py-3.5 bg-gradient-to-r from-sky-600 via-sky-700 to-sky-800 hover:from-sky-500 hover:to-sky-700 text-white font-extrabold rounded-xl shadow-lg shadow-sky-600/25 flex items-center justify-center space-x-2 text-xs transition-all active:scale-[0.99]"
-                      >
-                        <Calendar className="w-3.5 h-3.5 text-amber-300" />
-                        <span>Schedule Free Pickup Here</span>
-                        <ArrowRight className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setCurrentView('booking')}
+                      className="w-full py-2.5 bg-sky-600 hover:bg-sky-700 text-white font-semibold rounded-xl text-xs flex items-center justify-center space-x-1.5 transition-colors"
+                    >
+                      <Calendar className="w-3.5 h-3.5" />
+                      <span>Book Free Doorstep Pickup</span>
+                    </button>
                   </div>
                 ) : (
                   /* Form View */
                   <div>
                     <div className="flex items-center justify-between pb-3 mb-3 border-b border-slate-100">
                       <div>
-                        <h3 className="font-black font-display text-lg text-slate-900">Instant Pickup Booking</h3>
-                        <p className="text-xs text-slate-500 font-medium">Doorstep collection across Rewa (M.P.)</p>
+                        <h3 className="font-semibold text-base text-slate-900">Instant Pickup Booking</h3>
+                        <p className="text-xs text-slate-500">Doorstep collection across Rewa (M.P.)</p>
                       </div>
-                      <span className="px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-bold border border-emerald-200 flex items-center space-x-1 shadow-2xs">
-                        <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+                      <span className="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 text-xs font-medium border border-emerald-200 flex items-center space-x-1">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
                         <span>Slots Today</span>
                       </span>
                     </div>
 
-                    <form onSubmit={handleQuickBookContinue} className="space-y-3.5">
+                    <form onSubmit={handleQuickBookContinue} className="space-y-3">
                       <div>
                         <div className="flex justify-between items-center mb-1">
-                          <label className="text-xs font-bold uppercase tracking-wider text-slate-700">
-                            1. Pickup Pincode / Area
+                          <label className="text-xs font-medium text-slate-700">
+                            1. Pickup Area
                           </label>
-                          <span className="text-[10px] text-sky-700 font-extrabold bg-sky-50 px-2 py-0.5 rounded-md border border-sky-200/70">
-                            Rewa City Live
+                          <span className="text-[10px] text-sky-700 font-medium bg-sky-50 px-1.5 py-0.5 rounded border border-sky-100">
+                            Rewa City
                           </span>
                         </div>
 
                         <div className="relative">
-                          <MapPin className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
+                          <MapPin className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
                           <input
                             type="text"
                             required
                             value={quickPincode}
                             onChange={(e) => setQuickPincode(e.target.value)}
                             placeholder="Enter 486001 or select area below..."
-                            className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-semibold focus:outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-100 transition-all shadow-xs"
+                            className="w-full pl-9 pr-3 py-2 bg-white border border-slate-200 rounded-lg text-xs font-medium focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-200"
                           />
                         </div>
 
-                        <div className="flex flex-wrap gap-1 mt-2">
+                        <div className="flex flex-wrap gap-1 mt-1.5">
                           {[
                             { label: 'Nehru Nagar', pin: '486001' },
                             { label: 'Ring Road', pin: '486001' },
@@ -918,26 +693,26 @@ export const HomePage: React.FC = () => {
                               key={chip.label}
                               type="button"
                               onClick={() => setQuickPincode(chip.pin)}
-                              className={`text-[10px] font-bold px-2 py-0.5 rounded-lg border transition-colors ${
+                              className={`text-[10px] font-medium px-2 py-0.5 rounded border transition-colors ${
                                 quickPincode === chip.pin
-                                  ? 'bg-sky-600 text-white border-sky-600 shadow-2xs'
+                                  ? 'bg-sky-600 text-white border-sky-600'
                                   : 'bg-slate-50 text-slate-600 hover:bg-slate-100 border-slate-200'
                               }`}
                             >
-                              {chip.label} ({chip.pin})
+                              {chip.label}
                             </button>
                           ))}
                         </div>
                       </div>
 
                       <div>
-                        <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
+                        <label className="block text-xs font-medium text-slate-700 mb-1">
                           2. Primary Service
                         </label>
                         <select
                           value={quickServiceId}
                           onChange={(e) => setQuickServiceId(e.target.value)}
-                          className="w-full px-3 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-semibold focus:outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-100 shadow-xs"
+                          className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs font-medium focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-200"
                         >
                           {categories.map((c) => (
                             <option key={c.id} value={c.id}>
@@ -948,15 +723,15 @@ export const HomePage: React.FC = () => {
                       </div>
 
                       <div>
-                        <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
-                          3. Preferred 2-Hour Slot
+                        <label className="block text-xs font-medium text-slate-700 mb-1">
+                          3. Preferred Slot
                         </label>
                         <div className="relative">
-                          <Clock className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
+                          <Clock className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
                           <select
                             value={quickSlot}
                             onChange={(e) => setQuickSlot(e.target.value)}
-                            className="w-full pl-10 pr-3 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-semibold focus:outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-100 shadow-xs"
+                            className="w-full pl-9 pr-3 py-2 bg-white border border-slate-200 rounded-lg text-xs font-medium focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-200"
                           >
                             {pickupSlots.map((slot) => (
                               <option key={slot.id} value={slot.timeRange}>
@@ -969,10 +744,10 @@ export const HomePage: React.FC = () => {
 
                       <button
                         type="submit"
-                        className="w-full py-3.5 bg-gradient-to-r from-sky-600 via-sky-700 to-sky-800 hover:from-sky-500 hover:to-sky-700 text-white font-black rounded-xl shadow-lg shadow-sky-600/30 flex items-center justify-center space-x-2 transition-all active:scale-[0.99] text-sm mt-2"
+                        className="w-full py-2.5 bg-sky-600 hover:bg-sky-700 text-white font-semibold rounded-lg text-xs flex items-center justify-center space-x-1.5 transition-colors mt-2"
                       >
                         <span>Continue to Add Garments</span>
-                        <ArrowRight className="w-4 h-4" />
+                        <ArrowRight className="w-3.5 h-3.5" />
                       </button>
                     </form>
                   </div>
@@ -984,86 +759,91 @@ export const HomePage: React.FC = () => {
       </section>
 
       {/* =========================================================================
-          ✨ 2. INTERACTIVE "BUILD YOUR BASKET" LIVE CALCULATOR (WashODry Inspired)
+          ✨ 2. CLEAN & DECENT LIVE BASKET CALCULATOR
+      ========================================================================= */}
+      {/* =========================================================================
+          ✨ 2. CLEAN & DECENT LIVE BASKET CALCULATOR
       ========================================================================= */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-white/95 backdrop-blur-xl rounded-3xl p-6 sm:p-10 border border-slate-200/90 shadow-xl shadow-sky-950/5 relative overflow-hidden">
-          {/* Subtle Ambient Background Water Wave Glow */}
-          <div className="absolute -top-24 -right-24 w-80 h-80 bg-sky-100/60 rounded-full blur-3xl pointer-events-none" />
-
-          <div className="flex flex-col lg:flex-row items-center justify-between gap-8 relative z-10">
-            <div className="space-y-3 text-center lg:text-left max-w-md">
-              <span className="inline-flex items-center space-x-1.5 text-xs font-black uppercase tracking-wider text-sky-700 bg-sky-50 px-3.5 py-1.5 rounded-full border border-sky-200 shadow-2xs">
+        <div className="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200/90 shadow-sm">
+          {/* Header Row */}
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-6 border-b border-slate-100">
+            <div>
+              <span className="inline-flex items-center space-x-1.5 text-xs font-semibold uppercase tracking-wider text-sky-700 bg-sky-50 px-3 py-1 rounded-full border border-sky-200">
                 <Sliders className="w-3.5 h-3.5 text-sky-600" />
-                <span>Interactive Cost Calculator</span>
+                <span>Live Cost Estimator</span>
               </span>
-              <h2 className="text-2xl sm:text-3xl font-black font-display text-slate-900 tracking-tight leading-tight">
-                Build Your Laundry Load &amp; Unlock Free Delivery
+              <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight mt-2">
+                Estimate Your Laundry Load
               </h2>
-              <p className="text-xs sm:text-sm text-slate-600 font-normal leading-relaxed">
-                Add or subtract garments below to see live transparent pricing. Reach ₹399 to unlock 100% Free Doorstep Pickup &amp; Return!
+              <p className="text-xs sm:text-sm text-slate-600 mt-1 max-w-xl font-normal">
+                Select your everyday garments below for transparent pricing. Orders of ₹399 or more unlock 100% free doorstep pickup &amp; delivery across Rewa.
               </p>
-
-              {/* Promo code badge */}
-              <div className="pt-1 flex items-center justify-center lg:justify-start">
-                <button
-                  type="button"
-                  onClick={handleApplyVoucher}
-                  className={`inline-flex items-center space-x-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all border ${
-                    couponApplied
-                      ? 'bg-emerald-50 text-emerald-800 border-emerald-300'
-                      : 'bg-amber-50 hover:bg-amber-100 text-amber-800 border-amber-300'
-                  }`}
-                >
-                  <Gift className="w-4 h-4 text-amber-600" />
-                  <span>{couponApplied ? 'FIRSTWASH25 (25% OFF) Active!' : 'Click to Apply FIRSTWASH25 (25% Off)'}</span>
-                  <span className="text-[10px] font-mono font-black uppercase px-1.5 py-0.5 rounded bg-white border">
-                    {couponApplied ? 'Remove' : 'Apply'}
-                  </span>
-                </button>
-              </div>
             </div>
 
-            {/* Garment Grid with Interactive + / - counters */}
-            <div className="flex-1 grid grid-cols-2 sm:grid-cols-3 gap-3 w-full max-w-2xl">
+            {/* Voucher Pill */}
+            <div className="shrink-0">
+              <button
+                type="button"
+                onClick={handleApplyVoucher}
+                className={`inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-lg text-xs font-semibold transition-colors border ${
+                  couponApplied
+                    ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
+                    : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200'
+                }`}
+              >
+                <Gift className="w-3.5 h-3.5 text-amber-500" />
+                <span>{couponApplied ? 'FIRSTWASH25 Applied (25% Off)' : 'Apply FIRSTWASH25 (25% Off)'}</span>
+                <span className="text-[10px] font-bold text-sky-600 ml-1">
+                  {couponApplied ? 'Remove' : 'Apply'}
+                </span>
+              </button>
+            </div>
+          </div>
+
+          {/* Main 2-Column Split: Cards (Left) + Total Card (Right) */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start pt-6">
+            {/* Garment Grid (8 cols) */}
+            <div className="lg:col-span-8 grid grid-cols-2 sm:grid-cols-3 gap-3.5">
               {estimatorItems.map((item) => {
                 const count = estimatorCounts[item.id] || 0;
                 return (
                   <div
                     key={item.id}
-                    className={`p-3.5 rounded-2xl border transition-all text-center flex flex-col justify-between ${
+                    className={`p-4 rounded-xl border transition-colors text-center flex flex-col justify-between ${
                       count > 0
-                        ? 'bg-sky-50/70 border-sky-300 shadow-md shadow-sky-500/10 scale-[1.02]'
-                        : 'bg-slate-50 hover:bg-white border-slate-200 hover:border-slate-300'
+                        ? 'bg-sky-50/60 border-sky-300 ring-1 ring-sky-200'
+                        : 'bg-slate-50/50 hover:bg-white border-slate-200'
                     }`}
                   >
                     <div>
-                      <div className="text-3xl mb-1 filter drop-shadow-xs">{item.icon}</div>
-                      <div className="font-bold text-xs text-slate-800 leading-tight">{item.name}</div>
-                      <span className="inline-block text-[9px] font-bold text-sky-700 bg-sky-100/70 px-1.5 py-0.5 rounded mt-0.5">
-                        {item.tag}
-                      </span>
-                      <div className="text-xs text-sky-700 font-black mt-1">
+                      <div className="w-10 h-10 rounded-lg bg-white border border-slate-200/80 flex items-center justify-center text-xl mx-auto mb-2 shadow-2xs">
+                        {item.icon}
+                      </div>
+                      <div className="font-semibold text-xs text-slate-900 leading-tight">
+                        {item.name}
+                      </div>
+                      <div className="text-xs font-semibold text-sky-700 mt-1">
                         ₹{item.price}
-                        <span className="text-[10px] text-slate-500 font-semibold">/pc</span>
+                        <span className="text-[10px] text-slate-400 font-normal"> / pc</span>
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-center space-x-2 mt-3 pt-2 border-t border-slate-200/80">
+                    <div className="flex items-center justify-center space-x-2.5 mt-3 pt-2.5 border-t border-slate-200/60">
                       <button
                         onClick={() => updateEstimatorCount(item.id, -1)}
-                        className="w-7 h-7 rounded-lg bg-white text-slate-700 flex items-center justify-center font-bold text-xs shadow-xs hover:bg-slate-100 active:scale-95 transition-transform border border-slate-200"
+                        className="w-7 h-7 rounded-lg bg-white hover:bg-slate-100 text-slate-700 flex items-center justify-center font-bold text-xs border border-slate-200 transition-colors shadow-2xs"
                         title="Decrease"
                       >
-                        <Minus className="w-3.5 h-3.5" />
+                        <Minus className="w-3 h-3" />
                       </button>
-                      <span className="text-sm font-black text-slate-900 w-5 text-center">{count}</span>
+                      <span className="text-xs font-bold text-slate-900 w-5 text-center">{count}</span>
                       <button
                         onClick={() => updateEstimatorCount(item.id, 1)}
-                        className="w-7 h-7 rounded-lg bg-sky-600 text-white flex items-center justify-center font-bold text-xs shadow-xs hover:bg-sky-700 active:scale-95 transition-transform"
+                        className="w-7 h-7 rounded-lg bg-sky-600 hover:bg-sky-700 text-white flex items-center justify-center font-bold text-xs transition-colors shadow-2xs"
                         title="Increase"
                       >
-                        <Plus className="w-3.5 h-3.5" />
+                        <Plus className="w-3 h-3" />
                       </button>
                     </div>
                   </div>
@@ -1071,34 +851,40 @@ export const HomePage: React.FC = () => {
               })}
             </div>
 
-            {/* Total Tally & Milestone Action Card */}
-            <div className="bg-gradient-to-br from-sky-50 via-white to-sky-50/50 p-6 rounded-3xl border border-sky-200/90 text-center min-w-[270px] shadow-lg shadow-sky-900/5 space-y-4">
-              <div>
-                <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Estimated Total</span>
+            {/* Total Summary Card (4 cols) */}
+            <div className="lg:col-span-4 bg-slate-50/90 p-5 sm:p-6 rounded-xl border border-slate-200 space-y-4">
+              <div className="text-center">
+                <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
+                  Estimated Total
+                </span>
                 <div className="flex items-baseline justify-center space-x-2 mt-1">
                   {couponApplied && (
-                    <span className="text-sm font-bold text-slate-400 line-through">₹{rawEstimatedTotal}</span>
+                    <span className="text-sm font-semibold text-slate-400 line-through">
+                      ₹{rawEstimatedTotal}
+                    </span>
                   )}
-                  <span className="text-4xl font-black font-display text-sky-950">₹{estimatedTotal}</span>
+                  <span className="text-3xl font-bold text-slate-900">
+                    ₹{estimatedTotal}
+                  </span>
                 </div>
                 {couponApplied && (
-                  <span className="text-[11px] text-emerald-600 font-extrabold block mt-0.5">
-                    🎉 You save ₹{discountAmount} (25% Off)!
+                  <span className="text-[11px] text-emerald-600 font-semibold block mt-1">
+                    You save ₹{discountAmount} (25% Off)
                   </span>
                 )}
               </div>
 
               {/* Free delivery progress meter */}
-              <div className="space-y-1.5 text-left">
-                <div className="flex justify-between text-[11px] font-bold">
-                  <span className="text-slate-500">Free Doorstep Pickup Goal</span>
-                  <span className={rawEstimatedTotal >= freeDeliveryThreshold ? 'text-emerald-600 font-black' : 'text-slate-700'}>
-                    {rawEstimatedTotal >= freeDeliveryThreshold ? 'Unlocked! 🚚🎉' : `₹${freeDeliveryThreshold - rawEstimatedTotal} more needed`}
+              <div className="space-y-1.5 text-left bg-white p-3 rounded-lg border border-slate-200">
+                <div className="flex justify-between text-[11px] font-medium text-slate-600">
+                  <span>Free Pickup Goal (₹399)</span>
+                  <span className={rawEstimatedTotal >= freeDeliveryThreshold ? 'text-emerald-600 font-semibold' : 'text-slate-700 font-medium'}>
+                    {rawEstimatedTotal >= freeDeliveryThreshold ? 'Unlocked! 🚚' : `₹${freeDeliveryThreshold - rawEstimatedTotal} to go`}
                   </span>
                 </div>
-                <div className="w-full h-2.5 bg-slate-200/90 rounded-full overflow-hidden p-0.5">
+                <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-gradient-to-r from-sky-500 via-cyan-500 to-emerald-500 rounded-full transition-all duration-300"
+                    className="h-full bg-emerald-500 rounded-full transition-all duration-300"
                     style={{ width: `${progressToFreeDelivery}%` }}
                   />
                 </div>
@@ -1106,135 +892,41 @@ export const HomePage: React.FC = () => {
 
               <button
                 onClick={handleAddEstimatedToCart}
-                className="w-full py-3.5 px-4 bg-gradient-to-r from-sky-600 via-sky-700 to-sky-800 hover:from-sky-500 hover:to-sky-700 text-white font-black rounded-xl text-xs shadow-lg shadow-sky-600/25 transition-all active:scale-95 flex items-center justify-center space-x-1.5"
+                className="w-full py-3 px-4 bg-sky-600 hover:bg-sky-700 text-white font-semibold rounded-xl text-xs shadow-sm transition-colors flex items-center justify-center space-x-1.5"
               >
                 <span>Add Basket &amp; Book Pickup</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </button>
             </div>
           </div>
-        </div>
-      </section>
 
-      {/* =========================================================================
-          💎 3. 7-STAGE GARMENT WELLNESS JOURNEY (Pressto Inspired Interactive Stepper)
-      ========================================================================= */}
-      <section className="bg-gradient-to-b from-slate-950 via-slate-900 to-sky-950 text-white py-16 sm:py-24 rounded-3xl mx-4 sm:mx-6 lg:mx-8 relative overflow-hidden shadow-2xl">
-        {/* Subtle Background Glow Rings */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-sky-500/10 rounded-full blur-3xl pointer-events-none" />
-
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="text-center max-w-2xl mx-auto mb-12 sm:mb-16">
-            <span className="text-xs font-black uppercase tracking-wider text-sky-300 bg-sky-900/60 px-3.5 py-1.5 rounded-full border border-sky-400/30">
-              European Atelier Process
-            </span>
-            <h2 className="text-3xl sm:text-5xl font-black font-display mt-3 tracking-tight">
-              The 7-Stage Garment Spa Experience
-            </h2>
-            <p className="text-xs sm:text-sm text-slate-300 mt-2 font-normal leading-relaxed">
-              Inspired by luxury European dry cleaners like Pressto. Click each stage to see how your precious garments are treated with zero fabric degradation.
-            </p>
-          </div>
-
-          {/* Connected Step Pills Navigation */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2 mb-8">
-            {spaSteps.map((step, idx) => {
-              const StepIcon = step.icon;
-              const isActive = activeSpaStep === idx;
-              return (
-                <button
-                  key={step.num}
-                  type="button"
-                  onClick={() => setActiveSpaStep(idx)}
-                  className={`p-3 rounded-2xl border text-left transition-all flex flex-col justify-between ${
-                    isActive
-                      ? 'bg-sky-600 text-white border-sky-400 shadow-lg shadow-sky-600/30 scale-105'
-                      : 'bg-white/5 hover:bg-white/10 text-slate-300 border-white/10'
-                  }`}
-                >
-                  <div className="flex items-center justify-between mb-2">
-                    <span className={`text-[10px] font-mono font-black ${isActive ? 'text-amber-300' : 'text-slate-400'}`}>
-                      {step.num}
-                    </span>
-                    <StepIcon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-slate-400'}`} />
-                  </div>
-                  <div className="font-bold text-xs line-clamp-2 leading-tight">
-                    {step.title.split('&')[0]}
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Active Step Magnified Inspection Card */}
-          <div className="bg-slate-900/90 backdrop-blur-xl border border-sky-500/30 rounded-3xl p-6 sm:p-10 shadow-2xl">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-              <div className="lg:col-span-4 relative rounded-2xl overflow-hidden aspect-[4/3] bg-slate-950 border border-white/10 shadow-lg group">
-                <img
-                  src={
-                    activeSpaStep === 0
-                      ? '/images/reception-counter.jpg'
-                      : activeSpaStep === 1
-                      ? '/images/before-after-shirt.jpg'
-                      : activeSpaStep === 2
-                      ? '/images/industrial-washer.jpg'
-                      : activeSpaStep === 3
-                      ? '/images/hydro-extractor.jpg'
-                      : activeSpaStep === 4
-                      ? '/images/ethnic-silk-care.jpg'
-                      : activeSpaStep === 5
-                      ? '/images/steam-press.jpg'
-                      : '/images/laundry-processing.png'
-                  }
-                  alt={spaSteps[activeSpaStep].title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 to-transparent" />
-                <span className="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-sky-500 text-slate-950 font-black text-xs">
-                  Stage {spaSteps[activeSpaStep].num} of 07
-                </span>
-                <span className="absolute bottom-3 left-3 text-xs font-bold text-amber-300">
-                  {spaSteps[activeSpaStep].tag}
-                </span>
+          {/* More Services Option Banner (Redirects to Services Page) */}
+          <div className="mt-8 pt-6 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4 bg-slate-50/70 rounded-xl p-4 border border-dashed border-slate-300">
+            <div className="flex items-center space-x-3 text-center sm:text-left">
+              <div className="w-10 h-10 rounded-lg bg-sky-100 text-sky-600 flex items-center justify-center shrink-0 hidden sm:flex">
+                <Shirt className="w-5 h-5" />
               </div>
-
-              <div className="lg:col-span-8 space-y-4">
-                <div className="flex items-center space-x-2">
-                  <span className="text-xs font-mono font-black text-amber-300 bg-amber-950/70 px-2.5 py-1 rounded-full border border-amber-500/30">
-                    STEP {spaSteps[activeSpaStep].num}
-                  </span>
-                  <span className="text-xs text-sky-300 font-bold">
-                    {spaSteps[activeSpaStep].subtitle}
-                  </span>
-                </div>
-
-                <h3 className="text-2xl sm:text-3xl font-black font-display text-white">
-                  {spaSteps[activeSpaStep].title}
-                </h3>
-
-                <p className="text-sm text-slate-300 leading-relaxed font-normal">
-                  {spaSteps[activeSpaStep].detail}
+              <div>
+                <h4 className="text-xs sm:text-sm font-semibold text-slate-900">
+                  Looking for more garments, dry cleaning, roll press, or curtains?
+                </h4>
+                <p className="text-[11px] sm:text-xs text-slate-500 font-normal">
+                  Explore our complete catalog of 50+ services with transparent rate cards across Rewa.
                 </p>
-
-                <div className="pt-2 flex flex-wrap items-center gap-3">
-                  <button
-                    onClick={() => setActiveSpaStep((prev) => (prev + 1) % spaSteps.length)}
-                    className="px-5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs border border-white/20 flex items-center space-x-2 transition-all"
-                  >
-                    <span>Next Stage: {spaSteps[(activeSpaStep + 1) % spaSteps.length].title.split('&')[0]}</span>
-                    <ChevronRight className="w-3.5 h-3.5" />
-                  </button>
-
-                  <button
-                    onClick={() => setCurrentView('booking')}
-                    className="px-6 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-black text-xs flex items-center space-x-1.5 transition-all shadow-lg shadow-sky-500/20"
-                  >
-                    <span>Book with this 7-Stage Spa</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </button>
-                </div>
               </div>
             </div>
+
+            <button
+              type="button"
+              onClick={() => {
+                setCurrentView('services');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className="w-full sm:w-auto px-5 py-2.5 rounded-lg bg-white hover:bg-sky-50 text-sky-700 border border-sky-300 hover:border-sky-400 font-semibold text-xs shadow-xs transition-colors flex items-center justify-center space-x-1.5 shrink-0"
+            >
+              <span>View More Services &amp; Full Price List</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
           </div>
         </div>
       </section>
@@ -1465,7 +1157,7 @@ export const HomePage: React.FC = () => {
                       : '/images/laundry-processing.png'
                   }
                   alt="The Laundry Lounge Storefront, Reception Lounge and Commercial Plant"
-                  className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 cursor-pointer"
+                  className={`w-full h-full ${activeBranchPhoto === 'storefront' ? 'object-cover object-top' : 'object-cover object-center'} group-hover:scale-105 transition-transform duration-700 cursor-pointer`}
                   onClick={() => {
                     const currentItem = facilityShowcase.find((f) => f.id === activeBranchPhoto) || facilityShowcase[0];
                     setFacilityModalImage(currentItem);
@@ -1597,17 +1289,28 @@ export const HomePage: React.FC = () => {
               {/* 2 Branch Cards Grid */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {/* Branch 1 */}
-                <div className="p-4 rounded-2xl bg-sky-50/70 border border-sky-200/90 space-y-2.5 shadow-2xs">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-black text-sky-900">Branch 1: Arun Nagar</span>
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">
-                      Open Today
-                    </span>
+                <div className="p-4 rounded-2xl bg-sky-50/70 border border-sky-200/90 space-y-3 shadow-2xs">
+                  <div className="flex gap-3">
+                    <img
+                      src="/images/storefront-exterior.jpg"
+                      alt="The Laundry Lounge Arun Nagar Storefront"
+                      className="w-18 h-18 sm:w-20 sm:h-20 rounded-xl object-cover object-top shrink-0 border border-sky-300 shadow-xs cursor-pointer hover:opacity-90"
+                      onClick={() => setActiveBranchPhoto('storefront')}
+                      title="Click to view full photo"
+                    />
+                    <div className="space-y-1 flex-1">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-black text-sky-900">The Laundry Lounge (Branch 1 - Arun Nagar)</span>
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">
+                          Open Today
+                        </span>
+                      </div>
+                      <p className="text-xs text-slate-700 font-medium">
+                        Near Gayatri School, In Front of Apna Super Bazar, Arun Nagar, Rewa (M.P.) - 486001
+                      </p>
+                    </div>
                   </div>
-                  <p className="text-xs text-slate-700 font-medium">
-                    Near Gayatri School, In Front of Apna Super Bazar, Arun Nagar, Rewa (M.P.) - 486001
-                  </p>
-                  <div className="flex items-center space-x-2 pt-1">
+                  <div className="flex items-center space-x-2 pt-1 border-t border-sky-200/60">
                     <a
                       href="tel:9893733683"
                       className="px-3 py-1.5 bg-sky-600 hover:bg-sky-700 text-white rounded-xl text-xs font-bold flex items-center space-x-1 shadow-xs"
@@ -1620,7 +1323,7 @@ export const HomePage: React.FC = () => {
                       onClick={() => setActiveBranchPhoto('storefront')}
                       className="px-2.5 py-1.5 bg-white text-sky-800 border border-sky-200 rounded-xl text-xs font-semibold hover:bg-sky-100"
                     >
-                      View Photo
+                      View Real Store Photo
                     </button>
                   </div>
                 </div>
@@ -2106,7 +1809,7 @@ export const HomePage: React.FC = () => {
                 <img
                   src={facilityModalImage.image}
                   alt={facilityModalImage.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  className={`w-full h-full ${facilityModalImage.id === 'storefront' ? 'object-cover object-top' : 'object-cover'} group-hover:scale-105 transition-transform duration-500`}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-transparent to-transparent pointer-events-none" />
                 <span className="absolute bottom-3 left-3 text-[11px] font-bold text-amber-300 bg-slate-950/80 px-2 py-0.5 rounded border border-white/20">

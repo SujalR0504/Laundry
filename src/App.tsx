@@ -21,7 +21,7 @@ import { DeliveryStaffPage } from './pages/DeliveryStaffPage';
 import { CheckCircle2, AlertCircle, Info, X } from 'lucide-react';
 
 export const AppContent: React.FC = () => {
-  const { currentView, setCurrentView, toasts, dismissToast } = useApp();
+  const { currentView, setCurrentView, switchUserRole, toasts, dismissToast } = useApp();
 
   const [cartOpen, setCartOpen] = useState(false);
   const [authOpen, setAuthOpen] = useState(false);
@@ -32,6 +32,29 @@ export const AppContent: React.FC = () => {
     document.documentElement.scrollTop = 0;
     document.body.scrollTop = 0;
   }, [currentView]);
+
+  // Support direct URL hash navigation (e.g. #admin, #services, #tracking, #booking, #login)
+  useEffect(() => {
+    const handleHash = () => {
+      const hash = window.location.hash.toLowerCase().replace('#', '').trim();
+      if (!hash) return;
+      if (hash === 'admin' || hash === 'admin-dashboard') {
+        switchUserRole('admin');
+      } else if (hash === 'services') {
+        setCurrentView('services');
+      } else if (hash === 'tracking') {
+        setCurrentView('tracking');
+      } else if (hash === 'booking') {
+        setCurrentView('booking');
+      } else if (hash === 'login') {
+        setAuthOpen(true);
+      }
+    };
+
+    handleHash();
+    window.addEventListener('hashchange', handleHash);
+    return () => window.removeEventListener('hashchange', handleHash);
+  }, []);
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 text-slate-800 font-sans selection:bg-brand-500 selection:text-white pb-[calc(4.5rem+env(safe-area-inset-bottom,0px))] sm:pb-0 overflow-x-hidden">
