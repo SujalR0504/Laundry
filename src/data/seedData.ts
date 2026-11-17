@@ -10,6 +10,7 @@ import {
   BusinessSettings,
   Branch,
   CMSContent,
+  HeroSlideCMS,
   Order,
   UserProfile,
   BankAccount,
@@ -1175,6 +1176,71 @@ export const SEED_BUSINESS_SETTINGS: BusinessSettings = {
   },
 };
 
+export const SEED_HERO_SLIDES: HeroSlideCMS[] = [
+  {
+    id: 'slide-diwali',
+    image: '/images/ethnic-silk-care.jpg',
+    // TOP PILL SEASON / CAPSULE BADGE
+    topPill: 'DIWALI 2026 • FESTIVE COLLECTION',
+    showTopPill: true,
+    // FABRIC / ORIGIN FEATURE PILL
+    featurePill: 'EMBROIDERED ETHNIC WEAR',
+    showFeaturePill: true,
+    // HEADLINE (LINE 1 WHITE)
+    headline1: 'HAPPY',
+    // HEADLINE (LINE 2 GOLD HIGHLIGHT)
+    headline2: 'DIWALI',
+    // SLIDE EDITORIAL DESCRIPTION SUBTEXT
+    description:
+      'Celebrate the Festival of Lights with elegant ethnic styles. Discover beautiful embroidered outfits made for your festive moments.',
+    ctaText: 'Book Festive Care',
+    ctaLink: 'booking',
+    showCta: true,
+    secondaryCtaText: 'Pricing & Menu',
+    secondaryCtaLink: 'services',
+    showSecondaryCta: true,
+    active: true,
+  },
+  {
+    id: 'slide-storefront',
+    image: '/images/storefront-exterior.jpg',
+    topPill: 'THE LAUNDRY LOUNGE • REWA FLAGSHIP',
+    showTopPill: true,
+    featurePill: 'ARUN NAGAR / NEHRU NAGAR BOUTIQUE',
+    showFeaturePill: true,
+    headline1: 'DOORSTEP LAUNDRY &',
+    headline2: 'DRY CLEANING IN REWA',
+    description:
+      'Professional garment care, gentle ozone wash, European steam pressing & roll press delivered to your doorstep. Visit our Nehru Nagar & Ring Road branches or schedule a free pickup.',
+    ctaText: 'Book Doorstep Pickup',
+    ctaLink: 'booking',
+    showCta: true,
+    secondaryCtaText: 'Call 9893733683',
+    secondaryCtaLink: 'tel:9893733683',
+    showSecondaryCta: true,
+    active: true,
+  },
+  {
+    id: 'slide-rotary',
+    image: '/images/industrial-washer.jpg',
+    topPill: 'COMMERCIAL PLANT • HEAVY ROTARY WASHER',
+    showTopPill: true,
+    featurePill: 'DUAL-CHAMBER 304 STAINLESS STEEL',
+    showFeaturePill: true,
+    headline1: 'GERMAN HYGIENIC',
+    headline2: 'ROTARY WASH SYSTEM',
+    description:
+      'Engineered for sanitized washing with 100% RO softened mineral-free water and hypoallergenic enzyme detergents with zero fabric tearing or discoloration.',
+    ctaText: 'Explore Facility',
+    ctaLink: 'services',
+    showCta: true,
+    secondaryCtaText: 'Quick Booking',
+    secondaryCtaLink: 'booking',
+    showSecondaryCta: true,
+    active: true,
+  },
+];
+
 export const SEED_CMS: CMSContent = {
   heroHeadline: 'Professional Laundry & Dry Cleaning in Rewa',
   heroSubheadline: 'Doorstep pickup in Rewa or visit our 2 branches: Nehru Nagar (Near Gayatri School) and Gadariya Ring Road (Hari Om Branch). Fast, fragrant, and crisply pressed.',
@@ -1185,6 +1251,10 @@ export const SEED_CMS: CMSContent = {
   termsConditions: 'All garments are inspected prior to processing. Any pre-existing tears, color bleeds, or fragile embellishments will be noted. Claims for missing garments must be reported within 24 hours of delivery with original bill copy.',
   privacyPolicy: 'Your personal data including phone number and delivery address is stored securely solely to facilitate order dispatch and invoicing in Rewa.',
   cancellationPolicy: 'Pickups can be cancelled free of charge up to 1 hour before scheduled pickup time.',
+  heroSlides: SEED_HERO_SLIDES,
+  activeHeroSlideId: 'slide-diwali',
+  enableHeroSlider: true,
+  heroDisplayMode: 'festive_slider',
 };
 
 export const SEED_FAQS: FAQ[] = [

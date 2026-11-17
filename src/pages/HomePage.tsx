@@ -47,6 +47,8 @@ import {
   Building2,
   ExternalLink,
 } from 'lucide-react';
+import { HeroSlideCMS } from '../types';
+import { SEED_HERO_SLIDES } from '../data/seedData';
 
 export const HomePage: React.FC = () => {
   const {
@@ -71,6 +73,28 @@ export const HomePage: React.FC = () => {
 
   // Hero Right Widget Tab (Studio Showcase / 60s Booking / Washer Simulator)
   const [heroRightTab, setHeroRightTab] = useState<'visual' | 'form' | 'simulator'>('visual');
+
+  // Hero CMS Slides & Active Carousel State
+  const heroSlidesList: HeroSlideCMS[] =
+    cms.heroSlides && cms.heroSlides.length > 0
+      ? cms.heroSlides
+      : SEED_HERO_SLIDES;
+
+  const [activeSlideIndex, setActiveSlideIndex] = useState(0);
+
+  // Auto-play slide carousel every 7 seconds if multiple slides
+  useEffect(() => {
+    if (heroSlidesList.length <= 1) return;
+    const interval = setInterval(() => {
+      setActiveSlideIndex((prev) => (prev + 1) % heroSlidesList.length);
+    }, 7000);
+    return () => clearInterval(interval);
+  }, [heroSlidesList.length]);
+
+  const currentHeroSlide: HeroSlideCMS =
+    heroSlidesList[activeSlideIndex] ||
+    heroSlidesList[0] ||
+    SEED_HERO_SLIDES[0];
 
   // Hero Gallery featuring Authentic Store & Plant Images
   const heroGallery = [
@@ -455,6 +479,142 @@ export const HomePage: React.FC = () => {
   return (
     <div className="space-y-16 sm:space-y-24 pb-16 overflow-x-hidden selection:bg-sky-500 selection:text-white">
       {/* =========================================================================
+          🌟 FESTIVE HERO BANNER CAROUSEL (WITH LIVE ON/OFF BUTTON PILL TOGGLES)
+      ========================================================================= */}
+      {cms.enableHeroSlider !== false && currentHeroSlide && (
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-2">
+          <div className="relative rounded-3xl overflow-hidden bg-slate-950 text-white border border-amber-500/30 shadow-2xl">
+            {/* Background Image with Dark Vignette */}
+            <div className="absolute inset-0">
+              <img
+                src={currentHeroSlide.image}
+                alt={currentHeroSlide.headline1}
+                className="w-full h-full object-cover object-center filter brightness-[0.38] transition-all duration-700 ease-in-out"
+              />
+              <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/85 to-transparent" />
+              <div className="absolute inset-0 bg-radial-at-c from-transparent via-transparent to-slate-950/70" />
+            </div>
+
+            <div className="relative z-10 max-w-4xl px-6 sm:px-12 py-10 sm:py-14 space-y-6">
+              {/* BUTTONS / PILLS ROW WITH LIVE ON/OFF (BAND / CHALU) TOGGLE RESPECT */}
+              <div className="flex flex-wrap items-center gap-2.5">
+                {/* 1. TOP PILL SEASON / CAPSULE BADGE (CHALU = VISIBLE, BAND = HIDDEN) */}
+                {currentHeroSlide.showTopPill !== false && (
+                  <span className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-gradient-to-r from-amber-500/30 to-yellow-500/20 border border-amber-400/50 text-amber-300 text-xs font-extrabold tracking-wider uppercase shadow-md backdrop-blur-md">
+                    <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" />
+                    <span>{currentHeroSlide.topPill}</span>
+                  </span>
+                )}
+
+                {/* 2. FABRIC / ORIGIN FEATURE PILL (CHALU = VISIBLE, BAND = HIDDEN) */}
+                {currentHeroSlide.showFeaturePill !== false && (
+                  <span className="inline-flex items-center space-x-1.5 px-3.5 py-1.5 rounded-full bg-white/15 backdrop-blur-md border border-white/25 text-white text-xs font-semibold uppercase tracking-wide">
+                    <Sparkles className="w-3.5 h-3.5 text-yellow-300" />
+                    <span>{currentHeroSlide.featurePill}</span>
+                  </span>
+                )}
+              </div>
+
+              {/* HEADLINES: LINE 1 WHITE + LINE 2 GOLD HIGHLIGHT */}
+              <div className="space-y-1">
+                <div className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-white uppercase drop-shadow-md">
+                  {currentHeroSlide.headline1}
+                </div>
+                <div className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-200 bg-clip-text text-transparent uppercase drop-shadow-lg">
+                  {currentHeroSlide.headline2}
+                </div>
+              </div>
+
+              {/* SLIDE EDITORIAL DESCRIPTION SUBTEXT */}
+              <p className="text-slate-200 text-sm sm:text-base max-w-2xl leading-relaxed font-light drop-shadow-sm">
+                {currentHeroSlide.description}
+              </p>
+
+              {/* ACTION CTAS */}
+              <div className="flex flex-wrap items-center gap-3 pt-2">
+                {currentHeroSlide.showCta !== false && (
+                  <button
+                    onClick={() =>
+                      setCurrentView((currentHeroSlide.ctaLink as any) || 'booking')
+                    }
+                    className="px-6 py-3 rounded-xl bg-gradient-to-r from-amber-400 to-yellow-500 hover:from-amber-500 hover:to-yellow-600 text-slate-950 font-extrabold text-sm shadow-lg shadow-amber-500/20 flex items-center space-x-2 transition-all transform hover:-translate-y-0.5 cursor-pointer"
+                  >
+                    <Sparkles className="w-4 h-4 text-slate-950" />
+                    <span>{currentHeroSlide.ctaText || 'Book Festive Care'}</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+                )}
+
+                {currentHeroSlide.showSecondaryCta !== false && (
+                  <button
+                    onClick={() =>
+                      setCurrentView(
+                        (currentHeroSlide.secondaryCtaLink as any) || 'services'
+                      )
+                    }
+                    className="px-5 py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white font-medium text-sm border border-white/20 backdrop-blur-md transition-colors cursor-pointer"
+                  >
+                    <span>
+                      {currentHeroSlide.secondaryCtaText || 'Services & Pricing'}
+                    </span>
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* Carousel Navigation Arrows if > 1 slide */}
+            {heroSlidesList.length > 1 && (
+              <>
+                <div className="absolute inset-y-0 left-3 right-3 flex items-center justify-between pointer-events-none z-20">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setActiveSlideIndex((prev) =>
+                        prev > 0 ? prev - 1 : heroSlidesList.length - 1
+                      )
+                    }
+                    className="pointer-events-auto p-2.5 rounded-full bg-slate-900/70 hover:bg-slate-900 text-white border border-white/15 transition-all shadow-md backdrop-blur-sm cursor-pointer"
+                    title="Previous Slide"
+                  >
+                    <ChevronLeft className="w-5 h-5" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setActiveSlideIndex((prev) =>
+                        prev < heroSlidesList.length - 1 ? prev + 1 : 0
+                      )
+                    }
+                    className="pointer-events-auto p-2.5 rounded-full bg-slate-900/70 hover:bg-slate-900 text-white border border-white/15 transition-all shadow-md backdrop-blur-sm cursor-pointer"
+                    title="Next Slide"
+                  >
+                    <ChevronRight className="w-5 h-5" />
+                  </button>
+                </div>
+
+                {/* Dot Indicators */}
+                <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex items-center space-x-2 z-20">
+                  {heroSlidesList.map((s, idx) => (
+                    <button
+                      key={s.id || idx}
+                      type="button"
+                      onClick={() => setActiveSlideIndex(idx)}
+                      className={`h-2 rounded-full transition-all cursor-pointer ${
+                        activeSlideIndex === idx
+                          ? 'w-7 bg-amber-400'
+                          : 'w-2 bg-white/40 hover:bg-white/70'
+                      }`}
+                      title={`Go to slide ${idx + 1}`}
+                    />
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
+        </section>
+      )}
+
+      {/* =========================================================================
           🌟 1. HERO SECTION (DECENT, ELEGANT, UNCLUTTERED)
       ========================================================================= */}
       <section className="relative overflow-hidden bg-gradient-to-b from-slate-50 via-white to-slate-50/60 pt-6 sm:pt-10 pb-16 sm:pb-20 border-b border-slate-200/60">
@@ -571,13 +731,17 @@ export const HomePage: React.FC = () => {
 
                       {/* Top Badges */}
                       <div className="absolute top-3 left-3 right-3 flex items-center justify-between">
-                        <span className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-slate-900/80 backdrop-blur-sm text-white text-[11px] font-medium border border-white/20">
-                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                          <span>{heroGallery[activeHeroIndex].badge}</span>
-                        </span>
-                        <span className="px-2.5 py-1 rounded-full bg-white/95 text-slate-900 text-[10px] font-semibold">
-                          {heroGallery[activeHeroIndex].tag}
-                        </span>
+                        {currentHeroSlide.showTopPill !== false ? (
+                          <span className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-slate-900/80 backdrop-blur-sm text-white text-[11px] font-medium border border-white/20">
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                            <span>{heroGallery[activeHeroIndex].badge}</span>
+                          </span>
+                        ) : <div />}
+                        {currentHeroSlide.showFeaturePill !== false && (
+                          <span className="px-2.5 py-1 rounded-full bg-white/95 text-slate-900 text-[10px] font-semibold">
+                            {heroGallery[activeHeroIndex].tag}
+                          </span>
+                        )}
                       </div>
 
                       {/* Prev / Next Arrow Overlay */}

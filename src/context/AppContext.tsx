@@ -287,9 +287,22 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       },
     };
   });
-  const [cms, setCms] = useState<CMSContent>(() =>
-    loadLocal('cms', SEED_CMS)
-  );
+  const [cms, setCms] = useState<CMSContent>(() => {
+    const loaded = loadLocal('cms', SEED_CMS);
+    return {
+      ...SEED_CMS,
+      ...loaded,
+      heroSlides:
+        loaded.heroSlides && loaded.heroSlides.length > 0
+          ? loaded.heroSlides
+          : SEED_CMS.heroSlides,
+      activeHeroSlideId: loaded.activeHeroSlideId || SEED_CMS.activeHeroSlideId,
+      enableHeroSlider:
+        loaded.enableHeroSlider !== undefined
+          ? loaded.enableHeroSlider
+          : SEED_CMS.enableHeroSlider,
+    };
+  });
   const [reviews, setReviews] = useState<Review[]>(() =>
     loadLocal('reviews', SEED_REVIEWS)
   );

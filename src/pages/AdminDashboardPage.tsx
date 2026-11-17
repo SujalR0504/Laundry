@@ -55,6 +55,10 @@ import {
   Phone,
   Scale,
   Package,
+  ToggleLeft,
+  ToggleRight,
+  EyeOff,
+  Sliders,
 } from 'lucide-react';
 import {
   OrderStatus,
@@ -66,7 +70,9 @@ import {
   BankAccount,
   Expense,
   CustomerDueRecord,
+  HeroSlideCMS,
 } from '../types';
+import { SEED_HERO_SLIDES } from '../data/seedData';
 import { AccountingSuite } from '../components/admin/AccountingSuite';
 import { ChangeServiceImageModal, compressImageFile } from '../components/admin/ChangeServiceImageModal';
 import { InvoiceDesigner } from '../components/admin/InvoiceDesigner';
@@ -280,6 +286,71 @@ export const AdminDashboardPage: React.FC = () => {
   // Settings form states
   const [settingsForm, setSettingsForm] = useState({ ...businessSettings });
   const [cmsForm, setCmsForm] = useState({ ...cms });
+  const [selectedSlideId, setSelectedSlideId] = useState<string>(() => {
+    return cms.activeHeroSlideId || cms.heroSlides?.[0]?.id || 'slide-diwali';
+  });
+
+  // Ensure cmsForm.heroSlides is initialized
+  const heroSlidesList: HeroSlideCMS[] =
+    cmsForm.heroSlides && cmsForm.heroSlides.length > 0
+      ? cmsForm.heroSlides
+      : SEED_HERO_SLIDES;
+
+  const currentActiveSlide: HeroSlideCMS =
+    heroSlidesList.find((s) => s.id === selectedSlideId) ||
+    heroSlidesList[0] ||
+    SEED_HERO_SLIDES[0];
+
+  const handleUpdateSlideField = (field: keyof HeroSlideCMS, value: any) => {
+    const updated = heroSlidesList.map((s) => {
+      if (s.id === currentActiveSlide.id) {
+        return { ...s, [field]: value };
+      }
+      return s;
+    });
+    setCmsForm({
+      ...cmsForm,
+      heroSlides: updated,
+    });
+  };
+
+  const handleToggleSlidePill = (
+    pillType: 'topPill' | 'featurePill' | 'cta' | 'secondaryCta'
+  ) => {
+    if (pillType === 'topPill') {
+      const current = currentActiveSlide.showTopPill !== false;
+      handleUpdateSlideField('showTopPill', !current);
+      showToast(
+        !current
+          ? 'TOP PILL BADGE: चालू (ON) - Storefront Par Dikhega'
+          : 'TOP PILL BADGE: बंद (OFF) - Storefront Se Hata Diya Gaya',
+        'info'
+      );
+    } else if (pillType === 'featurePill') {
+      const current = currentActiveSlide.showFeaturePill !== false;
+      handleUpdateSlideField('showFeaturePill', !current);
+      showToast(
+        !current
+          ? 'FEATURE PILL: चालू (ON) - Storefront Par Dikhega'
+          : 'FEATURE PILL: बंद (OFF) - Storefront Se Hata Diya Gaya',
+        'info'
+      );
+    } else if (pillType === 'cta') {
+      const current = currentActiveSlide.showCta !== false;
+      handleUpdateSlideField('showCta', !current);
+      showToast(
+        !current ? 'PRIMARY CTA: चालू (ON)' : 'PRIMARY CTA: बंद (OFF)',
+        'info'
+      );
+    } else if (pillType === 'secondaryCta') {
+      const current = currentActiveSlide.showSecondaryCta !== false;
+      handleUpdateSlideField('showSecondaryCta', !current);
+      showToast(
+        !current ? 'SECONDARY CTA: चालू (ON)' : 'SECONDARY CTA: बंद (OFF)',
+        'info'
+      );
+    }
+  };
 
   // Walk-in Counter / POS Order Modal State
   const [showPosModal, setShowPosModal] = useState(false);
@@ -2100,44 +2171,720 @@ export const AdminDashboardPage: React.FC = () => {
             </div>
           )}
 
-          {/* TAB 11: CMS CONTENT */}
+          {/* TAB 11: CMS CONTENT & HERO SLIDES */}
           {activeTab === 'cms' && (
-            <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-soft-sm space-y-4">
-              <h3 className="font-extrabold text-base text-slate-900">Website CMS (Edit Without Code)</h3>
-              <div className="space-y-3 text-xs">
+            <div className="space-y-6">
+              {/* Header Card */}
+              <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-soft-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                  <label className="font-bold text-slate-700 block mb-1">Homepage Headline</label>
-                  <input
-                    type="text"
-                    value={cmsForm.heroHeadline}
-                    onChange={(e) => setCmsForm({ ...cmsForm, heroHeadline: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-xl"
-                  />
+                  <div className="flex items-center space-x-2">
+                    <span className="p-2 rounded-xl bg-amber-50 text-amber-600 border border-amber-200">
+                      <Sparkles className="w-5 h-5" />
+                    </span>
+                    <div>
+                      <h3 className="font-extrabold text-base text-slate-900">
+                        Website CMS &amp; Hero Slide Manager
+                      </h3>
+                      <p className="text-xs text-slate-500">
+                        Festive Banners, Season Capsule Badges, Headlines &amp; Live Button On/Off (चालू / बंद) Controls
+                      </p>
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <label className="font-bold text-slate-700 block mb-1">Hero Subheadline</label>
-                  <textarea
-                    rows={2}
-                    value={cmsForm.heroSubheadline}
-                    onChange={(e) => setCmsForm({ ...cmsForm, heroSubheadline: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-xl"
-                  />
+
+                <div className="flex items-center space-x-2.5">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const diwaliSlide = SEED_HERO_SLIDES[0];
+                      const updated = heroSlidesList.map((s) =>
+                        s.id === 'slide-diwali' ? { ...diwaliSlide } : s
+                      );
+                      setCmsForm({
+                        ...cmsForm,
+                        heroSlides: updated,
+                        activeHeroSlideId: 'slide-diwali',
+                      });
+                      setSelectedSlideId('slide-diwali');
+                      showToast('Diwali Festive 2026 Preset Loaded!', 'success');
+                    }}
+                    className="px-3.5 py-2 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200 font-bold text-xs flex items-center space-x-1.5 transition-colors"
+                  >
+                    <Sparkles className="w-3.5 h-3.5 text-amber-600" />
+                    <span>Reset Diwali Preset</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      updateCMS(cmsForm);
+                      showToast('CMS & Slide changes saved successfully to live storefront!', 'success');
+                    }}
+                    className="px-5 py-2.5 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl text-xs flex items-center space-x-2 shadow-sm transition-all"
+                  >
+                    <Check className="w-4 h-4" />
+                    <span>Save CMS Changes</span>
+                  </button>
                 </div>
-                <div>
-                  <label className="font-bold text-slate-700 block mb-1">Top Announcement Banner</label>
-                  <input
-                    type="text"
-                    value={cmsForm.announcementBar}
-                    onChange={(e) => setCmsForm({ ...cmsForm, announcementBar: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-xl"
-                  />
+              </div>
+
+              {/* SLIDE SELECTOR TABS & GLOBAL TOGGLE */}
+              <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-soft-sm space-y-5">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-200 gap-3">
+                  <div>
+                    <h4 className="font-extrabold text-sm text-slate-900">
+                      Hero Banner Slides &amp; Festive Carousel
+                    </h4>
+                    <p className="text-xs text-slate-500">
+                      Select a slide below to edit badges, headlines, and toggle buttons on/off (चालू / बंद).
+                    </p>
+                  </div>
+
+                  <div className="flex items-center space-x-3">
+                    <span className="text-xs font-semibold text-slate-600">
+                      Storefront Hero Slider:
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const next = cmsForm.enableHeroSlider === false;
+                        setCmsForm({ ...cmsForm, enableHeroSlider: next });
+                        showToast(
+                          next
+                            ? 'Hero Banner Slider Enabled on Storefront'
+                            : 'Hero Banner Slider Disabled',
+                          'info'
+                        );
+                      }}
+                      className={`inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all shadow-xs ${
+                        cmsForm.enableHeroSlider !== false
+                          ? 'bg-emerald-600 hover:bg-emerald-700 text-white'
+                          : 'bg-slate-200 text-slate-700'
+                      }`}
+                    >
+                      {cmsForm.enableHeroSlider !== false ? (
+                        <>
+                          <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
+                          <span>Slider चालू (Active)</span>
+                          <ToggleRight className="w-4 h-4 ml-0.5" />
+                        </>
+                      ) : (
+                        <>
+                          <span className="w-2 h-2 rounded-full bg-slate-400" />
+                          <span>Slider बंद (Disabled)</span>
+                          <ToggleLeft className="w-4 h-4 ml-0.5 text-slate-500" />
+                        </>
+                      )}
+                    </button>
+                  </div>
                 </div>
-                <button
-                  onClick={() => updateCMS(cmsForm)}
-                  className="px-5 py-2.5 bg-brand-600 text-white font-bold rounded-xl text-xs"
-                >
-                  Save CMS Changes
-                </button>
+
+                {/* Slides Picker Grid */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  {heroSlidesList.map((slide, idx) => {
+                    const isSelected = slide.id === selectedSlideId;
+                    return (
+                      <div
+                        key={slide.id || idx}
+                        onClick={() => setSelectedSlideId(slide.id)}
+                        className={`cursor-pointer rounded-2xl p-3 border-2 transition-all flex items-center space-x-3 relative overflow-hidden ${
+                          isSelected
+                            ? 'border-brand-600 bg-brand-50/40 shadow-soft-sm ring-2 ring-brand-500/20'
+                            : 'border-slate-200 hover:border-slate-300 bg-white'
+                        }`}
+                      >
+                        <div className="w-14 h-14 rounded-xl overflow-hidden bg-slate-900 shrink-0 border border-slate-200 relative">
+                          <img
+                            src={slide.image}
+                            alt={slide.headline1}
+                            className="w-full h-full object-cover"
+                          />
+                          <div className="absolute inset-0 bg-slate-950/20" />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center space-x-1.5">
+                            <span className="text-[10px] font-bold text-slate-400">
+                              SLIDE #{idx + 1}
+                            </span>
+                            {slide.id === 'slide-diwali' && (
+                              <span className="px-1.5 py-0.2 rounded bg-amber-100 text-amber-800 text-[9px] font-extrabold uppercase">
+                                Festive
+                              </span>
+                            )}
+                          </div>
+                          <div className="font-bold text-xs text-slate-900 truncate">
+                            {slide.headline1} {slide.headline2}
+                          </div>
+                          <div className="flex items-center space-x-1 text-[10px] text-slate-500 mt-0.5">
+                            <span
+                              className={`w-1.5 h-1.5 rounded-full ${
+                                slide.showTopPill !== false
+                                  ? 'bg-emerald-500'
+                                  : 'bg-slate-300'
+                              }`}
+                            />
+                            <span>
+                              Pill 1: {slide.showTopPill !== false ? 'ON' : 'OFF'}
+                            </span>
+                            <span>•</span>
+                            <span
+                              className={`w-1.5 h-1.5 rounded-full ${
+                                slide.showFeaturePill !== false
+                                  ? 'bg-emerald-500'
+                                  : 'bg-slate-300'
+                              }`}
+                            />
+                            <span>
+                              Pill 2: {slide.showFeaturePill !== false ? 'ON' : 'OFF'}
+                            </span>
+                          </div>
+                        </div>
+
+                        {isSelected && (
+                          <div className="absolute top-2 right-2">
+                            <span className="w-2.5 h-2.5 rounded-full bg-brand-600 ring-4 ring-brand-100" />
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* =========================================================================
+                  ⭐ HERO SLIDE EDITOR (EXACT MATCH OF USER SCREENSHOT + ON/OFF BUTTON TOGGLES)
+              ========================================================================= */}
+              <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-soft-sm space-y-6">
+                <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-10 h-10 rounded-xl bg-slate-900 overflow-hidden border border-slate-200">
+                      <img
+                        src={currentActiveSlide.image}
+                        alt="Current"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div>
+                      <h4 className="font-extrabold text-sm text-slate-900">
+                        Editing Slide: {currentActiveSlide.headline1} {currentActiveSlide.headline2}
+                      </h4>
+                      <p className="text-[11px] text-slate-500">
+                        Customize button pills, headlines, text and toggle on/off visibility.
+                      </p>
+                    </div>
+                  </div>
+
+                  <span className="px-3 py-1 rounded-full bg-slate-100 text-slate-700 text-xs font-bold border border-slate-200">
+                    ID: {currentActiveSlide.id}
+                  </span>
+                </div>
+
+                <div className="space-y-5">
+                  {/* ROW 1: TOP PILL & FEATURE PILL WITH DEDICATED ON/OFF (BAND / CHALU) TOGGLES */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    {/* 1. TOP PILL SEASON / CAPSULE BADGE */}
+                    <div
+                      className={`p-4 rounded-2xl border transition-all ${
+                        currentActiveSlide.showTopPill !== false
+                          ? 'bg-amber-50/40 border-amber-200'
+                          : 'bg-slate-50 border-slate-200'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between mb-2">
+                        <label className="text-[11px] font-extrabold tracking-wider text-slate-800 uppercase flex items-center space-x-1.5">
+                          <Sparkles className="w-3.5 h-3.5 text-amber-600" />
+                          <span>TOP PILL SEASON / CAPSULE BADGE</span>
+                        </label>
+
+                        {/* ON/OFF TOGGLE SWITCH BUTTON (बटन चालू / बंद) */}
+                        <button
+                          type="button"
+                          onClick={() => handleToggleSlidePill('topPill')}
+                          className={`inline-flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-extrabold transition-all shadow-xs cursor-pointer ${
+                            currentActiveSlide.showTopPill !== false
+                              ? 'bg-emerald-600 hover:bg-emerald-700 text-white ring-2 ring-emerald-500/30'
+                              : 'bg-slate-200 hover:bg-slate-300 text-slate-700 ring-1 ring-slate-300'
+                          }`}
+                          title="Click to Turn ON / OFF (चालू या बंद करें)"
+                        >
+                          {currentActiveSlide.showTopPill !== false ? (
+                            <>
+                              <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
+                              <span>चालू (ON)</span>
+                              <ToggleRight className="w-4 h-4 ml-0.5" />
+                            </>
+                          ) : (
+                            <>
+                              <span className="w-2 h-2 rounded-full bg-slate-400" />
+                              <span>बंद (OFF)</span>
+                              <ToggleLeft className="w-4 h-4 ml-0.5 text-slate-500" />
+                            </>
+                          )}
+                        </button>
+                      </div>
+
+                      <input
+                        type="text"
+                        value={currentActiveSlide.topPill}
+                        onChange={(e) =>
+                          handleUpdateSlideField('topPill', e.target.value)
+                        }
+                        placeholder="e.g. DIWALI 2026 • FESTIVE COLLECTION"
+                        className={`w-full px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all ${
+                          currentActiveSlide.showTopPill !== false
+                            ? 'bg-white border border-amber-300 text-slate-900 shadow-soft-sm focus:ring-2 focus:ring-amber-500'
+                            : 'bg-slate-100 border border-dashed border-slate-300 text-slate-400 line-through'
+                        }`}
+                      />
+
+                      <div className="flex items-center justify-between mt-2 text-[10px]">
+                        <span
+                          className={`font-semibold ${
+                            currentActiveSlide.showTopPill !== false
+                              ? 'text-emerald-700'
+                              : 'text-slate-500'
+                          }`}
+                        >
+                          {currentActiveSlide.showTopPill !== false
+                            ? '🟢 Button चालू Hai: Storefront banner par glowing pill dikhega'
+                            : '⚪ Button बंद Hai: Storefront banner se hide kar diya gaya hai'}
+                        </span>
+                        <span className="text-slate-400 font-mono">
+                          showTopPill: {String(currentActiveSlide.showTopPill !== false)}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* 2. FABRIC / ORIGIN FEATURE PILL */}
+                    <div
+                      className={`p-4 rounded-2xl border transition-all ${
+                        currentActiveSlide.showFeaturePill !== false
+                          ? 'bg-sky-50/40 border-sky-200'
+                          : 'bg-slate-50 border-slate-200'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between mb-2">
+                        <label className="text-[11px] font-extrabold tracking-wider text-slate-800 uppercase flex items-center space-x-1.5">
+                          <Shirt className="w-3.5 h-3.5 text-sky-600" />
+                          <span>FABRIC / ORIGIN FEATURE PILL</span>
+                        </label>
+
+                        {/* ON/OFF TOGGLE SWITCH BUTTON (बटन चालू / बंद) */}
+                        <button
+                          type="button"
+                          onClick={() => handleToggleSlidePill('featurePill')}
+                          className={`inline-flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-extrabold transition-all shadow-xs cursor-pointer ${
+                            currentActiveSlide.showFeaturePill !== false
+                              ? 'bg-emerald-600 hover:bg-emerald-700 text-white ring-2 ring-emerald-500/30'
+                              : 'bg-slate-200 hover:bg-slate-300 text-slate-700 ring-1 ring-slate-300'
+                          }`}
+                          title="Click to Turn ON / OFF (चालू या बंद करें)"
+                        >
+                          {currentActiveSlide.showFeaturePill !== false ? (
+                            <>
+                              <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
+                              <span>चालू (ON)</span>
+                              <ToggleRight className="w-4 h-4 ml-0.5" />
+                            </>
+                          ) : (
+                            <>
+                              <span className="w-2 h-2 rounded-full bg-slate-400" />
+                              <span>बंद (OFF)</span>
+                              <ToggleLeft className="w-4 h-4 ml-0.5 text-slate-500" />
+                            </>
+                          )}
+                        </button>
+                      </div>
+
+                      <input
+                        type="text"
+                        value={currentActiveSlide.featurePill}
+                        onChange={(e) =>
+                          handleUpdateSlideField('featurePill', e.target.value)
+                        }
+                        placeholder="e.g. EMBROIDERED ETHNIC WEAR"
+                        className={`w-full px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all ${
+                          currentActiveSlide.showFeaturePill !== false
+                            ? 'bg-white border border-sky-300 text-slate-900 shadow-soft-sm focus:ring-2 focus:ring-sky-500'
+                            : 'bg-slate-100 border border-dashed border-slate-300 text-slate-400 line-through'
+                        }`}
+                      />
+
+                      <div className="flex items-center justify-between mt-2 text-[10px]">
+                        <span
+                          className={`font-semibold ${
+                            currentActiveSlide.showFeaturePill !== false
+                              ? 'text-emerald-700'
+                              : 'text-slate-500'
+                          }`}
+                        >
+                          {currentActiveSlide.showFeaturePill !== false
+                            ? '🟢 Button चालू Hai: Storefront banner par frosted feature pill dikhega'
+                            : '⚪ Button बंद Hai: Storefront banner se hide kar diya gaya hai'}
+                        </span>
+                        <span className="text-slate-400 font-mono">
+                          showFeaturePill: {String(currentActiveSlide.showFeaturePill !== false)}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* ROW 2: HEADLINE LINE 1 & HEADLINE LINE 2 */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div>
+                      <label className="text-[11px] font-extrabold tracking-wider text-slate-700 uppercase block mb-1.5">
+                        HEADLINE (LINE 1 WHITE)
+                      </label>
+                      <input
+                        type="text"
+                        value={currentActiveSlide.headline1}
+                        onChange={(e) =>
+                          handleUpdateSlideField('headline1', e.target.value)
+                        }
+                        placeholder="e.g. HAPPY"
+                        className="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl font-extrabold text-sm text-slate-900 bg-white focus:ring-2 focus:ring-brand-500"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="text-[11px] font-extrabold tracking-wider text-amber-700 uppercase block mb-1.5">
+                        HEADLINE (LINE 2 GOLD HIGHLIGHT)
+                      </label>
+                      <input
+                        type="text"
+                        value={currentActiveSlide.headline2}
+                        onChange={(e) =>
+                          handleUpdateSlideField('headline2', e.target.value)
+                        }
+                        placeholder="e.g. DIWALI"
+                        className="w-full px-3.5 py-2.5 border border-amber-300 rounded-xl font-extrabold text-sm text-amber-900 bg-amber-50/30 focus:ring-2 focus:ring-amber-500"
+                      />
+                    </div>
+                  </div>
+
+                  {/* ROW 3: SLIDE EDITORIAL DESCRIPTION SUBTEXT */}
+                  <div>
+                    <label className="text-[11px] font-extrabold tracking-wider text-slate-700 uppercase block mb-1.5">
+                      SLIDE EDITORIAL DESCRIPTION SUBTEXT
+                    </label>
+                    <textarea
+                      rows={3}
+                      value={currentActiveSlide.description}
+                      onChange={(e) =>
+                        handleUpdateSlideField('description', e.target.value)
+                      }
+                      placeholder="Celebrate the Festival of Lights with elegant ethnic styles..."
+                      className="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-xs text-slate-800 bg-white focus:ring-2 focus:ring-brand-500 leading-relaxed"
+                    />
+                  </div>
+
+                  {/* ROW 4: BACKGROUND PHOTO & CALL-TO-ACTION BUTTON TOGGLES */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pt-2">
+                    {/* Background Image */}
+                    <div className="space-y-2">
+                      <label className="text-[11px] font-extrabold tracking-wider text-slate-700 uppercase block">
+                        SLIDE BACKGROUND PHOTO
+                      </label>
+                      <div className="flex items-center space-x-2">
+                        <input
+                          type="text"
+                          value={currentActiveSlide.image}
+                          onChange={(e) =>
+                            handleUpdateSlideField('image', e.target.value)
+                          }
+                          className="flex-1 px-3 py-2 border border-slate-300 rounded-xl text-xs font-mono"
+                        />
+                      </div>
+                      <div className="flex items-center space-x-2 text-[10px] text-slate-500">
+                        <span>Presets:</span>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            handleUpdateSlideField(
+                              'image',
+                              '/images/ethnic-silk-care.jpg'
+                            )
+                          }
+                          className="px-2 py-0.5 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold"
+                        >
+                          Diwali Ethnic
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            handleUpdateSlideField(
+                              'image',
+                              '/images/storefront-exterior.jpg'
+                            )
+                          }
+                          className="px-2 py-0.5 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold"
+                        >
+                          Storefront
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            handleUpdateSlideField(
+                              'image',
+                              '/images/industrial-washer.jpg'
+                            )
+                          }
+                          className="px-2 py-0.5 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold"
+                        >
+                          Rotary Plant
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* CTAs */}
+                    <div className="space-y-2">
+                      <label className="text-[11px] font-extrabold tracking-wider text-slate-700 uppercase block">
+                        CALL TO ACTION (CTA) BUTTONS
+                      </label>
+                      <div className="grid grid-cols-2 gap-2 text-xs">
+                        <div className="p-2.5 rounded-xl border border-slate-200 bg-slate-50 space-y-1.5">
+                          <div className="flex items-center justify-between">
+                            <span className="font-bold text-[11px] text-slate-700">Primary CTA</span>
+                            <button
+                              type="button"
+                              onClick={() => handleToggleSlidePill('cta')}
+                              className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
+                                currentActiveSlide.showCta !== false
+                                  ? 'bg-emerald-600 text-white'
+                                  : 'bg-slate-300 text-slate-700'
+                              }`}
+                            >
+                              {currentActiveSlide.showCta !== false ? 'चालू (ON)' : 'बंद (OFF)'}
+                            </button>
+                          </div>
+                          <input
+                            type="text"
+                            value={currentActiveSlide.ctaText || 'Book Festive Care'}
+                            onChange={(e) =>
+                              handleUpdateSlideField('ctaText', e.target.value)
+                            }
+                            className="w-full px-2 py-1 text-xs border rounded bg-white"
+                          />
+                        </div>
+
+                        <div className="p-2.5 rounded-xl border border-slate-200 bg-slate-50 space-y-1.5">
+                          <div className="flex items-center justify-between">
+                            <span className="font-bold text-[11px] text-slate-700">Secondary CTA</span>
+                            <button
+                              type="button"
+                              onClick={() => handleToggleSlidePill('secondaryCta')}
+                              className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
+                                currentActiveSlide.showSecondaryCta !== false
+                                  ? 'bg-emerald-600 text-white'
+                                  : 'bg-slate-300 text-slate-700'
+                              }`}
+                            >
+                              {currentActiveSlide.showSecondaryCta !== false ? 'चालू (ON)' : 'बंद (OFF)'}
+                            </button>
+                          </div>
+                          <input
+                            type="text"
+                            value={currentActiveSlide.secondaryCtaText || 'View Pricing'}
+                            onChange={(e) =>
+                              handleUpdateSlideField('secondaryCtaText', e.target.value)
+                            }
+                            className="w-full px-2 py-1 text-xs border rounded bg-white"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* =========================================================================
+                      🌟 LIVE REAL-TIME STOREFRONT PREVIEW CARD (SEE EXACT ON/OFF STATUS)
+                  ========================================================================= */}
+                  <div className="pt-4 border-t border-slate-200">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center space-x-2">
+                        <Eye className="w-4 h-4 text-brand-600" />
+                        <span className="text-xs font-extrabold uppercase tracking-wider text-slate-800">
+                          Live Storefront Real-Time Preview
+                        </span>
+                      </div>
+                      <span className="text-[11px] font-semibold text-slate-500">
+                        Shows exactly how it renders to customers on the homepage
+                      </span>
+                    </div>
+
+                    <div className="relative rounded-3xl overflow-hidden bg-slate-950 p-6 sm:p-8 text-white border border-amber-500/30 shadow-xl">
+                      {/* Background with Dark Vignette */}
+                      <div className="absolute inset-0">
+                        <img
+                          src={currentActiveSlide.image}
+                          alt="Preview"
+                          className="w-full h-full object-cover object-center filter brightness-[0.35]"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/85 to-transparent" />
+                      </div>
+
+                      <div className="relative z-10 max-w-2xl space-y-4">
+                        {/* Live Pill Badges Row with Visual State */}
+                        <div className="flex flex-wrap items-center gap-2">
+                          {/* Top Pill Preview */}
+                          {currentActiveSlide.showTopPill !== false ? (
+                            <span className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-gradient-to-r from-amber-500/30 to-yellow-500/20 border border-amber-400/50 text-amber-300 text-[11px] font-extrabold uppercase tracking-wider shadow-sm backdrop-blur-md">
+                              <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" />
+                              <span>{currentActiveSlide.topPill}</span>
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-full bg-rose-950/60 border border-rose-500/40 text-rose-300 text-[10px] font-semibold backdrop-blur-sm">
+                              <X className="w-3 h-3 text-rose-400" />
+                              <span>Top Pill: बंद (OFF) - Hidden from Customer</span>
+                            </span>
+                          )}
+
+                          {/* Feature Pill Preview */}
+                          {currentActiveSlide.showFeaturePill !== false ? (
+                            <span className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-white/15 backdrop-blur-md border border-white/30 text-white text-[11px] font-bold uppercase tracking-wider">
+                              <Sparkles className="w-3 h-3 text-yellow-300" />
+                              <span>{currentActiveSlide.featurePill}</span>
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-full bg-rose-950/60 border border-rose-500/40 text-rose-300 text-[10px] font-semibold backdrop-blur-sm">
+                              <X className="w-3 h-3 text-rose-400" />
+                              <span>Feature Pill: बंद (OFF) - Hidden from Customer</span>
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Headlines */}
+                        <div className="space-y-0.5">
+                          <div className="text-2xl sm:text-4xl font-black tracking-tight text-white uppercase drop-shadow-md">
+                            {currentActiveSlide.headline1}
+                          </div>
+                          <div className="text-2xl sm:text-4xl font-black tracking-tight bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-200 bg-clip-text text-transparent uppercase drop-shadow-lg">
+                            {currentActiveSlide.headline2}
+                          </div>
+                        </div>
+
+                        {/* Description */}
+                        <p className="text-slate-300 text-xs sm:text-sm font-light leading-relaxed max-w-xl">
+                          {currentActiveSlide.description}
+                        </p>
+
+                        {/* Action Buttons */}
+                        <div className="flex flex-wrap items-center gap-2.5 pt-1">
+                          {currentActiveSlide.showCta !== false && (
+                            <button
+                              type="button"
+                              className="px-4 py-2 rounded-xl bg-gradient-to-r from-amber-400 to-yellow-500 text-slate-950 font-bold text-xs shadow-md flex items-center space-x-1.5 pointer-events-none"
+                            >
+                              <Sparkles className="w-3.5 h-3.5 text-slate-950" />
+                              <span>{currentActiveSlide.ctaText || 'Book Festive Care'}</span>
+                              <ArrowRight className="w-3.5 h-3.5" />
+                            </button>
+                          )}
+                          {currentActiveSlide.showSecondaryCta !== false && (
+                            <button
+                              type="button"
+                              className="px-4 py-2 rounded-xl bg-white/10 text-white font-semibold text-xs border border-white/20 backdrop-blur-md pointer-events-none"
+                            >
+                              <span>{currentActiveSlide.secondaryCtaText || 'View Pricing'}</span>
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* SAVE CHANGES BAR */}
+                  <div className="pt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-t border-slate-100">
+                    <div className="flex items-center space-x-2 text-xs text-slate-500">
+                      <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                      <span>Changes are saved directly to your live system &amp; browser cache.</span>
+                    </div>
+
+                    <div className="flex items-center space-x-3">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setCmsForm({
+                            ...cmsForm,
+                            activeHeroSlideId: currentActiveSlide.id,
+                          });
+                          updateCMS({
+                            ...cmsForm,
+                            activeHeroSlideId: currentActiveSlide.id,
+                          });
+                          showToast(
+                            `Slide "${currentActiveSlide.headline1} ${currentActiveSlide.headline2}" set as Primary on Storefront!`,
+                            'success'
+                          );
+                        }}
+                        className="px-4 py-2.5 rounded-xl border border-slate-300 hover:bg-slate-50 text-slate-700 font-bold text-xs transition-colors"
+                      >
+                        Set as Homepage Primary Slide
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          updateCMS(cmsForm);
+                          showToast('CMS Content & Slide Buttons Saved Live!', 'success');
+                        }}
+                        className="px-6 py-2.5 bg-brand-600 hover:bg-brand-700 text-white font-extrabold rounded-xl text-xs flex items-center space-x-2 shadow-md transition-all transform hover:-translate-y-0.5"
+                      >
+                        <Check className="w-4 h-4" />
+                        <span>Save All CMS Changes</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* GENERAL WEBSITE TEXT & POLICIES (ACCORDION) */}
+              <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-soft-sm space-y-4">
+                <h4 className="font-extrabold text-sm text-slate-900">
+                  Storewide Announcement &amp; General Text
+                </h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                  <div>
+                    <label className="font-bold text-slate-700 block mb-1">
+                      Top Announcement Bar (Shown in Header)
+                    </label>
+                    <input
+                      type="text"
+                      value={cmsForm.announcementBar}
+                      onChange={(e) =>
+                        setCmsForm({ ...cmsForm, announcementBar: e.target.value })
+                      }
+                      className="w-full px-3 py-2 border rounded-xl"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="font-bold text-slate-700 block mb-1">
+                      Fallback Homepage Headline
+                    </label>
+                    <input
+                      type="text"
+                      value={cmsForm.heroHeadline}
+                      onChange={(e) =>
+                        setCmsForm({ ...cmsForm, heroHeadline: e.target.value })
+                      }
+                      className="w-full px-3 py-2 border rounded-xl"
+                    />
+                  </div>
+
+                  <div className="md:col-span-2">
+                    <label className="font-bold text-slate-700 block mb-1">
+                      Fallback Hero Subheadline
+                    </label>
+                    <textarea
+                      rows={2}
+                      value={cmsForm.heroSubheadline}
+                      onChange={(e) =>
+                        setCmsForm({ ...cmsForm, heroSubheadline: e.target.value })
+                      }
+                      className="w-full px-3 py-2 border rounded-xl"
+                    />
+                  </div>
+                </div>
               </div>
             </div>
           )}

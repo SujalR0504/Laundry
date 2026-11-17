@@ -279,6 +279,31 @@ export interface BusinessSettings {
   };
 }
 
+export interface HeroSlideCMS {
+  id: string;
+  image: string;
+  // TOP PILL SEASON / CAPSULE BADGE
+  topPill: string;
+  showTopPill?: boolean; // ON / OFF (चालू / बंद) toggle button
+  // FABRIC / ORIGIN FEATURE PILL
+  featurePill: string;
+  showFeaturePill?: boolean; // ON / OFF (चालू / बंद) toggle button
+  // HEADLINE (LINE 1 WHITE)
+  headline1: string;
+  // HEADLINE (LINE 2 GOLD HIGHLIGHT)
+  headline2: string;
+  // SLIDE EDITORIAL DESCRIPTION SUBTEXT
+  description: string;
+  // Call to Action Buttons & Visibility Toggles
+  ctaText?: string;
+  ctaLink?: string;
+  showCta?: boolean;
+  secondaryCtaText?: string;
+  secondaryCtaLink?: string;
+  showSecondaryCta?: boolean;
+  active: boolean;
+}
+
 export interface CMSContent {
   heroHeadline: string;
   heroSubheadline: string;
@@ -289,6 +314,11 @@ export interface CMSContent {
   termsConditions: string;
   privacyPolicy: string;
   cancellationPolicy: string;
+  // Hero Carousel & Banner Slides
+  heroSlides?: HeroSlideCMS[];
+  activeHeroSlideId?: string;
+  enableHeroSlider?: boolean;
+  heroDisplayMode?: 'festive_slider' | 'split_studio';
 }
 
 export interface AuditLog {
