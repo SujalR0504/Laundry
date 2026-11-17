@@ -1193,10 +1193,10 @@ export const SEED_HERO_SLIDES: HeroSlideCMS[] = [
     // SLIDE EDITORIAL DESCRIPTION SUBTEXT
     description:
       'Celebrate the Festival of Lights with elegant ethnic styles. Discover beautiful embroidered outfits made for your festive moments.',
-    ctaText: 'Book Festive Care',
+    ctaText: 'SHOP MEN',
     ctaLink: 'booking',
     showCta: true,
-    secondaryCtaText: 'Pricing & Menu',
+    secondaryCtaText: 'SHOP COLLECTION',
     secondaryCtaLink: 'services',
     showSecondaryCta: true,
     active: true,

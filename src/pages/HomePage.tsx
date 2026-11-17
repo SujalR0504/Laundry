@@ -540,7 +540,7 @@ export const HomePage: React.FC = () => {
                     className="px-6 py-3 rounded-xl bg-gradient-to-r from-amber-400 to-yellow-500 hover:from-amber-500 hover:to-yellow-600 text-slate-950 font-extrabold text-sm shadow-lg shadow-amber-500/20 flex items-center space-x-2 transition-all transform hover:-translate-y-0.5 cursor-pointer"
                   >
                     <Sparkles className="w-4 h-4 text-slate-950" />
-                    <span>{currentHeroSlide.ctaText || 'Book Festive Care'}</span>
+                    <span>{currentHeroSlide.ctaText || 'SHOP MEN'}</span>
                     <ArrowRight className="w-4 h-4" />
                   </button>
                 )}
@@ -555,7 +555,7 @@ export const HomePage: React.FC = () => {
                     className="px-5 py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white font-medium text-sm border border-white/20 backdrop-blur-md transition-colors cursor-pointer"
                   >
                     <span>
-                      {currentHeroSlide.secondaryCtaText || 'Services & Pricing'}
+                      {currentHeroSlide.secondaryCtaText || 'SHOP COLLECTION'}
                     </span>
                   </button>
                 )}
