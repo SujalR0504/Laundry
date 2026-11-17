@@ -2390,17 +2390,17 @@ export const AdminDashboardPage: React.FC = () => {
                           : 'bg-slate-50 border-slate-200'
                       }`}
                     >
-                      <div className="flex items-center justify-between mb-2">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
                         <label className="text-[11px] font-extrabold tracking-wider text-slate-800 uppercase flex items-center space-x-1.5">
-                          <Sparkles className="w-3.5 h-3.5 text-amber-600" />
-                          <span>TOP PILL SEASON / CAPSULE BADGE</span>
+                          <Sparkles className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+                          <span className="truncate">TOP PILL SEASON / CAPSULE BADGE</span>
                         </label>
 
                         {/* ON/OFF TOGGLE SWITCH BUTTON (बटन चालू / बंद) */}
                         <button
                           type="button"
                           onClick={() => handleToggleSlidePill('topPill')}
-                          className={`inline-flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-extrabold transition-all shadow-xs cursor-pointer ${
+                          className={`inline-flex items-center justify-center space-x-1.5 px-3 py-1.5 rounded-full text-xs font-extrabold transition-all shadow-xs cursor-pointer shrink-0 w-full sm:w-auto ${
                             currentActiveSlide.showTopPill !== false
                               ? 'bg-emerald-600 hover:bg-emerald-700 text-white ring-2 ring-emerald-500/30'
                               : 'bg-slate-200 hover:bg-slate-300 text-slate-700 ring-1 ring-slate-300'
@@ -2437,7 +2437,7 @@ export const AdminDashboardPage: React.FC = () => {
                         }`}
                       />
 
-                      <div className="flex items-center justify-between mt-2 text-[10px]">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between mt-2 text-[10px] gap-1">
                         <span
                           className={`font-semibold ${
                             currentActiveSlide.showTopPill !== false
@@ -2463,17 +2463,17 @@ export const AdminDashboardPage: React.FC = () => {
                           : 'bg-slate-50 border-slate-200'
                       }`}
                     >
-                      <div className="flex items-center justify-between mb-2">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
                         <label className="text-[11px] font-extrabold tracking-wider text-slate-800 uppercase flex items-center space-x-1.5">
-                          <Shirt className="w-3.5 h-3.5 text-sky-600" />
-                          <span>FABRIC / ORIGIN FEATURE PILL</span>
+                          <Shirt className="w-3.5 h-3.5 text-sky-600 shrink-0" />
+                          <span className="truncate">FABRIC / ORIGIN FEATURE PILL</span>
                         </label>
 
                         {/* ON/OFF TOGGLE SWITCH BUTTON (बटन चालू / बंद) */}
                         <button
                           type="button"
                           onClick={() => handleToggleSlidePill('featurePill')}
-                          className={`inline-flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-extrabold transition-all shadow-xs cursor-pointer ${
+                          className={`inline-flex items-center justify-center space-x-1.5 px-3 py-1.5 rounded-full text-xs font-extrabold transition-all shadow-xs cursor-pointer shrink-0 w-full sm:w-auto ${
                             currentActiveSlide.showFeaturePill !== false
                               ? 'bg-emerald-600 hover:bg-emerald-700 text-white ring-2 ring-emerald-500/30'
                               : 'bg-slate-200 hover:bg-slate-300 text-slate-700 ring-1 ring-slate-300'
@@ -2510,7 +2510,7 @@ export const AdminDashboardPage: React.FC = () => {
                         }`}
                       />
 
-                      <div className="flex items-center justify-between mt-2 text-[10px]">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between mt-2 text-[10px] gap-1">
                         <span
                           className={`font-semibold ${
                             currentActiveSlide.showFeaturePill !== false
@@ -2588,17 +2588,17 @@ export const AdminDashboardPage: React.FC = () => {
                           : 'bg-slate-50 border-slate-200'
                       }`}
                     >
-                      <div className="flex items-center justify-between mb-2">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
                         <label className="text-[11px] font-extrabold tracking-wider text-slate-800 uppercase flex items-center space-x-1.5">
-                          <Sparkles className="w-3.5 h-3.5 text-amber-600" />
-                          <span>PRIMARY CTA BUTTON LABEL</span>
+                          <Sparkles className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+                          <span className="truncate">PRIMARY CTA BUTTON LABEL</span>
                         </label>
 
                         {/* ON/OFF TOGGLE SWITCH BUTTON (बटन चालू / बंद) */}
                         <button
                           type="button"
                           onClick={() => handleToggleSlidePill('cta')}
-                          className={`inline-flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-extrabold transition-all shadow-xs cursor-pointer ${
+                          className={`inline-flex items-center justify-center space-x-1.5 px-3 py-1.5 rounded-full text-xs font-extrabold transition-all shadow-xs cursor-pointer shrink-0 w-full sm:w-auto ${
                             currentActiveSlide.showCta !== false
                               ? 'bg-emerald-600 hover:bg-emerald-700 text-white ring-2 ring-emerald-500/30'
                               : 'bg-slate-200 hover:bg-slate-300 text-slate-700 ring-1 ring-slate-300'
@@ -2635,7 +2635,7 @@ export const AdminDashboardPage: React.FC = () => {
                         }`}
                       />
 
-                      <div className="flex items-center justify-between mt-2 text-[10px]">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between mt-2 text-[10px] gap-1">
                         <span
                           className={`font-semibold ${
                             currentActiveSlide.showCta !== false
@@ -2661,17 +2661,17 @@ export const AdminDashboardPage: React.FC = () => {
                           : 'bg-slate-50 border-slate-200'
                       }`}
                     >
-                      <div className="flex items-center justify-between mb-2">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
                         <label className="text-[11px] font-extrabold tracking-wider text-slate-800 uppercase flex items-center space-x-1.5">
-                          <Layers className="w-3.5 h-3.5 text-sky-600" />
-                          <span>SECONDARY CTA BUTTON LABEL</span>
+                          <Layers className="w-3.5 h-3.5 text-sky-600 shrink-0" />
+                          <span className="truncate">SECONDARY CTA BUTTON LABEL</span>
                         </label>
 
                         {/* ON/OFF TOGGLE SWITCH BUTTON (बटन चालू / बंद) */}
                         <button
                           type="button"
                           onClick={() => handleToggleSlidePill('secondaryCta')}
-                          className={`inline-flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-extrabold transition-all shadow-xs cursor-pointer ${
+                          className={`inline-flex items-center justify-center space-x-1.5 px-3 py-1.5 rounded-full text-xs font-extrabold transition-all shadow-xs cursor-pointer shrink-0 w-full sm:w-auto ${
                             currentActiveSlide.showSecondaryCta !== false
                               ? 'bg-emerald-600 hover:bg-emerald-700 text-white ring-2 ring-emerald-500/30'
                               : 'bg-slate-200 hover:bg-slate-300 text-slate-700 ring-1 ring-slate-300'
@@ -2708,7 +2708,7 @@ export const AdminDashboardPage: React.FC = () => {
                         }`}
                       />
 
-                      <div className="flex items-center justify-between mt-2 text-[10px]">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between mt-2 text-[10px] gap-1">
                         <span
                           className={`font-semibold ${
                             currentActiveSlide.showSecondaryCta !== false
@@ -2718,7 +2718,7 @@ export const AdminDashboardPage: React.FC = () => {
                         >
                           {currentActiveSlide.showSecondaryCta !== false
                             ? '🟢 Button चालू Hai: Storefront banner par Secondary button dikhega'
-                            : '⚪ Button बंद Hai: Storefront banner se Secondary button hide kar diya gaya hai'}
+                            : '⚪ Button बंद Hai: Storefront banner se button hide kar diya gaya hai'}
                         </span>
                         <span className="text-slate-400 font-mono">
                           showSecondaryCta: {String(currentActiveSlide.showSecondaryCta !== false)}
@@ -2799,7 +2799,7 @@ export const AdminDashboardPage: React.FC = () => {
                       </span>
                     </div>
 
-                    <div className="relative rounded-3xl overflow-hidden bg-slate-950 p-6 sm:p-8 text-white border border-amber-500/30 shadow-xl">
+                    <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden bg-slate-950 p-4 sm:p-8 text-white border border-amber-500/30 shadow-xl max-w-full">
                       {/* Background with Dark Vignette */}
                       <div className="absolute inset-0">
                         <img
@@ -2812,78 +2812,78 @@ export const AdminDashboardPage: React.FC = () => {
 
                       <div className="relative z-10 max-w-2xl space-y-4">
                         {/* Live Pill Badges Row with Visual State */}
-                        <div className="flex flex-wrap items-center gap-2">
+                        <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 max-w-full">
                           {/* Top Pill Preview */}
                           {currentActiveSlide.showTopPill !== false ? (
-                            <span className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-gradient-to-r from-amber-500/30 to-yellow-500/20 border border-amber-400/50 text-amber-300 text-[11px] font-extrabold uppercase tracking-wider shadow-sm backdrop-blur-md">
-                              <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" />
-                              <span>{currentActiveSlide.topPill}</span>
+                            <span className="inline-flex items-center space-x-1.5 px-2.5 sm:px-3 py-1 rounded-full bg-gradient-to-r from-amber-500/30 to-yellow-500/20 border border-amber-400/50 text-amber-300 text-[10px] sm:text-[11px] font-extrabold uppercase tracking-wider shadow-sm backdrop-blur-md max-w-full truncate">
+                              <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-amber-400 animate-ping shrink-0" />
+                              <span className="truncate">{currentActiveSlide.topPill}</span>
                             </span>
                           ) : (
                             <span className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-full bg-rose-950/60 border border-rose-500/40 text-rose-300 text-[10px] font-semibold backdrop-blur-sm">
-                              <X className="w-3 h-3 text-rose-400" />
-                              <span>Top Pill: बंद (OFF) - Hidden from Customer</span>
+                              <X className="w-3 h-3 text-rose-400 shrink-0" />
+                              <span>Top Pill: बंद (OFF) - Hidden</span>
                             </span>
                           )}
 
                           {/* Feature Pill Preview */}
                           {currentActiveSlide.showFeaturePill !== false ? (
-                            <span className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-white/15 backdrop-blur-md border border-white/30 text-white text-[11px] font-bold uppercase tracking-wider">
-                              <Sparkles className="w-3 h-3 text-yellow-300" />
-                              <span>{currentActiveSlide.featurePill}</span>
+                            <span className="inline-flex items-center space-x-1.5 px-2.5 sm:px-3 py-1 rounded-full bg-white/15 backdrop-blur-md border border-white/30 text-white text-[10px] sm:text-[11px] font-bold uppercase tracking-wider max-w-full truncate">
+                              <Sparkles className="w-3 h-3 text-yellow-300 shrink-0" />
+                              <span className="truncate">{currentActiveSlide.featurePill}</span>
                             </span>
                           ) : (
                             <span className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-full bg-rose-950/60 border border-rose-500/40 text-rose-300 text-[10px] font-semibold backdrop-blur-sm">
-                              <X className="w-3 h-3 text-rose-400" />
-                              <span>Feature Pill: बंद (OFF) - Hidden from Customer</span>
+                              <X className="w-3 h-3 text-rose-400 shrink-0" />
+                              <span>Feature Pill: बंद (OFF) - Hidden</span>
                             </span>
                           )}
                         </div>
 
                         {/* Headlines */}
                         <div className="space-y-0.5">
-                          <div className="text-2xl sm:text-4xl font-black tracking-tight text-white uppercase drop-shadow-md">
+                          <div className="text-xl sm:text-3xl lg:text-4xl font-black tracking-tight text-white uppercase drop-shadow-md break-words leading-tight">
                             {currentActiveSlide.headline1}
                           </div>
-                          <div className="text-2xl sm:text-4xl font-black tracking-tight bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-200 bg-clip-text text-transparent uppercase drop-shadow-lg">
+                          <div className="text-xl sm:text-3xl lg:text-4xl font-black tracking-tight bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-200 bg-clip-text text-transparent uppercase drop-shadow-lg break-words leading-tight">
                             {currentActiveSlide.headline2}
                           </div>
                         </div>
 
                         {/* Description */}
-                        <p className="text-slate-300 text-xs sm:text-sm font-light leading-relaxed max-w-xl">
+                        <p className="text-slate-300 text-xs sm:text-sm font-light leading-relaxed max-w-xl line-clamp-3 sm:line-clamp-none">
                           {currentActiveSlide.description}
                         </p>
 
                         {/* Action Buttons */}
-                        <div className="flex flex-wrap items-center gap-2.5 pt-1">
+                        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 pt-1 w-full sm:w-auto">
                           {currentActiveSlide.showCta !== false ? (
                             <button
                               type="button"
-                              className="px-4 py-2 rounded-xl bg-gradient-to-r from-amber-400 to-yellow-500 text-slate-950 font-bold text-xs shadow-md flex items-center space-x-1.5 pointer-events-none"
+                              className="px-4 py-2 rounded-xl bg-gradient-to-r from-amber-400 to-yellow-500 text-slate-950 font-bold text-xs shadow-md flex items-center justify-center space-x-1.5 pointer-events-none"
                             >
-                              <Sparkles className="w-3.5 h-3.5 text-slate-950" />
+                              <Sparkles className="w-3.5 h-3.5 text-slate-950 shrink-0" />
                               <span>{currentActiveSlide.ctaText || 'SHOP MEN'}</span>
-                              <ArrowRight className="w-3.5 h-3.5" />
+                              <ArrowRight className="w-3.5 h-3.5 shrink-0" />
                             </button>
                           ) : (
                             <span className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-full bg-rose-950/60 border border-rose-500/40 text-rose-300 text-[10px] font-semibold backdrop-blur-sm">
-                              <X className="w-3 h-3 text-rose-400" />
-                              <span>Primary CTA: बंद (OFF) - Hidden from Customer</span>
+                              <X className="w-3 h-3 text-rose-400 shrink-0" />
+                              <span>Primary CTA: बंद (OFF) - Hidden</span>
                             </span>
                           )}
 
                           {currentActiveSlide.showSecondaryCta !== false ? (
                             <button
                               type="button"
-                              className="px-4 py-2 rounded-xl bg-white/10 text-white font-semibold text-xs border border-white/20 backdrop-blur-md pointer-events-none"
+                              className="px-4 py-2 rounded-xl bg-white/10 text-white font-semibold text-xs border border-white/20 backdrop-blur-md pointer-events-none text-center justify-center"
                             >
                               <span>{currentActiveSlide.secondaryCtaText || 'SHOP COLLECTION'}</span>
                             </button>
                           ) : (
                             <span className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-full bg-rose-950/60 border border-rose-500/40 text-rose-300 text-[10px] font-semibold backdrop-blur-sm">
-                              <X className="w-3 h-3 text-rose-400" />
-                              <span>Secondary CTA: बंद (OFF) - Hidden from Customer</span>
+                              <X className="w-3 h-3 text-rose-400 shrink-0" />
+                              <span>Secondary CTA: बंद (OFF) - Hidden</span>
                             </span>
                           )}
                         </div>
